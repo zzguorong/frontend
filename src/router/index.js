@@ -73,6 +73,24 @@ export const constantRoutes = [
         name: 'Tree',
         component: () => import('@/views/tree/index'),
         meta: { title: 'Tree', icon: 'tree' }
+      },
+      {
+        path: 'generate',
+        name: 'Generate',
+        component: () => import('@/views/generate/index'),
+        meta: { title: 'Generate', icon: 'tree' }
+      },
+      {
+        path: 'generateFile',
+        name: 'GenerateFile',
+        component: () => import('@/views/generateFile/index'),
+        meta: { title: 'GenerateFile', icon: 'tree' }
+      },
+      {
+        path: 'generateShow',
+        name: 'GenerateShow',
+        component: () => import('@/views/generateShow/index'),
+        meta: { title: 'GenerateShow', icon: 'tree' }
       }
     ]
   },
