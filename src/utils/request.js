@@ -15,11 +15,14 @@ service.interceptors.request.use(
   config => {
     // do something before request is sent
 
+    // 统一设置请求头，所有请求都接受 JSON 响应
+    config.headers['Accept'] = 'application/json'
+
     if (store.getters.token) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
-      config.headers['X-Token'] = getToken()
+      config.headers['Authorization'] = "Bearer " + getToken()
     }
     return config
   },
@@ -44,11 +47,10 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-    console.log(response)
-    // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
+    // 当 HTTP 状态码不在 2xx 范围时判定为错误
+    if (response.status < 200 || response.status >= 300) {
       Message({
-        message: res.message || 'Error',
+        message: res.msg || 'Error',
         type: 'error',
         duration: 5 * 1000
       })

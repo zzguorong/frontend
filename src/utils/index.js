@@ -115,3 +115,35 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+// 将blobUrl转换为base64
+export async function blobUrlToBase64(blobUrl) {
+  try {
+    const response = await fetch(blobUrl);
+    const blob = await response.blob();
+
+    // 使用 FileReader 读取，避免 String.fromCharCode 造成大文件栈溢出
+    return await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = err => reject(err);
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error('转换失败:', error);
+    return null;
+  }
+}
+
+// 新增：使用内联 Web Worker 将 Blob 转 Base64，避免主线程阻塞
+export function blobToBase64Async(blob) {
+  return new Promise((resolve, reject) => {
+    const workerScript = `self.onmessage=function(e){const r=new FileReader();r.onload=function(){self.postMessage(r.result);};r.onerror=function(){self.postMessage(null);};r.readAsDataURL(e.data);}`;
+    const workerURL = URL.createObjectURL(new Blob([workerScript], { type: 'application/javascript' }));
+    const worker = new Worker(workerURL);
+    URL.revokeObjectURL(workerURL);
+    worker.onmessage = (e) => { resolve(e.data); worker.terminate(); };
+    worker.onerror = (err) => { reject(err); worker.terminate(); };
+    worker.postMessage(blob);
+  });
+}

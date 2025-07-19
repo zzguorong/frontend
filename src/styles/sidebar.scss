@@ -54,7 +54,8 @@
     }
 
     .svg-icon {
-      margin-right: 16px;
+      font-size: 20px;
+      margin-left: 15px!important;
     }
 
     .sub-el-icon {
@@ -201,7 +202,7 @@
   .el-menu-item {
     &:hover {
       // you can use $subMenuHover
-      background-color: $menuHover !important;
+      background-color: transparent !important;
     }
   }
 
@@ -224,3 +225,66 @@
     }
   }
 }
+
+/* ================= 自定义主题覆盖 ================= */
+
+/* 悬浮/激活背景黑色，文字与图标白色 */
+// .sidebar-container .el-menu-item:not(.is-disabled):hover,
+// .sidebar-container .submenu-title-noDropdown:hover,
+// .sidebar-container .el-submenu__title:hover,
+// .sidebar-container .el-menu-item.is-active,
+// .sidebar-container .is-active > .el-submenu__title {
+//   background-color: #000 !important;
+//   color: #fff !important;
+//   stroke:#fff !important;   /* 兼容线条型图标 */
+// }
+
+/* 默认图标黑色 */
+.sidebar-container .svg-icon,
+.sidebar-container .svg-icon > use,
+.sidebar-container .svg-icon path {
+  color: #000 !important;
+  // fill: currentColor !important;
+}
+/* 悬浮/激活图标白色 */
+.sidebar-container .submenu-title-noDropdown:hover .svg-icon,
+.sidebar-container .el-submenu__title:hover .svg-icon,
+.sidebar-container .el-menu-item:hover .svg-icon,
+.sidebar-container .el-menu-item.is-active .svg-icon,
+.sidebar-container .is-active > .el-submenu__title .svg-icon {
+  fill: #fff !important;
+  stroke:#fff !important;   /* 兼容线条型图标 */
+}
+/* 菜单悬浮 / 激活时：图标变白 */
+.sidebar-container .el-menu-item:not(.is-disabled):hover  .svg-icon,
+.sidebar-container .submenu-title-noDropdown:hover        .svg-icon,
+.sidebar-container .el-submenu__title:hover               .svg-icon,
+.sidebar-container .el-menu-item.is-active                .svg-icon,
+.sidebar-container .is-active > .el-submenu__title        .svg-icon {
+  color: #fff !important;   /* 决定 currentColor */
+  fill:  #fff !important;   /* 兼容纯填充型图标 */
+  stroke:#fff !important;   /* 兼容线条型图标 */
+}
+
+/* 新增：确保 path 也同步变白 */
+.sidebar-container .el-menu-item:not(.is-disabled):hover  .svg-icon path,
+.sidebar-container .submenu-title-noDropdown:hover        .svg-icon path,
+.sidebar-container .el-submenu__title:hover               .svg-icon path,
+.sidebar-container .el-menu-item.is-active                .svg-icon path,
+.sidebar-container .is-active > .el-submenu__title        .svg-icon path {
+  color:  #fff !important;
+  stroke: #fff !important;
+}
+
+/* 新增：确保 <use> 元素同步变白 */
+.sidebar-container .el-menu-item:not(.is-disabled):hover  .svg-icon > use,
+.sidebar-container .submenu-title-noDropdown:hover        .svg-icon > use,
+.sidebar-container .el-submenu__title:hover               .svg-icon > use,
+.sidebar-container .el-menu-item.is-active                .svg-icon > use,
+.sidebar-container .is-active > .el-submenu__title        .svg-icon > use {
+  color:  #fff !important;
+  fill:   #fff !important;
+  stroke: #fff !important;
+}
+
+

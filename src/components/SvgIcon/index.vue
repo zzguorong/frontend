@@ -29,11 +29,15 @@ export default {
       return `#icon-${this.iconClass}`
     },
     svgClass() {
+      let classes = 'svg-icon'
       if (this.className) {
-        return 'svg-icon ' + this.className
-      } else {
-        return 'svg-icon'
+        classes += ' ' + this.className
       }
+      // 为home图标添加特殊类名
+      if (this.iconClass === 'home') {
+        classes += ' svg-icon-home-large'
+      }
+      return classes
     },
     styleExternalIcon() {
       return {

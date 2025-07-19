@@ -28,15 +28,63 @@ module.exports = {
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
-  productionSourceMap: false,
+  productionSourceMap: true,
+  // 让 vue-cli 对使用新语法（如 ??、?. 等）的第三方包进行转译
+  // 这里指定 laravel-echo，避免编译期出现 Unexpected token 报错
+  transpileDependencies: ['laravel-echo'],
   devServer: {
-    port: port,
+    disableHostCheck: true,
+    // 统一端口，确保与浏览器访问端口一致（若需要可自行修改）
+    port: 9530,
+    host: '0.0.0.0',
     open: true,
+    inline: true,
     overlay: {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js')
+    // 强制所有 HMR 相关 URL 使用同源地址
+    public: 'localhost:9530',
+    sockHost: 'localhost',
+    sockPort: 9530,
+    sockPath: '/sockjs-node',
+    // 为 sockjs-node/info 预检请求增加 CORS 头
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+    // before: require('./mock/mock-server.js'),
+    // headers: {
+    //   'Access-Control-Allow-Origin': '*',
+    //   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+    //   'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization'
+    // },
+    // allowedHosts: [
+    //   'localhost',
+    //   '127.0.0.1',
+    //   '192.168.10.35'
+    // ],
+    proxy: {
+      // 配置跨域
+      '/api': {
+        target: 'http://47.112.1.202',
+        // target: 'https://192.168.10.5:9528',
+        // target: 'http://172.20.10.3:8080',
+        // ws:true,
+        changeOrigin: true,
+        // pathRewrite: {
+        //   '^/api': '/'
+        // }
+      }
+      // '/api': {
+      //   target: 'https://demo.it98k.cn',
+      //   // target: "http://localhost:3000",
+      //   // ws:true,
+      //   changOrigin: true,
+      //   pathRewrite: {
+      //     '^/api': '/'
+      //   }
+      // }
+    }
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
@@ -44,7 +92,8 @@ module.exports = {
     name: name,
     resolve: {
       alias: {
-        '@': resolve('src')
+        '@': resolve('src'),
+        'fabric': 'fabric/dist/fabric.js'
       }
     }
   },

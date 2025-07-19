@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>微信登录处理中...</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .loading {
+            text-align: center;
+            font-size: 16px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading">正在处理微信登录，请稍候...</div>
+    
+    <script>
+        console.log('=== 微信回调中间页面加载 ===');
+        console.log('完整URL:', window.location.href);
+        
+        // 获取URL参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        const state = urlParams.get('state');
+        
+        console.log('提取到的参数 code:', code, 'state:', state);
+        
+        if (code) {
+            // 直接调用后端API
+            console.log('发送微信登录请求到后端...');
+            
+            fetch('/api/wechat_login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ code: code })
+            })
+            .then(response => {
+                console.log('后端响应状态:', response.status);
+                if (response.ok) {
+                    console.log('微信登录成功，跳转到生成页面');
+                    window.location.href = '/#/generate';
+                } else {
+                    console.error('微信登录失败');
+                    alert('微信登录失败，请重试');
+                    window.location.href = '/#/loginInterface';
+                }
+            })
+            .catch(error => {
+                console.error('请求失败:', error);
+                alert('网络错误，请重试');
+                window.location.href = '/#/loginInterface';
+            });
+        } else {
+            console.error('未收到微信授权码');
+            alert('未收到微信授权码');
+            window.location.href = '/#/loginInterface';
+        }
+    </script>
+</body>
+</html> 

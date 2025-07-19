@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'Vue Admin Template',
+  title: 'GAIAHub',
 
   /**
    * @type {boolean} true | false

@@ -2,9 +2,16 @@
   <div v-if="!item.hidden">
     <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
-        <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
-          <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title" />
-        </el-menu-item>
+        <el-tooltip 
+          :content="onlyOneChild.meta.title||(item.meta&&item.meta.title)" 
+          placement="right" 
+          effect="dark">
+          <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
+            <div class="icon-border">
+              <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)"/>
+            </div>
+          </el-menu-item>
+        </el-tooltip>
       </app-link>
     </template>
 
@@ -93,3 +100,5 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+</style>
