@@ -1,8 +1,7 @@
 #app {
-
   .main-container {
     min-height: 100%;
-    transition: margin-left .28s;
+    transition: margin-left 0.28s;
     margin-left: $sideBarWidth;
     position: relative;
   }
@@ -11,10 +10,10 @@
     transition: width 0.28s;
     width: $sideBarWidth !important;
     background-color: $menuBg;
-    height: 100%;
+    height: calc(100vh - 70px) !important;
     position: fixed;
     font-size: 0px;
-    top: 0;
+    top: 70px; // 根据顶部高度调整
     bottom: 0;
     left: 0;
     z-index: 1001;
@@ -22,7 +21,8 @@
 
     // reset element-ui css
     .horizontal-collapse-transition {
-      transition: 0s width ease-in-out, 0s padding-left ease-in-out, 0s padding-right ease-in-out;
+      transition: 0s width ease-in-out, 0s padding-left ease-in-out,
+        0s padding-right ease-in-out;
     }
 
     .scrollbar-wrapper {
@@ -55,7 +55,7 @@
 
     .svg-icon {
       font-size: 20px;
-      margin-left: 15px!important;
+      margin-left: 15px !important;
     }
 
     .sub-el-icon {
@@ -77,11 +77,11 @@
       }
     }
 
-    .is-active>.el-submenu__title {
+    .is-active > .el-submenu__title {
       color: $subMenuActiveText !important;
     }
 
-    & .nest-menu .el-submenu>.el-submenu__title,
+    & .nest-menu .el-submenu > .el-submenu__title,
     & .el-submenu .el-menu-item {
       min-width: $sideBarWidth !important;
       background-color: $subMenuBg !important;
@@ -121,7 +121,7 @@
     .el-submenu {
       overflow: hidden;
 
-      &>.el-submenu__title {
+      & > .el-submenu__title {
         padding: 0 !important;
 
         .svg-icon {
@@ -140,8 +140,8 @@
 
     .el-menu--collapse {
       .el-submenu {
-        &>.el-submenu__title {
-          &>span {
+        & > .el-submenu__title {
+          & > span {
             height: 0;
             width: 0;
             overflow: hidden;
@@ -164,7 +164,7 @@
     }
 
     .sidebar-container {
-      transition: transform .28s;
+      transition: transform 0.28s;
       width: $sideBarWidth !important;
     }
 
@@ -178,7 +178,6 @@
   }
 
   .withoutAnimation {
-
     .main-container,
     .sidebar-container {
       transition: none;
@@ -188,7 +187,7 @@
 
 // when menu collapsed
 .el-menu--vertical {
-  &>.el-menu {
+  & > .el-menu {
     .svg-icon {
       margin-right: 16px;
     }
@@ -198,7 +197,7 @@
     }
   }
 
-  .nest-menu .el-submenu>.el-submenu__title,
+  .nest-menu .el-submenu > .el-submenu__title,
   .el-menu-item {
     &:hover {
       // you can use $subMenuHover
@@ -207,7 +206,7 @@
   }
 
   // the scroll bar appears when the subMenu is too long
-  >.el-menu--popup {
+  > .el-menu--popup {
     max-height: 100vh;
     overflow-y: auto;
 
@@ -253,38 +252,36 @@
 .sidebar-container .el-menu-item.is-active .svg-icon,
 .sidebar-container .is-active > .el-submenu__title .svg-icon {
   fill: #fff !important;
-  stroke:#fff !important;   /* 兼容线条型图标 */
+  stroke: #fff !important; /* 兼容线条型图标 */
 }
 /* 菜单悬浮 / 激活时：图标变白 */
-.sidebar-container .el-menu-item:not(.is-disabled):hover  .svg-icon,
-.sidebar-container .submenu-title-noDropdown:hover        .svg-icon,
-.sidebar-container .el-submenu__title:hover               .svg-icon,
-.sidebar-container .el-menu-item.is-active                .svg-icon,
-.sidebar-container .is-active > .el-submenu__title        .svg-icon {
-  color: #fff !important;   /* 决定 currentColor */
-  fill:  #fff !important;   /* 兼容纯填充型图标 */
-  stroke:#fff !important;   /* 兼容线条型图标 */
+.sidebar-container .el-menu-item:not(.is-disabled):hover .svg-icon,
+.sidebar-container .submenu-title-noDropdown:hover .svg-icon,
+.sidebar-container .el-submenu__title:hover .svg-icon,
+.sidebar-container .el-menu-item.is-active .svg-icon,
+.sidebar-container .is-active > .el-submenu__title .svg-icon {
+  color: #fff !important; /* 决定 currentColor */
+  fill: #fff !important; /* 兼容纯填充型图标 */
+  stroke: #fff !important; /* 兼容线条型图标 */
 }
 
 /* 新增：确保 path 也同步变白 */
-.sidebar-container .el-menu-item:not(.is-disabled):hover  .svg-icon path,
-.sidebar-container .submenu-title-noDropdown:hover        .svg-icon path,
-.sidebar-container .el-submenu__title:hover               .svg-icon path,
-.sidebar-container .el-menu-item.is-active                .svg-icon path,
-.sidebar-container .is-active > .el-submenu__title        .svg-icon path {
-  color:  #fff !important;
+.sidebar-container .el-menu-item:not(.is-disabled):hover .svg-icon path,
+.sidebar-container .submenu-title-noDropdown:hover .svg-icon path,
+.sidebar-container .el-submenu__title:hover .svg-icon path,
+.sidebar-container .el-menu-item.is-active .svg-icon path,
+.sidebar-container .is-active > .el-submenu__title .svg-icon path {
+  color: #fff !important;
   stroke: #fff !important;
 }
 
 /* 新增：确保 <use> 元素同步变白 */
-.sidebar-container .el-menu-item:not(.is-disabled):hover  .svg-icon > use,
-.sidebar-container .submenu-title-noDropdown:hover        .svg-icon > use,
-.sidebar-container .el-submenu__title:hover               .svg-icon > use,
-.sidebar-container .el-menu-item.is-active                .svg-icon > use,
-.sidebar-container .is-active > .el-submenu__title        .svg-icon > use {
-  color:  #fff !important;
-  fill:   #fff !important;
+.sidebar-container .el-menu-item:not(.is-disabled):hover .svg-icon > use,
+.sidebar-container .submenu-title-noDropdown:hover .svg-icon > use,
+.sidebar-container .el-submenu__title:hover .svg-icon > use,
+.sidebar-container .el-menu-item.is-active .svg-icon > use,
+.sidebar-container .is-active > .el-submenu__title .svg-icon > use {
+  color: #fff !important;
+  fill: #fff !important;
   stroke: #fff !important;
 }
-
-

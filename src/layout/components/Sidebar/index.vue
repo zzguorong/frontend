@@ -2,47 +2,22 @@
   <div :class="{ 'has-logo': showLogo }" class="sidebar-wrapper">
     <logo v-if="showLogo" :collapse="isCollapse" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
-      <el-menu
-        :default-active="activeMenu"
-        :collapse="isCollapse"
-        :background-color="variables.menuBg"
-        :text-color="variables.menuText"
-        :unique-opened="false"
-        :active-text-color="variables.menuActiveText"
-        :collapse-transition="false"
-        mode="vertical"
-        class="top-fixed-menu"
-      >
-        <sidebar-item
-          v-for="route in topRoutes"
-          :key="route.path"
-          :item="route"
-          :base-path="route.path"
-        />
+      <el-menu :default-active="activeMenu" :collapse="isCollapse" :background-color="variables.menuBg"
+        :text-color="variables.menuText" :unique-opened="false" :active-text-color="variables.menuActiveText"
+        :collapse-transition="false" mode="vertical" class="top-fixed-menu">
+        <sidebar-item v-for="route in topRoutes" :key="route.path" :item="route" :base-path="route.path" />
       </el-menu>
     </el-scrollbar>
     <!-- 底部区域容器 -->
     <div class="bottom-section">
       <!-- 底部固定菜单 -->
-      <el-menu
-        v-if="bottomRoutes.length"
-        :default-active="activeMenu"
-        :collapse="isCollapse"
-        :background-color="variables.menuBg"
-        :text-color="variables.menuText"
-        :active-text-color="variables.menuActiveText"
-        :collapse-transition="false"
-        mode="vertical"
-        class="bottom-fixed-menu"
-      >
-        <sidebar-item
-          v-for="route in bottomRoutes"
-          :key="route.path"
-          :item="route"
-          :base-path="route.path"
-        />
+      <el-menu v-if="bottomRoutes.length" :default-active="activeMenu" :collapse="isCollapse"
+        :background-color="variables.menuBg" :text-color="variables.menuText"
+        :active-text-color="variables.menuActiveText" :collapse-transition="false" mode="vertical"
+        class="bottom-fixed-menu">
+        <sidebar-item v-for="route in bottomRoutes" :key="route.path" :item="route" :base-path="route.path" />
       </el-menu>
-      
+
       <!-- 退出按钮 - 始终显示在底部菜单下方 -->
       <div class="logout-item" @click="handleLogout">
         <div class="icon-wrapper">
@@ -54,10 +29,10 @@
 </template>
 
 <script>
+import variables from "@/styles/variables.scss";
 import { mapGetters } from "vuex";
 import Logo from "./Logo";
 import SidebarItem from "./SidebarItem";
-import variables from "@/styles/variables.scss";
 
 export default {
   components: { SidebarItem, Logo },
@@ -66,9 +41,13 @@ export default {
     routes() {
       return this.$router.options.routes;
     },
-    // 新增：顶部与底部路由列表
+    // 新增：顶部与底部路由列表 ,跳转首页放在了顶部导航栏目
     topRoutes() {
-      return this.routes.filter((r) => !(r.meta && r.meta.fixedBottom));
+      return this.routes.filter(
+        (r) =>
+          r.path !== "/dashboard" && // 过滤掉 dashboard 父路由
+          !(r.meta && r.meta.fixedBottom)
+      );
     },
     bottomRoutes() {
       return this.routes.filter((r) => r.meta && r.meta.fixedBottom);
@@ -109,8 +88,9 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
+
   /* 统一给侧边栏图标加灰色边框 */
-  ::v-deep .svg-icon > use {
+  ::v-deep .svg-icon>use {
     border-radius: 50%;
     box-sizing: content-box;
   }
@@ -159,7 +139,7 @@ export default {
   background: transparent;
   position: relative;
   padding-left: 12px;
-  
+
   /* 图标容器样式 */
   .icon-wrapper {
     display: inline-flex;
@@ -171,57 +151,62 @@ export default {
     box-sizing: border-box;
     margin-right: 5px;
     position: relative;
+
     ::v-deep .svg-icon {
-    fill: #000 !important;
-    color: #000 !important;
-    position: absolute;
-    top: 6px;
-    left: -8px;
-    width: 18px !important;
-    height: 18px !important;
-    margin: 0 !important;
-    line-height: 1 !important;
-  }
-  ::v-deep .svg-icon.is-active {
-    background: #000;
-    color: #fff !important;
-    fill: #fff !important;
-    stroke: #fff !important;
-  }
-  &:active {
-    ::v-deep .svg-icon,
-    ::v-deep .svg-icon > use,
-    ::v-deep .svg-icon path {
+      fill: #000 !important;
+      color: #000 !important;
+      position: absolute;
+      top: 6px;
+      left: -8px;
+      width: 18px !important;
+      height: 18px !important;
+      margin: 0 !important;
+      line-height: 1 !important;
+    }
+
+    ::v-deep .svg-icon.is-active {
+      background: #000;
       color: #fff !important;
       fill: #fff !important;
       stroke: #fff !important;
     }
-  }
-  &:hover {
-    background-color: #000 !important;
-    
-    .icon-wrapper {
+
+    &:active {
+
+      ::v-deep .svg-icon,
+      ::v-deep .svg-icon>use,
+      ::v-deep .svg-icon path {
+        color: #fff !important;
+        fill: #fff !important;
+        stroke: #fff !important;
+      }
+    }
+
+    &:hover {
       background-color: #000 !important;
-    }
-    
-    ::v-deep .svg-icon,
-    ::v-deep .svg-icon > use,
-    ::v-deep .svg-icon path {
-      color: #fff !important;
-      fill: #fff !important;
-      stroke: #fff !important;
+
+      .icon-wrapper {
+        background-color: #000 !important;
+      }
+
+      ::v-deep .svg-icon,
+      ::v-deep .svg-icon>use,
+      ::v-deep .svg-icon path {
+        color: #fff !important;
+        fill: #fff !important;
+        stroke: #fff !important;
+      }
     }
   }
-  }
-  
+
   /* 图标样式 */
-  
+
 }
 
 
 /* 禁用 icon-wrapper 内图标的悬浮背景色 */
 .icon-wrapper:hover .svg-icon,
-.icon-wrapper:hover .svg-icon > use,
+.icon-wrapper:hover .svg-icon>use,
 .icon-wrapper:hover .svg-icon path {
   background: none !important;
   background-color: transparent !important;
