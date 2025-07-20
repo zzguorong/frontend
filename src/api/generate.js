@@ -1,4 +1,4 @@
-import request from "@/utils/request";
+import request from '@/utils/request'
 
 // 销售/移库配货查询
 export function salesOrTRansferQuery(params) {
@@ -80,8 +80,3 @@ export function wechatLogin(data) {
     data
   })
 }
-
-
-
-
-

@@ -9,7 +9,7 @@
         alt="GAIAHub"
         width="300px"
         height="auto"
-      />
+      >
     </div>
     <!-- 主卡片 -->
     <div class="login-card">
@@ -25,41 +25,40 @@
               <el-input
                 v-model="form.phone"
                 placeholder="请输入手机号"
-              ></el-input>
+              />
             </el-form-item>
             <el-form-item prop="password">
               <el-input
                 v-model="form.password"
                 placeholder="请输入密码"
-              ></el-input>
+              />
             </el-form-item>
             <el-form-item prop="confirmPassword">
               <el-input
                 v-model="form.confirmPassword"
                 placeholder="请再次输入密码"
-              ></el-input>
+              />
             </el-form-item>
             <el-form-item class="form-code" prop="code">
               <el-input
                 v-model="form.code"
                 placeholder="请输入验证码"
-              ></el-input>
+              />
               <div
                 type="text"
                 class="resend-btn"
                 :disabled="countDown > 0"
                 @click="handleSend"
               >
-                <template v-if="countDown > 0"
-                  >重新发送({{ countDown }})</template
-                >
+                <template
+                  v-if="countDown > 0"
+                >重新发送({{ countDown }})</template>
                 <template v-else>发送验证码</template>
               </div>
             </el-form-item>
           </el-form>
           <div class="register-desc">
-            注册即代表已阅读并同意<span class="agree-word">服务条款</span
-            >和<span class="agree-word">隐私政策</span>
+            注册即代表已阅读并同意<span class="agree-word">服务条款</span>和<span class="agree-word">隐私政策</span>
           </div>
           <!-- 注册按钮 -->
           <div class="login-btn-wrapper" @click="isPhoneLogin = false">
@@ -76,42 +75,42 @@
 
 <script>
 export default {
-  name: "LoginInterface",
+  name: 'LoginInterface',
   data() {
     return {
       form: {},
       countDown: 0,
       rules: {
-        phone: [{ required: true, message: "请输入手机号", trigger: "blur" }],
-        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+        phone: [{ required: true, message: '请输入手机号', trigger: 'blur' }],
+        password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
         confirmPassword: [
-          { required: true, message: "请再次输入密码", trigger: "blur" },
+          { required: true, message: '请再次输入密码', trigger: 'blur' }
         ],
-        code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
+        code: [{ required: true, message: '请输入验证码', trigger: 'blur' }]
       },
-      timer: null,
-    };
+      timer: null
+    }
+  },
+  beforeDestroy() {
+    this.timer && clearInterval(this.timer)
   },
   methods: {
     handleSend() {
-      if (this.countDown > 0) return;
-      this.countDown = 60;
+      if (this.countDown > 0) return
+      this.countDown = 60
       this.timer = setInterval(() => {
         if (this.countDown > 0) {
-          this.countDown--;
+          this.countDown--
         } else {
-          clearInterval(this.timer);
+          clearInterval(this.timer)
         }
-      }, 1000);
+      }, 1000)
     },
     returnLogin() {
-      this.$router.push("/login");
-    },
-  },
-  beforeDestroy() {
-    this.timer && clearInterval(this.timer);
-  },
-};
+      this.$router.push('/login')
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

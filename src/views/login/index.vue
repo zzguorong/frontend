@@ -9,7 +9,7 @@
         alt="GAIAHub"
         width="300px"
         height="auto"
-      />
+      >
     </div>
     <!-- 主卡片 -->
     <div class="login-card">
@@ -26,94 +26,131 @@
           <div v-if="activeTab === 'phone'" class="tab-content phone-login">
             <p class="sub-tip">如果您的手机号码未注册，将为您自动注册</p>
 
-            <!-- 手机号 + 区号输入 -->
-            <div class="phone-input-line">
-              <el-select
-                v-model="phonePrefix"
-                class="phone-prefix"
-                size="large"
-                popper-class="phone-prefix-select"
-              >
-                <el-option label="+86" value="+86" />
-                <!-- 可扩展其他区号 -->
-              </el-select>
-              <el-input
-                v-model="phone"
-                placeholder="输入手机号"
-                size="large"
-                class="phone-input"
-              />
-            </div>
-
-            <!-- 验证码输入 -->
-            <p class="code-label">输入验证码</p>
-            <div class="code-input-line">
-              <input v-for="n in 6" :key="n" maxlength="1" class="code-box" />
-              <div
-                type="text"
-                class="resend-btn"
-                :disabled="countDown > 0"
-                @click="handleSend"
-              >
-                <template v-if="countDown > 0"
-                  >重新发送({{ countDown }})</template
-                >
-                <template v-else>发送验证码</template>
+            <el-form ref="phoneLoginForm" :model="phoneLoginForm" :rules="phoneLoginFormRules">
+              <!-- 手机号 + 区号输入 -->
+              <div class="phone-input-line">
+                <el-form-item prop="phonePrefix">
+                  <el-select
+                    v-model="phoneLoginForm.phonePrefix"
+                    class="phone-prefix"
+                    size="large"
+                    popper-class="phone-prefix-select"
+                  >
+                    <el-option label="+86" value="+86" />
+                    <!-- 可扩展其他区号 -->
+                  </el-select>
+                </el-form-item>
+                <el-form-item prop="phone" class="phone-input">
+                  <el-input
+                    v-model="phoneLoginForm.phone"
+                    placeholder="请输入手机号"
+                    size="large"
+                  />
+                </el-form-item>
               </div>
-            </div>
 
-            <!-- 登录按钮 -->
-            <div class="login-btn-wrapper">
-              <el-button
-                type="primary"
-                size="large"
-                class="login-btn"
-                @click.native.prevent="handleLogin"
-                >登录</el-button
-              >
-            </div>
+              <!-- 验证码输入 -->
+              <p class="code-label">输入验证码</p>
+              <div class="code-input-line">
+                <input
+                  v-for="(_, index) in codeDigits"
+                  :key="index"
+                  ref="codeDigitInputs"
+                  v-model="codeDigits[index]"
+                  type="text"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  maxlength="1"
+                  class="code-box"
+                  @input="handleCodeDigitInput(index, $event)"
+                  @keydown.delete="handleCodeDigitDelete(index)"
+                  @paste="handleCodeDigitPaste"
+                  @focus="codeDigitCurrentIndex = index"
+                >
+
+                <div
+                  type="text"
+                  class="resend-btn"
+                  :disabled="countDown > 0"
+                  @click="handleSend"
+                >
+                  <template
+                    v-if="countDown > 0"
+                  >重新发送({{ countDown }})</template>
+                  <template v-else>发送验证码</template>
+                </div>
+
+                <el-form-item prop="code" class="force-new-line">
+                  <el-input
+                    v-model="phoneLoginForm.code"
+                    placeholder="请输入验证码"
+                    size="large"
+                    class="code-input"
+                  />
+                </el-form-item>
+              </div>
+
+              <!-- 登录按钮 -->
+              <div class="login-btn-wrapper">
+                <el-button
+                  type="primary"
+                  size="large"
+                  class="login-btn"
+                  :loading="loading"
+                  @click.native.prevent="handleLogin"
+                >登录</el-button>
+              </div>
+            </el-form>
 
             <!-- 协议勾选 -->
             <div class="agree-checkbox-wrapper">
-              <el-checkbox v-model="agree" class="agree-checkbox">
-              </el-checkbox>
+              <el-checkbox v-model="agree" class="agree-checkbox" />
               我已阅读并接受<span class="agree-word" @click="handleTermOfservice">服务条款</span>和<span
                 class="agree-word"
-                @click="handlePrivacyPolicy">隐私政策</span
-              >
+                @click="handlePrivacyPolicy"
+              >隐私政策</span>
             </div>
           </div>
 
           <div v-else class="tab-content password-login">
-            <p class="code-label">仅支持手机号登录</p>
-            <!-- 手机号 + 区号输入 -->
-            <div class="phone-input-line phone-style">
-              <el-input
-                v-model="phone"
-                placeholder="请输入手机号"
-                size="large"
-                class="phone-input"
-              />
-            </div>
-            <p class="code-label">输入密码</p>
-            <el-input
-              v-model="password"
-              type="password"
-              show-password
-              size="large"
-              class="full-input"
-              placeholder="请输入密码"
-            />
-            <!-- 登录按钮 -->
-            <div class="login-btn-wrapper">
-              <el-button type="primary" size="large" class="login-btn"
-                >登录</el-button
-              >
-            </div>
+            <el-form ref="passwordLoginForm" :model="passwordLoginForm" :rules="passwordLoginFormRules">
+              <p class="code-label">仅支持手机号登录</p>
+              <!-- 手机号 + 区号输入 -->
+              <el-form-item prop="phone">
+                <el-input
+                  v-model="passwordLoginForm.phone"
+                  placeholder="请输入手机号"
+                  size="large"
+                  class="phone-input"
+                />
+              </el-form-item>
+
+              <p class="code-label">输入密码</p>
+              <el-form-item prop="password">
+                <el-input
+                  v-model="passwordLoginForm.password"
+                  type="password"
+                  show-password
+                  size="large"
+                  placeholder="请输入密码"
+                />
+              </el-form-item>
+
+              <!-- 登录按钮 -->
+              <div class="login-btn-wrapper">
+                <el-button
+                  type="primary"
+                  size="large"
+                  :loading="loading"
+                  class="login-btn"
+                  @click.native.prevent="handleLogin"
+                >登录</el-button>
+              </div>
+            </el-form>
+
             <!-- 协议勾选 -->
             <div class="agree-checkbox-wrapper" style="margin-top: 15px">
-              注册登录即代表已阅读并同意<span class="agree-word">服务条款</span
-              >和<span class="agree-word">隐私政策</span>
+              注册登录即代表已阅读并同意<span class="agree-word">服务条款</span>和<span class="agree-word">隐私政策</span>
             </div>
             <div class="forget-password">
               <span @click="handleForgetPassword">忘记密码</span>
@@ -125,8 +162,8 @@
         <!-- 右侧二维码 -->
         <div class="qr-wrapper">
           <div class="qr-title">扫描二维码使用微信登录</div>
-          <div class="qr-box" ref="qrBox">
-            <div id="wechat-login-container"></div>
+          <div ref="qrBox" class="qr-box">
+            <div id="wechat-login-container" />
           </div>
           <div class="qr-info">
             <div class="qr-success">扫描成功</div>
@@ -139,80 +176,187 @@
 </template>
 
 <script>
-import { getWechatLoginUrl,wechatLogin } from "@/api/generate";
+import { getWechatLoginUrl, wechatLogin } from '@/api/generate'
+import { sendSmsCode } from '@/api/index'
 export default {
-  name: "LoginInterface",
+  name: 'LoginInterface',
   data() {
     return {
-      activeTab: "phone",
-      phonePrefix: "+86",
-      phone: "",
-      password: "",
-      countDown: 60,
-      agree: true,
-      timer: null,
-      wxLoginLoaded: false,
-      loginForm: {
-        nickname: "admin",
-        password: "password",
+      activeTab: 'phone',
+      loading: false,
+      redirect: null,
+      codeDigits: Array(6).fill(''),
+      codeDigitCurrentIndex: 0,
+      phoneLoginForm: {
+        phonePrefix: '+86',
+        phone: '',
+        code: ''
       },
-    };
-  },
-  mounted() {
-    getWechatLoginUrl().then((res) => {
-      console.log(res);
-    });
-    // this.initWechatLogin();
-    // this.startWechatLogin();
-    new WxLogin({
-      self_redirect: true, //默认为false(保留当前二维码)  true(当前二维码所在的地方通过iframe 内跳转到 redirect_uri)
-      id: "wechat-login-container", //容器的id
-      appid: "wxaebb39450f19b3fa", //应用唯一标识，在微信开放平台提交应用审核通过后获得
-      scope: "snsapi_login", //应用授权作用域，拥有多个作用域用逗号（,）分隔，网页应用目前仅填写snsapi_login即可
-      redirect_uri: encodeURIComponent(
-        "https://www.gaiass.com/api/auth/wechat/callback"
-      ), //扫完码授权成功跳转到的路径
-      // state: "",    //用于保持请求和回调的状态，授权请求后原样带回给第三方。该参数可用于防止 csrf 攻击（跨站请求伪造攻击），建议第三方带上该参数，可设置为简单的随机数加 session 进行校验
-      style: "white", //提供"black"、"white"可选，默认为黑色文字描述
-    });
-    // 渲染完二维码后缩放到 100×100
-    this.$nextTick(() => {
-      setTimeout(this.adjustQrIframe, 100);
-    });
-    const code = this.getUrlParam("code");
+      phoneLoginFormRules: {
+        phonePrefix: [
+          { required: true, message: '请选择区号', trigger: 'blur' }
+        ],
+        phone: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '请输入验证码', trigger: 'blur' },
+          { pattern: /^\d{6}$/, message: '验证码必须为6位数字', trigger: 'blur' }
+        ]
+      },
+      passwordLoginForm: {
+        phone: '',
+        password: ''
+      },
+      passwordLoginFormRules: {
+        phone: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, max: 20, message: '密码长度为6-20位', trigger: 'blur' }
+        ]
+      },
+      countDown: 0,
+      agree: false,
+      timer: null,
+      wxLoginLoaded: false
+    }
   },
 
   watch: {
     $route: {
-      handler: function (route) {
-        this.redirect = route.query && route.query.redirect;
+      handler: function(route) {
+        this.redirect = route.query && route.query.redirect
       },
-      immediate: true,
-    },
+      immediate: true
+    }
+  },
+  mounted() {
+    getWechatLoginUrl().then((res) => {
+      console.log(res)
+    })
+    // this.initWechatLogin();
+    // this.startWechatLogin();
+    new WxLogin({
+      self_redirect: true, // 默认为false(保留当前二维码)  true(当前二维码所在的地方通过iframe 内跳转到 redirect_uri)
+      id: 'wechat-login-container', // 容器的id
+      appid: 'wxaebb39450f19b3fa', // 应用唯一标识，在微信开放平台提交应用审核通过后获得
+      scope: 'snsapi_login', // 应用授权作用域，拥有多个作用域用逗号（,）分隔，网页应用目前仅填写snsapi_login即可
+      redirect_uri: encodeURIComponent(
+        'https://www.gaiass.com/api/auth/wechat/callback'
+      ), // 扫完码授权成功跳转到的路径
+      // state: "",    //用于保持请求和回调的状态，授权请求后原样带回给第三方。该参数可用于防止 csrf 攻击（跨站请求伪造攻击），建议第三方带上该参数，可设置为简单的随机数加 session 进行校验
+      style: 'white' // 提供"black"、"white"可选，默认为黑色文字描述
+    })
+    // 渲染完二维码后缩放到 100×100
+    this.$nextTick(() => {
+      setTimeout(this.adjustQrIframe, 100)
+    })
+    const code = this.getUrlParam('code')
+  },
+  beforeDestroy() {
+    this.timer && clearInterval(this.timer)
+    window.removeEventListener('resize', this.adjustQrIframe)
   },
   methods: {
+    handleCodeDigitInput(index, event) {
+      const value = event.target.value.replace(/\D/g, '')
+      this.codeDigits[index] = value
+      this.phoneLoginForm.code = this.codeDigits.join('')
+
+      if (value && index < 5) {
+        this.$nextTick(() => {
+          this.$refs.codeDigitInputs[index + 1].focus()
+        })
+      }
+    },
+    handleCodeDigitDelete(index) {
+      if (!this.codeDigits[index] && index > 0) {
+        this.$refs.codeDigitInputs[index - 1].focus()
+      }
+    },
+    handleCodeDigitPaste(event) {
+      event.preventDefault()
+      const pasteData = event.clipboardData.getData('text').replace(/\D/g, '')
+      if (pasteData.length === 6) {
+        this.codeDigits = pasteData.split('').slice(0, 6)
+        this.phoneLoginForm.code = this.codeDigits.join('')
+      }
+    },
     // 跳转服务条款
     handleTermOfservice() {
-      this.$router.push("/termOfservice");
+      this.$router.push('/termOfservice')
     },
     // 跳转隐私政策
     handlePrivacyPolicy() {
-      this.$router.push("/privacyPolicy");
+      this.$router.push('/privacyPolicy')
     },
     handleLogin() {
+      if (this.activeTab === 'phone') {
+        this.$refs.phoneLoginForm.validate((valid) => {
+          if (valid) {
+            // 判断是否同意协议
+            if (!this.agree) {
+              this.$message.error('请同意服务条款和隐私政策')
+              return false
+            }
+            this.phoneLogin()
+          } else {
+            return false
+          }
+        })
+      } else {
+        this.$refs.passwordLoginForm.validate((valid) => {
+          if (valid) {
+            this.loginWithPassword()
+          } else {
+            return false
+          }
+        })
+      }
+    },
+    // 手机登录
+    phoneLogin() {
+      this.$refs.phoneLoginForm.validate((valid) => {
+        if (valid) {
+          this.loading = true
+          this.$store
+            .dispatch('user/phoneLogin', {
+              phone: this.phoneLoginForm.phonePrefix + this.phoneLoginForm.phone,
+              code: this.phoneLoginForm.code
+            })
+            .then(() => {
+              this.$router.push({ path: this.redirect || '/generate' })
+              this.loading = false
+            })
+            .catch(() => {
+              this.loading = false
+            })
+        } else {
+          return false
+        }
+      })
+    },
+    // 密码登录
+    loginWithPassword() {
+      this.loading = true
+
       this.$store
-        .dispatch("user/login",this.loginForm)
+        .dispatch('user/passwordLogin', {
+          nickname: this.passwordLoginForm.phone,
+          password: this.passwordLoginForm.password
+        })
         .then(() => {
-          console.log(this.redirect);
-          this.$router.push({ path: this.redirect || "/generate" });
-          this.loading = false;
+          console.log(this.redirect)
+          this.$router.push({ path: this.redirect || '/generate' })
+          this.loading = false
         })
         .catch(() => {
-          this.loading = false;
-        });
-      // wechatLogin({ code: "021CAb100CTnAU1QRy000fcLww4CAb1x" }).then((res) => {
-      //   console.log(res);
-      // });
+          this.loading = false
+        })
     },
     //   try {
     //     const res = await getWechatLoginUrl();
@@ -266,62 +410,80 @@ export default {
     //   });
     // },
     getUrlParam(name) {
-      let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-      let r = window.location.search.substr(1).match(reg);
+      const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)')
+      const r = window.location.search.substr(1).match(reg)
       if (r != null) {
         // ok
-        return unescape(r[2]);
+        return unescape(r[2])
       }
       // false
-      return null;
+      return null
     },
     adjustQrIframe() {
-      const box = this.$refs.qrBox;
-      if (!box) return;
-      const iframe = box.querySelector("iframe");
-      if (!iframe) return; // 脚本还没插入 iframe
+      const box = this.$refs.qrBox
+      if (!box) return
+      const iframe = box.querySelector('iframe')
+      if (!iframe) return // 脚本还没插入 iframe
 
       // 1. 基本尺寸
-      const BOX = box.clientWidth; // = box.clientHeight，因为 qr-box 是正方形
-      const W0 = 300; // 微信二维码原始宽
-      const H0 = 60; // 标题条大约 60px
+      const BOX = box.clientWidth // = box.clientHeight，因为 qr-box 是正方形
+      const W0 = 300 // 微信二维码原始宽
+      const H0 = 60 // 标题条大约 60px
 
       // 2. 计算缩放与位移
-      const S = BOX / W0; // 缩放系数
-      const tx = (BOX - W0 * S) / 2; // 水平居中
-      const ty = -H0 * S; // 把标题区推出可视区
+      const S = BOX / W0 // 缩放系数
+      const tx = (BOX - W0 * S) / 2 // 水平居中
+      const ty = -H0 * S // 把标题区推出可视区
 
       // 3. 一次写入 transform
-      iframe.style.width = W0 + "px";
-      iframe.style.height = "360px"; // 原始高即可
-      iframe.style.border = "none";
-      iframe.style.pointerEvents = "none";
-      iframe.style.transformOrigin = "top left";
-      iframe.style.transform = `translate(${tx}px, ${ty}px) scale(${S})`;
+      iframe.style.width = W0 + 'px'
+      iframe.style.height = '360px' // 原始高即可
+      iframe.style.border = 'none'
+      iframe.style.pointerEvents = 'none'
+      iframe.style.transformOrigin = 'top left'
+      iframe.style.transform = `translate(${tx}px, ${ty}px) scale(${S})`
     },
     handleSend() {
-      if (this.countDown > 0) return;
-      this.countDown = 60;
-      this.timer = setInterval(() => {
-        if (this.countDown > 0) {
-          this.countDown--;
+      if (this.countDown > 0) return
+
+      // 发送验证码逻辑
+      this.$refs.phoneLoginForm.validateField('phone', (errorMessage) => {
+        if (!errorMessage) {
+          this.countDown = 60
+          this.timer = setInterval(() => {
+            if (this.countDown > 0) {
+              this.countDown--
+            } else {
+              clearInterval(this.timer)
+            }
+          }, 1000)
+          // reset code digits
+          this.codeDigits = Array(6).fill('')
+          this.phoneLoginForm.code = ''
+          // 调用发送验证码 API
+          sendSmsCode({
+            phone: this.phoneLoginForm.phonePrefix + this.phoneLoginForm.phone
+          })
+            .then((res) => {
+              this.$message.success(res.message || '验证码已发送，请注意查收')
+              this.$refs.codeDigitInputs[0].focus()
+            })
+            .catch(() => {
+              console.error('发送验证码失败')
+            })
         } else {
-          clearInterval(this.timer);
+          return false
         }
-      }, 1000);
+      })
     },
     handleForgetPassword() {
-      this.$router.push("/resetPassword");
+      this.$router.push('/resetPassword')
     },
     handleRegister() {
-      this.$router.push("/register");
-    },
-  },
-  beforeDestroy() {
-    this.timer && clearInterval(this.timer);
-    window.removeEventListener("resize", this.adjustQrIframe);
-  },
-};
+      this.$router.push('/register')
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -453,7 +615,7 @@ export default {
 .phone-input-line {
   display: flex;
   align-items: center;
-  margin-bottom: 24px;
+  // margin-bottom: 24px;
 
   .phone-prefix {
     width: 70px;
@@ -490,6 +652,7 @@ export default {
   width: 360px;
   height: 42.5px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 24px;
@@ -502,6 +665,12 @@ export default {
     border-radius: 4px;
     text-align: center;
     font-size: 18px;
+  }
+  .force-new-line {
+    flex-basis: 100%; /* 让该项占据整行 */
+  }
+  .code-input {
+    display: none;
   }
   .resend-btn {
     margin-left: 12px;
