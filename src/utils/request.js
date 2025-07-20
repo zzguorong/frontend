@@ -22,7 +22,7 @@ service.interceptors.request.use(
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
-      config.headers['Authorization'] = "Bearer " + getToken()
+      config.headers['Authorization'] = 'Bearer ' + getToken()
     }
     return config
   },
@@ -50,7 +50,7 @@ service.interceptors.response.use(
     // 当 HTTP 状态码不在 2xx 范围时判定为错误
     if (response.status < 200 || response.status >= 300) {
       Message({
-        message: res.msg || 'Error',
+        message: res.message || 'Error',
         type: 'error',
         duration: 5 * 1000
       })
@@ -75,8 +75,12 @@ service.interceptors.response.use(
   },
   error => {
     console.log('err' + error) // for debug
+    let message = error.response && error.response.data && (error.response.data.message || error.response.data.error)
+    if (!message) {
+      message = error.message || '请求失败，请稍后再试'
+    }
     Message({
-      message: error.message,
+      message,
       type: 'error',
       duration: 5 * 1000
     })
