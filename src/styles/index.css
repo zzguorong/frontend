@@ -24,7 +24,7 @@
 /* fade-transform */
 .fade-transform-leave-active,
 .fade-transform-enter-active {
-  transition: all .5s;
+  transition: all 0.5s;
 }
 
 .fade-transform-enter {
@@ -40,7 +40,7 @@
 /* breadcrumb transition */
 .breadcrumb-enter-active,
 .breadcrumb-leave-active {
-  transition: all .5s;
+  transition: all 0.5s;
 }
 
 .breadcrumb-enter,
@@ -50,7 +50,7 @@
 }
 
 .breadcrumb-move {
-  transition: all .5s;
+  transition: all 0.5s;
 }
 
 .breadcrumb-leave-active {
@@ -96,7 +96,7 @@
 
 #app .main-container {
   min-height: 100%;
-  transition: margin-left .28s;
+  transition: margin-left 0.28s;
   margin-left: 210px;
   position: relative;
 }
@@ -116,7 +116,8 @@
 }
 
 #app .sidebar-container .horizontal-collapse-transition {
-  transition: 0s width ease-in-out, 0s padding-left ease-in-out, 0s padding-right ease-in-out;
+  transition: 0s width ease-in-out, 0s padding-left ease-in-out,
+    0s padding-right ease-in-out;
 }
 
 #app .sidebar-container .scrollbar-wrapper {
@@ -182,7 +183,8 @@
 }
 
 #app .hideSidebar .sidebar-container {
-  width: 54px !important;
+  /* width: 54px !important; */
+  height: calc(100vh - 80px) !important;
 }
 
 #app .hideSidebar .main-container {
@@ -243,7 +245,7 @@
 }
 
 #app .mobile .sidebar-container {
-  transition: transform .28s;
+  transition: transform 0.28s;
   width: 210px !important;
 }
 
@@ -350,7 +352,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,
+    Microsoft YaHei, Arial, sans-serif;
 }
 
 label {

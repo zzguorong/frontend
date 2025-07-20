@@ -1,21 +1,18 @@
 <template>
-  <el-upload
-    ref="upload"
-    class="avatar-uploader"
-    :action="actionUrl"
-    :show-file-list="false"
-    :on-success="handleAvatarSuccess"
-    :before-upload="beforeAvatarUpload"
-    :data="uploadData"
-    :headers="uploadHeaders"
-  >
-    <img v-if="imgUrl" :src="imgUrl" class="avatar" />
+  <el-upload ref="upload" class="avatar-uploader" :action="actionUrl" :show-file-list="false"
+    :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" :data="uploadData" :headers="uploadHeaders">
+    <div v-if="imgUrl" style="position: relative; display: inline-block;">
+      <img :src="imgUrl" class="avatar" />
+      <!-- 删除按钮 -->
+      <i class="el-icon-close delete-btn" @click.stop.prevent="handleDelete" />
+    </div>
     <div v-else class="upload-wrapper">
       <i class="el-icon-plus avatar-uploader-icon" />
       <div class="upload-text">{{ describeText }}</div>
     </div>
   </el-upload>
 </template>
+
 <script>
 import { getToken } from "@/utils/auth";
 
@@ -36,18 +33,9 @@ export default {
     };
   },
   props: {
-    imgUrl: {
-      type: String,
-      default: "",
-    },
-    describeText: {
-      type: String,
-      default: "",
-    },
-    finalApi: {
-      type: String,
-      default: "",
-    },
+    imgUrl: { type: String, default: "" },
+    describeText: { type: String, default: "" },
+    finalApi: { type: String, default: "" },
   },
   methods: {
     // 自定义上传方法，不发送网络请求
@@ -94,7 +82,6 @@ export default {
       this.$emit("upload-success", { res, file, imageUrl });
       this.$message.success("图片上传成功！");
     },
-
     beforeAvatarUpload(file) {
       // 将当前文件同步到请求体额外字段
       if (this.finalApi === "/segment_image") {
@@ -106,7 +93,6 @@ export default {
       }
       const isImage = file && file.type && file.type.startsWith("image/");
       const isLt2M = file.size / 1024 / 1024 < 2;
-
       if (!isImage) {
         this.$message.error("只能上传图片文件!");
         return false;
@@ -116,6 +102,10 @@ export default {
         return false;
       }
       return true;
+    },
+    // 新增：删除按钮事件
+    handleDelete() {
+      this.$emit("delete");
     },
   },
 };
@@ -197,8 +187,8 @@ export default {
 .avatar-uploader {
   height: 80px;
 }
-el-icon-plus:before {
-}
+
+el-icon-plus:before {}
 
 .upload-progress {
   position: absolute;
@@ -214,5 +204,29 @@ el-icon-plus:before {
 
 .upload-progress :deep(.el-progress-bar__inner) {
   transition: width 0.3s ease;
+}
+
+.avatar-uploader .delete-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  background-color: rgba(128, 128, 128, 0.6);
+  /* 半透明灰色背景 */
+  border-radius: 50%;
+  color: #fff;
+  /* 白色叉叉 */
+  font-size: 16px;
+  line-height: 22px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s ease;
+  z-index: 10;
+}
+
+.avatar-uploader .delete-btn:hover {
+  background-color: rgba(128, 128, 128, 0.9);
 }
 </style>
