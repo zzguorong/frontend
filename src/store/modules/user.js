@@ -56,8 +56,8 @@ const actions = {
       })
         .then((response) => {
           console.log('phoneLogin response', response)
-          commit('SET_TOKEN', response.token)
-          setToken(response.token)
+          commit('SET_TOKEN', response.access_token)
+          setToken(response.access_token)
           resolve()
         })
         .catch((error) => {
