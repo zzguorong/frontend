@@ -132,6 +132,7 @@
                   type="password"
                   show-password
                   size="large"
+                  maxlength="20"
                   placeholder="请输入密码"
                 />
               </el-form-item>

@@ -35,6 +35,24 @@ export function userLogout() {
   })
 }
 
+// 用户名密码注册
+export function userRegister(data) {
+  return request({
+    url: '/registration',
+    method: 'post',
+    data
+  })
+}
+
+// 重置密码
+export function resetPassword(data) {
+  return request({
+    url: '/password_reset',
+    method: 'post',
+    data
+  })
+}
+
 // 获取用户详情
 export function getUserInfo(params) {
   return request({
