@@ -1,33 +1,33 @@
 // import {logout, getInfo, login} from "@/api/user";
-import { getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
-import { login, phoneLogin, userLogout } from '@/api/index'
+import { getInfo } from '@/api/user';
+import { getToken, setToken, removeToken } from '@/utils/auth';
+import { resetRouter } from '@/router';
+import { login, phoneLogin, userLogout } from '@/api/index';
 
 const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
     avatar: ''
-  }
-}
+  };
+};
 
-const state = getDefaultState()
+const state = getDefaultState();
 
 const mutations = {
   RESET_STATE: (state) => {
-    Object.assign(state, getDefaultState())
+    Object.assign(state, getDefaultState());
   },
   SET_TOKEN: (state, token) => {
-    state.token = token
+    state.token = token;
   },
   SET_NAME: (state, name) => {
-    state.name = name
+    state.name = name;
   },
   SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
+    state.avatar = avatar;
   }
-}
+};
 
 const actions = {
   // user login
@@ -48,43 +48,43 @@ const actions = {
   // },
   // 手机号加验证码登录
   phoneLogin({ commit }, userInfo) {
-    const { phone, code } = userInfo
+    const { phone, code } = userInfo;
     return new Promise((resolve, reject) => {
       phoneLogin({
         phone: phone.trim(),
         code: code
       })
         .then((response) => {
-          console.log('phoneLogin response', response)
-          commit('SET_TOKEN', response.access_token)
-          setToken(response.access_token)
-          resolve()
+          console.log('phoneLogin response', response);
+          commit('SET_TOKEN', response.access_token);
+          setToken(response.access_token);
+          resolve();
         })
         .catch((error) => {
-          console.log('phoneLogin error', error)
-          reject(error)
-        })
-    })
+          console.log('phoneLogin error', error);
+          reject(error);
+        });
+    });
   },
   // 用户名密码登录
   passwordLogin({ commit }, userInfo) {
-    const { phone, password } = userInfo
+    const { phone, password } = userInfo;
     return new Promise((resolve, reject) => {
       login({
         phone: phone.trim(),
         password: password
       })
         .then((response) => {
-          console.log(response, 'response')
-          commit('SET_TOKEN', response.access_token)
-          setToken(response.access_token)
-          resolve()
+          console.log(response, 'response');
+          commit('SET_TOKEN', response.access_token);
+          setToken(response.access_token);
+          resolve();
         })
         .catch((error) => {
-          console.log('error', error)
-          reject(error)
-        })
-    })
+          console.log('error', error);
+          reject(error);
+        });
+    });
   },
 
   // get user info
@@ -92,51 +92,51 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo(state.token)
         .then((response) => {
-          const { data } = response
+          const { data } = response;
 
           if (!data) {
-            return reject('Verification failed, please Login again.')
+            return reject('Verification failed, please Login again.');
           }
 
-          const { name, avatar } = data
+          const { name, avatar } = data;
 
-          commit('SET_NAME', name)
-          commit('SET_AVATAR', avatar)
-          resolve(data)
+          commit('SET_NAME', name);
+          commit('SET_AVATAR', avatar);
+          resolve(data);
         })
         .catch((error) => {
-          reject(error)
-        })
-    })
+          reject(error);
+        });
+    });
   },
 
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
       userLogout().then(() => {
-        commit('RESET_STATE')
-        removeToken() // must remove  token  first
-        resetRouter()
-        resolve()
+        commit('RESET_STATE');
+        removeToken(); // must remove  token  first
+        resetRouter();
+        resolve();
       }).catch((error) => {
-        reject(error)
-      })
-    })
+        reject(error);
+      });
+    });
   },
 
   // remove token
   resetToken({ commit }) {
     return new Promise((resolve) => {
-      removeToken() // must remove  token  first
-      commit('RESET_STATE')
-      resolve()
-    })
+      removeToken(); // must remove  token  first
+      commit('RESET_STATE');
+      resolve();
+    });
   }
-}
+};
 
 export default {
   namespaced: true,
   state,
   mutations,
   actions
-}
+};

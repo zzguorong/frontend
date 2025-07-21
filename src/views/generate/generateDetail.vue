@@ -20,7 +20,7 @@
       <el-row :gutter="20">
         <el-col :span="18">
           <!-- 中间预览区域 -->
-          <div class="center-preview-area" ref="previewArea">
+          <div ref="previewArea" class="center-preview-area">
             <!-- 预览主区域 -->
             <div class="main-preview">
               <div v-if="!currentPreviewImage" class="empty-preview">
@@ -32,7 +32,7 @@
                 :src="currentPreviewImage"
                 alt="预览图"
                 class="preview-image"
-              />
+              >
               <!-- 预览图操作按钮 -->
               <div class="preview-actions">
                 <svg-icon
@@ -109,12 +109,11 @@
                     icon-class="question"
                     class="icon-style"
                     style="position: absolute; right: 18px; top: 15px"
-                  ></svg-icon>
+                  />
                 </el-tooltip>
               </div>
               <div class="download-controls">
                 <div
-                  @click="downloadJPG"
                   style="
                     height: 35px;
                     line-height: 35px;
@@ -127,11 +126,11 @@
                     background-color: #fff;
                     cursor: pointer;
                   "
+                  @click="downloadJPG"
                 >
                   JPG下载
                 </div>
                 <div
-                  @click="downloadPSD"
                   style="
                     height: 35px;
                     line-height: 35px;
@@ -145,6 +144,7 @@
                     position: relative;
                     cursor: not-allowed;
                   "
+                  @click="downloadPSD"
                 >
                   PSD下载
                   <el-tooltip content="PSD下载功能" placement="top">
@@ -152,7 +152,7 @@
                       icon-class="question"
                       class="icon-style"
                       style="position: absolute; right: 15px; top: 10px"
-                    ></svg-icon>
+                    />
                   </el-tooltip>
                 </div>
               </div>
@@ -217,7 +217,7 @@
                         "
                         class="empty-gallery"
                       >
-                        <i class="el-icon-heart"></i>
+                        <i class="el-icon-heart" />
                         <p>暂无收藏的图册</p>
                         <p class="hint">收藏图册后将在此处显示</p>
                       </div>
@@ -264,8 +264,8 @@
                               v-if="item.image"
                               :src="item.image"
                               alt="画廊图片"
-                            />
-                            <div v-else class="empty-item"></div>
+                            >
+                            <div v-else class="empty-item" />
 
                             <!-- 图片数量标识 -->
                             <!-- <div class="image-count-badge">
@@ -343,7 +343,7 @@
                 </div>
               </el-tab-pane>
               <el-tab-pane label="项目参数" name="right">
-                <div class="project-panel" ref="paramsScroll" data-simplebar>
+                <div ref="paramsScroll" class="project-panel" data-simplebar>
                   <!-- 项目参数 -->
                   <div class="params-section">
                     <!-- 提示词 -->
@@ -466,7 +466,7 @@
                           icon-class="question"
                           class="icon-style"
                           style="position: absolute; right: 13px; top: 11px"
-                        ></svg-icon>
+                        />
                       </el-tooltip>
                     </div>
                   </div>
@@ -496,34 +496,33 @@
                 </div>
               </el-tab-pane>
             </el-tabs>
-          </div></el-col
-        >
+          </div></el-col>
       </el-row>
     </div>
   </div>
 </template>
 
 <script>
-import "simplebar/dist/simplebar.min.css";
+import 'simplebar/dist/simplebar.min.css';
 import {
   getProjectDetail,
   getGalleryImages,
-  generateBaseImage,
-} from "@/api/generate";
+  generateBaseImage
+} from '@/api/generate';
 export default {
-  name: "GenerateDetail",
+  name: 'GenerateDetail',
   data() {
     return {
       // 左侧参数
       materialFixed: 10,
       // 预览相关
-      currentPreviewImage: "",
+      currentPreviewImage: '',
       currentImageIndex: 0, // 当前选中的画廊项目索引
       currentImageInSet: 0, // 当前显示的是该项目images数组中的第几张图片
 
       // 选项数据
-      viewTypeOptions: [{ label: "室内图", value: "4" }],
-      styleCategoryOptions: [{ label: "通用", value: "通用" }],
+      viewTypeOptions: [{ label: '室内图', value: '4' }],
+      styleCategoryOptions: [{ label: '通用', value: '通用' }],
 
       // 画廊数据
       // galleryItems: [
@@ -603,17 +602,17 @@ export default {
       // 收藏状态 - 使用二维数组匹配新的数据结构
       favoriteStates: [
         [false, false], // 第一个日期组的2个项目
-        [false, false], // 第二个日期组的2个项目
+        [false, false] // 第二个日期组的2个项目
       ],
 
       // 悬停状态 - 使用二维数组匹配新的数据结构
       favoriteHoverStates: [
         [false, false], // 第一个日期组的2个项目
-        [false, false], // 第二个日期组的2个项目
+        [false, false] // 第二个日期组的2个项目
       ],
       deleteHoverStates: [
         [false, false], // 第一个日期组的2个项目
-        [false, false], // 第二个日期组的2个项目
+        [false, false] // 第二个日期组的2个项目
       ],
       // 画廊标题图标状态
       galleryFavoriteActive: false,
@@ -628,14 +627,14 @@ export default {
       previewTrashActive: false,
       previewTrashHover: false,
       resizeObserver: null,
-      activeName: "left",
+      activeName: 'left',
       pollingTimer: null,
       generatedImageId: null,
       semanticImgUrlId: null,
       semanticImgUrl: null,
       styleImageId: null,
       styleImgUrl: null,
-      projectParameters: {},
+      projectParameters: {}
     };
   },
   computed: {
@@ -656,7 +655,7 @@ export default {
         return {
           dateIndex,
           itemIndex,
-          item: this.galleryItems[dateIndex].galleryItem[itemIndex],
+          item: this.galleryItems[dateIndex].galleryItem[itemIndex]
         };
       }
       return null;
@@ -744,7 +743,7 @@ export default {
             filteredItems.push({
               ...dateGroup.galleryItem[itemIndex],
               originalDateIndex: dateIndex,
-              originalItemIndex: itemIndex,
+              originalItemIndex: itemIndex
             });
           }
         }
@@ -753,13 +752,13 @@ export default {
         if (filteredItems.length > 0) {
           filtered.push({
             ...dateGroup,
-            galleryItem: filteredItems,
+            galleryItem: filteredItems
           });
         }
       }
 
       return filtered;
-    },
+    }
   },
   mounted() {
     getGalleryImages().then((res) => {
@@ -767,7 +766,7 @@ export default {
       console.log(generationImages);
       this.galleryItems = generationImages.map((item) => {
         return {
-          date: item.generated_images[0].created_at.split("T")[0],
+          date: item.generated_images[0].created_at.split('T')[0],
           galleryItem: [
             {
               image: item.generated_images[0].url, // 使用require正确引入图片
@@ -775,8 +774,8 @@ export default {
                 {
                   src: item.generated_images[0].url,
                   generatedImageId: item.generated_images[0].id,
-                  isCollect: false,
-                },
+                  isCollect: false
+                }
               ],
               projectParameters: {
                 prompt: item.prompt,
@@ -786,15 +785,15 @@ export default {
                 generation_categories: item.generation_categories,
                 resolution: item.scale,
                 viewType: item.generation_categories.id,
-                styleCategory: item.generation_categories.id,
+                styleCategory: item.generation_categories.id
               },
               semanticImgUrl: item.segment_images.url,
               semanticImgUrlId: item.segment_images.id,
               styleImgUrl: item.style_images,
               styleImageId: item.style_image_id,
-              isFavorite: false,
-            },
-          ],
+              isFavorite: false
+            }
+          ]
         };
       });
 
@@ -817,7 +816,7 @@ export default {
         // 找到最后一个日期组
         const lastDateIndex = this.galleryItems.length - 1;
         const lastDateGroup = this.galleryItems[lastDateIndex];
-        
+
         // 确保最后一个日期组有图片
         if (lastDateGroup.galleryItem.length > 0) {
           // 找到该日期组内的最后一个项目
@@ -831,7 +830,7 @@ export default {
     });
     if (this.$route.query.id) {
       getProjectDetail(this.$route.query.id).then((res) => {
-        console.log("getProjectDetail", res);
+        console.log('getProjectDetail', res);
         const generationRequest = res.generation_request;
         this.generatedImageId = res.id;
         this.projectParameters.promptText = generationRequest.prompt;
@@ -848,8 +847,8 @@ export default {
         this.projectParameters.styleCategory =
           generationRequest.generation_categories.id;
         this.currentPreviewImage = res.url;
-        (this.semanticImgUrlId = generationRequest.segment_image_id),
-          (this.styleImageId = generationRequest.style_image_id);
+        (this.semanticImgUrlId = generationRequest.segment_image_id);
+        (this.styleImageId = generationRequest.style_image_id);
       });
     }
     // getProjectDetail(1).then((res) => {
@@ -893,27 +892,27 @@ export default {
   methods: {
     viewTypeFormat(row) {
       const statusMap = {
-        1: "鸟瞰图",
-        2: "人视图",
-        3: "平面图",
-        4: "室内图",
+        1: '鸟瞰图',
+        2: '人视图',
+        3: '平面图',
+        4: '室内图'
       };
-      return statusMap[row] || "";
+      return statusMap[row] || '';
     },
     styleTypeFormat(row) {
       const statusMap = {
-        1: "通用",
-        2: "大尺寸",
+        1: '通用',
+        2: '大尺寸'
       };
-      return statusMap[row] || "";
+      return statusMap[row] || '';
     },
     scaleFormat(row) {
       const statusMap = {
-        1: "标准(1080P)",
-        2: "大(2k)",
-        3: "超大(4k)",
+        1: '标准(1080P)',
+        2: '大(2k)',
+        3: '超大(4k)'
       };
-      return statusMap[row] || "";
+      return statusMap[row] || '';
     },
     // 辅助方法：获取全局索引
     getGlobalIndex(dateIndex, itemIndex) {
@@ -980,7 +979,7 @@ export default {
       ) {
         return {
           dateIndex: item.originalDateIndex,
-          itemIndex: item.originalItemIndex,
+          itemIndex: item.originalItemIndex
         };
       }
       return { dateIndex: displayDateIndex, itemIndex: displayItemIndex };
@@ -1094,15 +1093,15 @@ export default {
 
     // 切换收藏状态
     toggleFavorite(dateIndex, itemIndex) {
-      console.log("=== 点击收藏按钮 ===");
-      console.log("日期索引:", dateIndex, "项目索引:", itemIndex);
+      console.log('=== 点击收藏按钮 ===');
+      console.log('日期索引:', dateIndex, '项目索引:', itemIndex);
 
       // 确保状态数组存在
       if (!this.favoriteStates[dateIndex]) {
         this.$set(this.favoriteStates, dateIndex, []);
       }
 
-      console.log("切换前状态:", this.favoriteStates[dateIndex][itemIndex]);
+      console.log('切换前状态:', this.favoriteStates[dateIndex][itemIndex]);
 
       // 切换收藏状态
       const newState = !this.favoriteStates[dateIndex][itemIndex];
@@ -1114,21 +1113,21 @@ export default {
         this.galleryItems[dateIndex].galleryItem[itemIndex];
       if (targetItem) {
         // 记录文件夹级收藏状态
-        this.$set(targetItem, "isFavorite", newState);
+        this.$set(targetItem, 'isFavorite', newState);
 
         // 同步更新内部图片收藏标记
         if (Array.isArray(targetItem.images)) {
           targetItem.images.forEach((img, idx) => {
             // 若对象是简单字符串则跳过
-            if (img && typeof img === "object") {
-              this.$set(targetItem.images[idx], "isCollect", newState);
+            if (img && typeof img === 'object') {
+              this.$set(targetItem.images[idx], 'isCollect', newState);
             }
           });
         }
       }
 
-      console.log("切换后状态:", newState);
-      console.log("完整状态数组:", JSON.stringify(this.favoriteStates));
+      console.log('切换后状态:', newState);
+      console.log('完整状态数组:', JSON.stringify(this.favoriteStates));
 
       // 根据新状态显示消息和切换图标
       const globalIndex = this.getGlobalIndex(dateIndex, itemIndex);
@@ -1152,7 +1151,7 @@ export default {
         this.updatePreviewAfterFilter();
       }
 
-      console.log("=== 收藏状态切换完成 ===");
+      console.log('=== 收藏状态切换完成 ===');
 
       // 如果当前预览的项目就是被操作的项目，同步更新预览爱心状态
       if (
@@ -1185,10 +1184,10 @@ export default {
       this.galleryFavoriteActive = this.showOnlyFavorites;
 
       const message = this.showOnlyFavorites
-        ? "已筛选收藏图册"
-        : "显示全部图册";
+        ? '已筛选收藏图册'
+        : '显示全部图册';
       this.$message.success(message);
-      console.log("画廊筛选状态:", this.showOnlyFavorites);
+      console.log('画廊筛选状态:', this.showOnlyFavorites);
 
       // 处理筛选状态变化后的预览图
       this.updatePreviewAfterFilter();
@@ -1200,8 +1199,8 @@ export default {
         // 筛选模式：检查是否有收藏图册
         if (this.filteredGalleryItems.length === 0) {
           // 没有收藏图册，清空预览图
-          console.log("筛选结果为空，清空预览图");
-          this.currentPreviewImage = "";
+          console.log('筛选结果为空，清空预览图');
+          this.currentPreviewImage = '';
           this.currentImageIndex = -1;
           this.currentImageInSet = 0;
           this.previewFavoriteActive = false;
@@ -1211,7 +1210,7 @@ export default {
 
           if (currentlyInFiltered) {
             // 当前图册在筛选结果中，保持当前显示
-            console.log("当前图册在收藏筛选结果中，保持显示");
+            console.log('当前图册在收藏筛选结果中，保持显示');
             // 不需要做任何操作，保持当前状态
           } else {
             // 当前图册不在筛选结果中，检查是否还有其他收藏图册
@@ -1225,11 +1224,11 @@ export default {
               );
               const globalIndex = this.getGlobalIndex(dateIndex, itemIndex);
               this.selectGalleryItem(globalIndex, dateIndex, itemIndex);
-              console.log("当前图册不在收藏筛选结果中，切换到第一个收藏图册");
+              console.log('当前图册不在收藏筛选结果中，切换到第一个收藏图册');
             } else {
               // 没有收藏图册了，清空预览图
-              console.log("取消收藏后没有收藏图册了，清空预览图");
-              this.currentPreviewImage = "";
+              console.log('取消收藏后没有收藏图册了，清空预览图');
+              this.currentPreviewImage = '';
               this.currentImageIndex = -1;
               this.currentImageInSet = 0;
               this.previewFavoriteActive = false;
@@ -1245,7 +1244,7 @@ export default {
           )
         ) {
           // 画廊完全为空，清空预览图
-          this.currentPreviewImage = "";
+          this.currentPreviewImage = '';
           this.currentImageIndex = -1;
           this.currentImageInSet = 0;
           this.previewFavoriteActive = false;
@@ -1308,7 +1307,7 @@ export default {
         this.galleryItems.length === 0 ||
         this.galleryItems.every((group) => group.galleryItem.length === 0)
       ) {
-        this.$message.warning("暂无图册可以创建新分组");
+        this.$message.warning('暂无图册可以创建新分组');
         return;
       }
 
@@ -1316,10 +1315,10 @@ export default {
       const newGroupName = this.generateNewGroupName();
 
       // 找到离新分组日期最近的有图册的分组
-      let closestGroupWithItems = this.findClosestGroupWithItems(newGroupName);
+      const closestGroupWithItems = this.findClosestGroupWithItems(newGroupName);
 
       if (!closestGroupWithItems) {
-        this.$message.warning("没有找到可移动的图册");
+        this.$message.warning('没有找到可移动的图册');
         return;
       }
 
@@ -1330,7 +1329,7 @@ export default {
       // 创建新分组并移动第一个图册
       const newGroup = {
         date: newGroupName,
-        galleryItem: [closestGroupWithItems.item],
+        galleryItem: [closestGroupWithItems.item]
       };
 
       // 从原分组中移除图册
@@ -1373,7 +1372,7 @@ export default {
       this.$message.success(
         `已创建新分组"${newGroupName}"，从分组"${sourceGroupName}"移动图册`
       );
-      console.log("新分组创建成功:", newGroupName);
+      console.log('新分组创建成功:', newGroupName);
     },
 
     // 找到离指定日期最近的有图册的分组
@@ -1381,7 +1380,7 @@ export default {
       // 解析目标日期
       const targetDate = this.parseGroupDate(targetDateString);
       if (!targetDate) {
-        console.error("无法解析目标日期:", targetDateString);
+        console.error('无法解析目标日期:', targetDateString);
         return null;
       }
 
@@ -1418,12 +1417,12 @@ export default {
             dateIndex,
             itemIndex: 0,
             item: group.galleryItem[0],
-            distance: distance,
+            distance: distance
           };
         }
       }
 
-      console.log("找到最近的分组:", closestGroup);
+      console.log('找到最近的分组:', closestGroup);
       return closestGroup;
     },
 
@@ -1434,7 +1433,7 @@ export default {
         let cleanDateString = dateString;
 
         // 移除最后的编号部分 (-NN)
-        const lastDashIndex = cleanDateString.lastIndexOf("-");
+        const lastDashIndex = cleanDateString.lastIndexOf('-');
         if (lastDashIndex > 0) {
           const potentialNumber = cleanDateString.substring(lastDashIndex + 1);
           if (/^\d{2}$/.test(potentialNumber)) {
@@ -1443,10 +1442,10 @@ export default {
         }
 
         // 统一格式：将 . 替换为 -
-        cleanDateString = cleanDateString.replace(/\./g, "-");
+        cleanDateString = cleanDateString.replace(/\./g, '-');
 
         // 解析日期
-        const parts = cleanDateString.split("-");
+        const parts = cleanDateString.split('-');
         if (parts.length >= 3) {
           const year = parseInt(parts[0]);
           const month = parseInt(parts[1]) - 1; // JavaScript月份从0开始
@@ -1457,10 +1456,10 @@ export default {
           }
         }
 
-        console.error("无法解析日期格式:", dateString);
+        console.error('无法解析日期格式:', dateString);
         return null;
       } catch (error) {
-        console.error("日期解析错误:", error, dateString);
+        console.error('日期解析错误:', error, dateString);
         return null;
       }
     },
@@ -1469,8 +1468,8 @@ export default {
     generateNewGroupName() {
       const now = new Date();
       const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, "0");
-      const day = String(now.getDate()).padStart(2, "0");
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
       const baseDate = `${year}-${month}-${day}`;
 
       // 检查当前已存在的分组，找到当天日期的最大编号
@@ -1481,7 +1480,7 @@ export default {
 
       let maxNumber = 0;
       todayGroups.forEach((groupName) => {
-        const parts = groupName.split("-");
+        const parts = groupName.split('-');
         if (parts.length === 4) {
           const number = parseInt(parts[3]);
           if (!isNaN(number) && number > maxNumber) {
@@ -1491,7 +1490,7 @@ export default {
       });
 
       // 生成新的编号
-      const newNumber = String(maxNumber + 1).padStart(2, "0");
+      const newNumber = String(maxNumber + 1).padStart(2, '0');
       const newGroupName = `${baseDate}-${newNumber}`;
 
       return newGroupName;
@@ -1504,8 +1503,8 @@ export default {
     // 预览图操作按钮交互方法
     handlePreviewReturn() {
       // 返回到generate/index页面
-      this.$router.push("/generate");
-      console.log("返回到generate/index页面");
+      this.$router.push('/generate');
+      console.log('返回到generate/index页面');
     },
 
     onPreviewReturnHover(isHover) {
@@ -1524,11 +1523,11 @@ export default {
         const currentImage = currentItem.images[this.currentImageInSet];
         if (currentImage) {
           // 切换当前图片的收藏状态
-          this.$set(currentImage, "isCollect", !currentImage.isCollect);
+          this.$set(currentImage, 'isCollect', !currentImage.isCollect);
 
           const message = currentImage.isCollect
-            ? "预览图已收藏"
-            : "预览图取消收藏";
+            ? '预览图已收藏'
+            : '预览图取消收藏';
           this.$message.success(message);
 
           // 检查该图册是否有任何图片被收藏
@@ -1546,10 +1545,10 @@ export default {
           // 更新预览图收藏按钮状态
           this.previewFavoriteActive = currentImage.isCollect;
 
-          console.log("预览图收藏状态:", currentImage.isCollect);
-          console.log("图册收藏状态:", hasCollectedImage);
+          console.log('预览图收藏状态:', currentImage.isCollect);
+          console.log('图册收藏状态:', hasCollectedImage);
           console.log(
-            "更新后的favoriteStates:",
+            '更新后的favoriteStates:',
             JSON.stringify(this.favoriteStates)
           );
 
@@ -1580,17 +1579,17 @@ export default {
 
       // 如果有多张图片，删除当前显示的图片
       this.$confirm(
-        "你确认要删除当前预览图片吗？<br/>删除图片，图片将会从系统中移除。",
-        "确认删除图片",
+        '你确认要删除当前预览图片吗？<br/>删除图片，图片将会从系统中移除。',
+        '确认删除图片',
         {
-          confirmButtonText: "确认删除",
-          cancelButtonText: "取消",
-          type: "warning",
+          confirmButtonText: '确认删除',
+          cancelButtonText: '取消',
+          type: 'warning',
           dangerouslyUseHTMLString: true,
           showCancelButton: true,
           showConfirmButton: true,
           closeOnClickModal: false,
-          closeOnPressEscape: false,
+          closeOnPressEscape: false
         }
       )
         .then(() => {
@@ -1600,7 +1599,7 @@ export default {
 
           // 更新图册缩略图为剩余的第一张图片
           if (currentItem.images.length > 0) {
-            this.$set(currentItem, "image", currentItem.images[0].src);
+            this.$set(currentItem, 'image', currentItem.images[0].src);
           }
 
           // 检查删除后是否还有收藏图片，更新图册收藏状态
@@ -1630,17 +1629,17 @@ export default {
             return;
           }
 
-          this.$message.success("图片删除成功");
+          this.$message.success('图片删除成功');
           console.log(
-            "删除预览图片:",
+            '删除预览图片:',
             deletedImageIndex,
-            "剩余图片数:",
+            '剩余图片数:',
             currentItem.images.length
           );
         })
         .catch(() => {
           // 取消删除：弹框消失，不做任何操作
-          console.log("取消删除预览图片");
+          console.log('取消删除预览图片');
         });
     },
 
@@ -1652,17 +1651,17 @@ export default {
     deleteThumbnail(dateIndex, itemIndex) {
       const globalIndex = this.getGlobalIndex(dateIndex, itemIndex);
       this.$confirm(
-        "你确认要删除图片吗？<br/>删除图片，图片将会从系统中移除。",
-        "确认删除图片",
+        '你确认要删除图片吗？<br/>删除图片，图片将会从系统中移除。',
+        '确认删除图片',
         {
-          confirmButtonText: "确认删除",
-          cancelButtonText: "取消",
-          type: "warning",
+          confirmButtonText: '确认删除',
+          cancelButtonText: '取消',
+          type: 'warning',
           dangerouslyUseHTMLString: true,
           showCancelButton: true,
           showConfirmButton: true,
           closeOnClickModal: false,
-          closeOnPressEscape: false,
+          closeOnPressEscape: false
         }
       )
         .then(() => {
@@ -1697,7 +1696,7 @@ export default {
               this.selectGalleryItem(newIndex, newDateIndex, newItemIndex);
             } else {
               // 画廊完全为空，清空预览图
-              this.currentPreviewImage = "";
+              this.currentPreviewImage = '';
               this.currentImageIndex = -1;
               this.currentImageInSet = 0;
               this.previewFavoriteActive = false;
@@ -1706,12 +1705,12 @@ export default {
             this.currentImageIndex--;
           }
 
-          this.$message.success("删除成功");
-          console.log("删除画廊项目:", dateIndex, itemIndex);
+          this.$message.success('删除成功');
+          console.log('删除画廊项目:', dateIndex, itemIndex);
         })
         .catch(() => {
           // 取消删除：弹框消失，不做任何操作
-          console.log("取消删除画廊项目:", dateIndex, itemIndex);
+          console.log('取消删除画廊项目:', dateIndex, itemIndex);
         });
     },
     // 选择画廊项目
@@ -1730,7 +1729,7 @@ export default {
         // 更新预览图收藏按钮状态
         this.previewFavoriteActive = selectedItem.images[0].isCollect || false;
         this.projectParameters = { ...selectedItem.projectParameters };
-        console.log("selectedItem", selectedItem);
+        console.log('selectedItem', selectedItem);
         // this.baseImageId = selectedItem.baseImageId;
         this.generatedImageId = selectedItem.images[0].generatedImageId;
         this.semanticImgUrlId = selectedItem.semanticImgUrlId;
@@ -1742,7 +1741,7 @@ export default {
         this.currentPreviewImage = selectedItem.image;
         this.previewFavoriteActive = false;
       } else {
-        this.currentPreviewImage = "";
+        this.currentPreviewImage = '';
         this.previewFavoriteActive = false;
       }
     },
@@ -1803,15 +1802,15 @@ export default {
 
     // 下载功能
     downloadJPG() {
-      this.$message.success("开始下载JPG格式");
+      this.$message.success('开始下载JPG格式');
     },
 
     downloadPSD() {
-      this.$message.success("开始下载PSD格式");
+      this.$message.success('开始下载PSD格式');
     },
     // 保留参数生图
     saveParams() {
-      this.$message.success("参数已保存");
+      this.$message.success('参数已保存');
       const params = {
         promptText: this.projectParameters.promptText,
         viewType: this.projectParameters.viewType,
@@ -1819,18 +1818,17 @@ export default {
         styleTransferLevel: this.projectParameters.styleTransferLevel,
         resolution: this.projectParameters.resolution,
         aspectRatio: this.projectParameters.aspectRatio,
-        styleTransferLevel: this.projectParameters.styleTransferLevel,
         styleImgUrl: this.currentPreviewImage,
-        styleImageId: this.styleImageId,
+        styleImageId: this.styleImageId
       };
-      this.$store.commit("generation/setGenerationParams", params);
-      this.$router.push("/generate");
+      this.$store.commit('generation/setGenerationParams', params);
+      this.$router.push('/generate');
     },
     // 保留底图生图
     keepBaseGenerate() {
       // 这里可以添加实际的生成逻辑
       generateBaseImage({
-        generated_image_id: this.generatedImageId,
+        generated_image_id: this.generatedImageId
       }).then((res) => {
         const params = {
           promptText: this.projectParameters.promptText,
@@ -1839,20 +1837,19 @@ export default {
           styleTransferLevel: this.projectParameters.styleTransferLevel,
           resolution: this.projectParameters.resolution,
           aspectRatio: this.projectParameters.aspectRatio,
-          styleTransferLevel: this.projectParameters.styleTransferLevel,
           baseControlLevel: this.projectParameters.baseControlLevel,
           basemapUrl: res.data.url,
           basemapUrlId: res.data.id,
           semanticImgUrl: this.semanticImgUrl,
           semanticImgUrlId: this.semanticImgUrlId,
           styleImgUrl: this.styleImgUrl,
-          styleImageId: this.styleImageId,
+          styleImageId: this.styleImageId
         };
-        this.$store.commit("generation/setGenerationParams", params);
-        this.$router.push("/generate");
+        this.$store.commit('generation/setGenerationParams', params);
+        this.$router.push('/generate');
       });
-    },
-  },
+    }
+  }
 };
 </script>
 
