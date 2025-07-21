@@ -1,21 +1,5 @@
 <template>
   <div class="generate-detail-container">
-    <!-- 顶部导航栏 -->
-    <!-- <div class="header">
-      <div class="logo">
-        <span class="logo-icon">♦</span>
-        <span class="logo-text">名字</span>
-      </div>
-      <div class="nav-menu">
-        <span class="nav-item">首页</span>
-        <span class="nav-item active">生图界面</span>
-        <span class="nav-item">关于我们</span>
-        <el-button type="primary" size="small" class="subscribe-btn"
-          >订阅计划</el-button
-        >
-        <el-avatar icon="el-icon-user-solid" size="small" class="user-avatar" />
-      </div>
-    </div> -->
     <div class="content-wrapper">
       <el-row :gutter="20">
         <el-col :span="18">
@@ -42,57 +26,8 @@
                   @mouseenter="onPreviewReturnHover(true)"
                   @mouseleave="onPreviewReturnHover(false)"
                 />
-                <!-- <svg-icon
-                  :class="[
-                    'preview-action-icon',
-                    'favorite-icon',
-                    { active: previewFavoriteActive },
-                  ]"
-                  :icon-class="
-                    previewFavoriteActive || previewFavoriteHover
-                      ? 'favorate-active'
-                      : 'favorate'
-                  "
-                  @click="handlePreviewFavorite"
-                  @mouseenter="onPreviewFavoriteHover(true)"
-                  @mouseleave="onPreviewFavoriteHover(false)"
-                />
-                <svg-icon
-                  :class="[
-                    'preview-action-icon',
-                    'trash-icon',
-                    { active: previewTrashActive },
-                  ]"
-                  :icon-class="
-                    previewTrashActive || previewTrashHover
-                      ? 'trash-active'
-                      : 'trash'
-                  "
-                  @click="handlePreviewTrash"
-                  @mouseenter="onPreviewTrashHover(true)"
-                  @mouseleave="onPreviewTrashHover(false)"
-                /> -->
               </div>
-              <!-- 导航箭头 -->
-              <!-- <div class="nav-arrows">
-                <svg-icon
-                  icon-class="left-arrow"
-                  class="nav-btn prev-btn"
-                  :disabled="!canGoPrev"
-                  @click="prevImage"
-                ></svg-icon>
-                <svg-icon
-                  icon-class="right-arrow"
-                  class="nav-btn next-btn"
-                  :disabled="!canGoNext"
-                  @click="nextImage"
-                ></svg-icon>
-              </div> -->
             </div>
-            <!-- 图片指示器 -->
-            <!-- <div v-if="currentImageCount > 1" class="image-indicator">
-            {{ currentImageInSet + 1 }} / {{ currentImageCount }}
-          </div> -->
             <!-- 传输到底图按钮 -->
             <div class="transfer-action">
               <div
@@ -191,21 +126,6 @@
                             @mouseleave="onGalleryFavoriteHover(false)"
                           />
                         </div>
-                        <!-- <div class="gallery-icon-box">
-                          <svg-icon
-                            :class="[
-                              'gallery-action-icon',
-                              'plus-gallery-icon',
-                            ]"
-                            icon-class="newly-built"
-                            :style="{
-                              color: galleryPlusHover ? '#f56565' : '#000',
-                            }"
-                            @click="toggleGalleryPlus"
-                            @mouseenter="onGalleryPlusHover(true)"
-                            @mouseleave="onGalleryPlusHover(false)"
-                          />
-                        </div> -->
                       </div>
                     </div>
 
@@ -618,15 +538,10 @@ export default {
       // 画廊标题图标状态
       galleryFavoriteActive: false,
       galleryFavoriteHover: false,
-      galleryPlusHover: false,
       // 画廊筛选状态
       showOnlyFavorites: false,
       // 预览图操作按钮状态
       previewReturnHover: false,
-      previewFavoriteActive: false,
-      previewFavoriteHover: false,
-      previewTrashActive: false,
-      previewTrashHover: false,
       resizeObserver: null,
       activeName: 'left',
       pollingTimer: null,
@@ -660,57 +575,6 @@ export default {
         };
       }
       return null;
-    },
-
-    // 判断是否可以显示上一张图片
-    canGoPrev() {
-      const currentDetails = this.currentItemDetails;
-      if (!currentDetails) return false;
-
-      // 只有当前图册有多张图片时才可以翻页
-      if (
-        currentDetails.item &&
-        currentDetails.item.images &&
-        currentDetails.item.images.length > 1
-      ) {
-        return true;
-      }
-
-      // 当前图册只有一张图片时，禁用上一张按钮
-      return false;
-    },
-
-    // 判断是否可以显示下一张图片
-    canGoNext() {
-      const currentDetails = this.currentItemDetails;
-      if (!currentDetails) return false;
-
-      // 只有当前图册有多张图片时才可以翻页
-      if (
-        currentDetails.item &&
-        currentDetails.item.images &&
-        currentDetails.item.images.length > 1
-      ) {
-        return true;
-      }
-
-      // 当前图册只有一张图片时，禁用下一张按钮
-      return false;
-    },
-
-    // 当前项目的图片总数
-    currentImageCount() {
-      const currentDetails = this.currentItemDetails;
-      if (!currentDetails) return 1;
-
-      if (
-        currentDetails.item &&
-        currentDetails.item.images &&
-        currentDetails.item.images.length > 0
-      ) {
-        return currentDetails.item.images.length;
-      }
-      return 1; // 如果没有images数组，默认为1张
     },
 
     // 过滤后的画廊数据
@@ -1223,13 +1087,6 @@ export default {
       }
 
       console.log('=== 收藏状态切换完成 ===');
-
-      // 如果当前预览的项目就是被操作的项目，同步更新预览爱心状态
-      if (
-        this.currentImageIndex === this.getGlobalIndex(dateIndex, itemIndex)
-      ) {
-        this.previewFavoriteActive = newState;
-      }
     },
     // 收藏悬停处理
     onFavoriteHover(dateIndex, itemIndex, isHover) {
@@ -1274,7 +1131,6 @@ export default {
           this.currentPreviewImage = '';
           this.currentImageIndex = -1;
           this.currentImageInSet = 0;
-          this.previewFavoriteActive = false;
         } else {
           // 检查当前预览的图册是否在筛选结果中
           const currentlyInFiltered = this.isCurrentItemInFilteredResults();
@@ -1302,7 +1158,6 @@ export default {
               this.currentPreviewImage = '';
               this.currentImageIndex = -1;
               this.currentImageInSet = 0;
-              this.previewFavoriteActive = false;
             }
           }
         }
@@ -1318,7 +1173,6 @@ export default {
           this.currentPreviewImage = '';
           this.currentImageIndex = -1;
           this.currentImageInSet = 0;
-          this.previewFavoriteActive = false;
         } else if (this.currentImageIndex >= 0) {
           // 重新选择当前项目以确保索引正确
           const { dateIndex, itemIndex } = this.getDateAndItemIndex(
@@ -1366,211 +1220,6 @@ export default {
       this.galleryFavoriteHover = isHover;
     },
 
-    toggleGalleryPlus() {
-      // 创建新分组
-      this.createNewGroup();
-    },
-
-    // 创建新分组
-    createNewGroup() {
-      // 检查是否有图册可以移动
-      if (
-        this.galleryItems.length === 0 ||
-        this.galleryItems.every((group) => group.galleryItem.length === 0)
-      ) {
-        this.$message.warning('暂无图册可以创建新分组');
-        return;
-      }
-
-      // 生成新的分组名称（当天日期）
-      const newGroupName = this.generateNewGroupName();
-
-      // 找到离新分组日期最近的有图册的分组
-      const closestGroupWithItems = this.findClosestGroupWithItems(newGroupName);
-
-      if (!closestGroupWithItems) {
-        this.$message.warning('没有找到可移动的图册');
-        return;
-      }
-
-      // 保存原分组名称（在删除之前）
-      const sourceGroupName =
-        this.galleryItems[closestGroupWithItems.dateIndex].date;
-
-      // 创建新分组并移动第一个图册
-      const newGroup = {
-        date: newGroupName,
-        galleryItem: [closestGroupWithItems.item]
-      };
-
-      // 从原分组中移除图册
-      this.galleryItems[closestGroupWithItems.dateIndex].galleryItem.splice(
-        closestGroupWithItems.itemIndex,
-        1
-      );
-
-      // 移除对应的状态数组元素
-      const removedFavoriteState = this.favoriteStates[
-        closestGroupWithItems.dateIndex
-      ].splice(closestGroupWithItems.itemIndex, 1)[0];
-      const removedFavoriteHoverState = this.favoriteHoverStates[
-        closestGroupWithItems.dateIndex
-      ].splice(closestGroupWithItems.itemIndex, 1)[0];
-      const removedDeleteHoverState = this.deleteHoverStates[
-        closestGroupWithItems.dateIndex
-      ].splice(closestGroupWithItems.itemIndex, 1)[0];
-
-      // 如果原分组变空了，删除原分组
-      if (
-        this.galleryItems[closestGroupWithItems.dateIndex].galleryItem
-          .length === 0
-      ) {
-        this.galleryItems.splice(closestGroupWithItems.dateIndex, 1);
-        this.favoriteStates.splice(closestGroupWithItems.dateIndex, 1);
-        this.favoriteHoverStates.splice(closestGroupWithItems.dateIndex, 1);
-        this.deleteHoverStates.splice(closestGroupWithItems.dateIndex, 1);
-      }
-
-      // 将新分组添加到最前面
-      this.galleryItems.unshift(newGroup);
-      this.favoriteStates.unshift([removedFavoriteState]);
-      this.favoriteHoverStates.unshift([removedFavoriteHoverState]);
-      this.deleteHoverStates.unshift([removedDeleteHoverState]);
-
-      // 更新当前选中的图册索引到新分组的第一个图册
-      this.selectGalleryItem(0, 0, 0);
-
-      this.$message.success(
-        `已创建新分组"${newGroupName}"，从分组"${sourceGroupName}"移动图册`
-      );
-      console.log('新分组创建成功:', newGroupName);
-    },
-
-    // 找到离指定日期最近的有图册的分组
-    findClosestGroupWithItems(targetDateString) {
-      // 解析目标日期
-      const targetDate = this.parseGroupDate(targetDateString);
-      if (!targetDate) {
-        console.error('无法解析目标日期:', targetDateString);
-        return null;
-      }
-
-      let closestGroup = null;
-      let minDistance = Infinity;
-
-      // 遍历所有分组，找到距离最近的有图册的分组
-      for (
-        let dateIndex = 0;
-        dateIndex < this.galleryItems.length;
-        dateIndex++
-      ) {
-        const group = this.galleryItems[dateIndex];
-
-        // 检查该分组是否有图册
-        if (group.galleryItem.length === 0) {
-          continue;
-        }
-
-        // 解析分组日期
-        const groupDate = this.parseGroupDate(group.date);
-        if (!groupDate) {
-          continue;
-        }
-
-        // 计算日期距离（天数）
-        const distance =
-          Math.abs(targetDate - groupDate) / (1000 * 60 * 60 * 24);
-
-        // 如果距离更近，更新最近分组
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestGroup = {
-            dateIndex,
-            itemIndex: 0,
-            item: group.galleryItem[0],
-            distance: distance
-          };
-        }
-      }
-
-      console.log('找到最近的分组:', closestGroup);
-      return closestGroup;
-    },
-
-    // 解析分组日期字符串为Date对象
-    parseGroupDate(dateString) {
-      try {
-        // 支持格式：YYYY-MM-DD-NN 或 YYYY.MM-DD-NN
-        let cleanDateString = dateString;
-
-        // 移除最后的编号部分 (-NN)
-        const lastDashIndex = cleanDateString.lastIndexOf('-');
-        if (lastDashIndex > 0) {
-          const potentialNumber = cleanDateString.substring(lastDashIndex + 1);
-          if (/^\d{2}$/.test(potentialNumber)) {
-            cleanDateString = cleanDateString.substring(0, lastDashIndex);
-          }
-        }
-
-        // 统一格式：将 . 替换为 -
-        cleanDateString = cleanDateString.replace(/\./g, '-');
-
-        // 解析日期
-        const parts = cleanDateString.split('-');
-        if (parts.length >= 3) {
-          const year = parseInt(parts[0]);
-          const month = parseInt(parts[1]) - 1; // JavaScript月份从0开始
-          const day = parseInt(parts[2]);
-
-          if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
-            return new Date(year, month, day);
-          }
-        }
-
-        console.error('无法解析日期格式:', dateString);
-        return null;
-      } catch (error) {
-        console.error('日期解析错误:', error, dateString);
-        return null;
-      }
-    },
-
-    // 生成新的分组名称（当天日期）
-    generateNewGroupName() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      const baseDate = `${year}-${month}-${day}`;
-
-      // 检查当前已存在的分组，找到当天日期的最大编号
-      const existingGroups = this.galleryItems.map((group) => group.date);
-      const todayGroups = existingGroups.filter((groupName) =>
-        groupName.startsWith(baseDate)
-      );
-
-      let maxNumber = 0;
-      todayGroups.forEach((groupName) => {
-        const parts = groupName.split('-');
-        if (parts.length === 4) {
-          const number = parseInt(parts[3]);
-          if (!isNaN(number) && number > maxNumber) {
-            maxNumber = number;
-          }
-        }
-      });
-
-      // 生成新的编号
-      const newNumber = String(maxNumber + 1).padStart(2, '0');
-      const newGroupName = `${baseDate}-${newNumber}`;
-
-      return newGroupName;
-    },
-
-    onGalleryPlusHover(isHover) {
-      this.galleryPlusHover = isHover;
-    },
-
     // 预览图操作按钮交互方法
     handlePreviewReturn() {
       // 返回到generate/index页面
@@ -1580,142 +1229,6 @@ export default {
 
     onPreviewReturnHover(isHover) {
       this.previewReturnHover = isHover;
-    },
-
-    handlePreviewFavorite() {
-      const currentDetails = this.currentItemDetails;
-      if (!currentDetails) return;
-
-      const { dateIndex, itemIndex } = currentDetails;
-      const currentItem = currentDetails.item;
-
-      // 如果有images数组，更新当前显示图片的isCollect状态
-      if (currentItem && currentItem.images && currentItem.images.length > 0) {
-        const currentImage = currentItem.images[this.currentImageInSet];
-        if (currentImage) {
-          // 切换当前图片的收藏状态
-          this.$set(currentImage, 'isCollect', !currentImage.isCollect);
-
-          const message = currentImage.isCollect
-            ? '预览图已收藏'
-            : '预览图取消收藏';
-          this.$message.success(message);
-
-          // 检查该图册是否有任何图片被收藏
-          const hasCollectedImage = currentItem.images.some(
-            (img) => img.isCollect
-          );
-
-          // 更新图册的收藏状态（使用favoriteStates数组）
-          this.$set(
-            this.favoriteStates[dateIndex],
-            itemIndex,
-            hasCollectedImage
-          );
-
-          // 更新预览图收藏按钮状态
-          this.previewFavoriteActive = currentImage.isCollect;
-
-          console.log('预览图收藏状态:', currentImage.isCollect);
-          console.log('图册收藏状态:', hasCollectedImage);
-          console.log(
-            '更新后的favoriteStates:',
-            JSON.stringify(this.favoriteStates)
-          );
-
-          // 如果当前是筛选模式，检查筛选结果是否变为空
-          if (this.showOnlyFavorites) {
-            this.updatePreviewAfterFilter();
-          }
-        }
-      }
-    },
-
-    onPreviewFavoriteHover(isHover) {
-      this.previewFavoriteHover = isHover;
-    },
-
-    handlePreviewTrash() {
-      const currentDetails = this.currentItemDetails;
-      if (!currentDetails) return;
-
-      const { dateIndex, itemIndex } = currentDetails;
-      const currentItem = currentDetails.item;
-
-      // 如果没有images数组或者只有一张图片，删除整个图册
-      if (!currentItem.images || currentItem.images.length <= 1) {
-        this.deleteThumbnail(dateIndex, itemIndex);
-        return;
-      }
-
-      // 如果有多张图片，删除当前显示的图片
-      this.$confirm(
-        '你确认要删除当前预览图片吗？<br/>删除图片，图片将会从系统中移除。',
-        '确认删除图片',
-        {
-          confirmButtonText: '确认删除',
-          cancelButtonText: '取消',
-          type: 'warning',
-          dangerouslyUseHTMLString: true,
-          showCancelButton: true,
-          showConfirmButton: true,
-          closeOnClickModal: false,
-          closeOnPressEscape: false
-        }
-      )
-        .then(() => {
-          // 确认删除：从images数组中删除当前图片
-          const deletedImageIndex = this.currentImageInSet;
-          currentItem.images.splice(deletedImageIndex, 1);
-
-          // 更新图册缩略图为剩余的第一张图片
-          if (currentItem.images.length > 0) {
-            this.$set(currentItem, 'image', currentItem.images[0].src);
-          }
-
-          // 检查删除后是否还有收藏图片，更新图册收藏状态
-          const hasCollectedImage = currentItem.images.some(
-            (img) => img.isCollect
-          );
-          this.$set(
-            this.favoriteStates[dateIndex],
-            itemIndex,
-            hasCollectedImage
-          );
-
-          // 切换到下一张图片，如果是最后一张则显示第一张
-          if (this.currentImageInSet >= currentItem.images.length) {
-            this.currentImageInSet = Math.max(0, currentItem.images.length - 1);
-          }
-
-          if (currentItem.images.length > 0) {
-            // 还有图片，更新预览图
-            this.currentPreviewImage =
-              currentItem.images[this.currentImageInSet].src;
-            this.previewFavoriteActive =
-              currentItem.images[this.currentImageInSet].isCollect || false;
-          } else {
-            // 没有图片了，删除整个图册
-            this.deleteThumbnail(dateIndex, itemIndex);
-            return;
-          }
-
-          this.$message.success('图片删除成功');
-          console.log(
-            '删除预览图片:',
-            deletedImageIndex,
-            '剩余图片数:',
-            currentItem.images.length
-          );
-        })
-        .catch(() => {
-          // 取消删除：弹框消失，不做任何操作
-          console.log('取消删除预览图片');
-        });
-    },
-
-    onPreviewTrashHover(isHover) {
-      this.previewTrashHover = isHover;
     },
 
     // 删除缩略图（画廊项目）
@@ -1770,7 +1283,6 @@ export default {
               this.currentPreviewImage = '';
               this.currentImageIndex = -1;
               this.currentImageInSet = 0;
-              this.previewFavoriteActive = false;
             }
           } else if (globalIndex < this.currentImageIndex) {
             this.currentImageIndex--;
@@ -1797,8 +1309,6 @@ export default {
       ) {
         // 优先显示images数组中的图片
         this.currentPreviewImage = selectedItem.images[0].src;
-        // 更新预览图收藏按钮状态
-        this.previewFavoriteActive = selectedItem.images[0].isCollect || false;
         this.projectParameters = { ...selectedItem.projectParameters };
         console.log('selectedItem', selectedItem);
         // this.baseImageId = selectedItem.baseImageId;
@@ -1810,65 +1320,9 @@ export default {
       } else if (selectedItem && selectedItem.image) {
         // 如果没有images数组，显示单张image
         this.currentPreviewImage = selectedItem.image;
-        this.previewFavoriteActive = false;
       } else {
         this.currentPreviewImage = '';
-        this.previewFavoriteActive = false;
       }
-    },
-
-    // 上一张图片（仅在当前图册内循环）
-    prevImage() {
-      const currentDetails = this.currentItemDetails;
-      if (!currentDetails) return;
-
-      // 只有当前图册有多张图片时才进行切换
-      if (
-        currentDetails.item &&
-        currentDetails.item.images &&
-        currentDetails.item.images.length > 1
-      ) {
-        if (this.currentImageInSet > 0) {
-          // 不是第一张，正常往前翻
-          this.currentImageInSet--;
-        } else {
-          // 是第一张，循环到最后一张
-          this.currentImageInSet = currentDetails.item.images.length - 1;
-        }
-        this.currentPreviewImage =
-          currentDetails.item.images[this.currentImageInSet].src;
-        // 更新预览图收藏按钮状态
-        this.previewFavoriteActive =
-          currentDetails.item.images[this.currentImageInSet].isCollect || false;
-      }
-      // 如果当前图册只有一张图片，不做任何操作
-    },
-
-    // 下一张图片（仅在当前图册内循环）
-    nextImage() {
-      const currentDetails = this.currentItemDetails;
-      if (!currentDetails) return;
-
-      // 只有当前图册有多张图片时才进行切换
-      if (
-        currentDetails.item &&
-        currentDetails.item.images &&
-        currentDetails.item.images.length > 1
-      ) {
-        if (this.currentImageInSet < currentDetails.item.images.length - 1) {
-          // 不是最后一张，正常往后翻
-          this.currentImageInSet++;
-        } else {
-          // 是最后一张，循环到第一张
-          this.currentImageInSet = 0;
-        }
-        this.currentPreviewImage =
-          currentDetails.item.images[this.currentImageInSet].src;
-        // 更新预览图收藏按钮状态
-        this.previewFavoriteActive =
-          currentDetails.item.images[this.currentImageInSet].isCollect || false;
-      }
-      // 如果当前图册只有一张图片，不做任何操作
     },
 
     // 下载功能
