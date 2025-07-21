@@ -9,81 +9,96 @@
         alt="GAIAHub"
         width="300px"
         height="auto"
-      />
+      >
     </div>
     <!-- 主卡片 -->
-    <div class="login-card" v-if="isPhoneLogin">
+    <div v-show="isPhoneLogin" class="login-card">
       <!-- 主体内容 -->
       <div class="content-wrapper">
         <div class="tab-content phone-login">
           <div class="reset-title">重置登录密码</div>
           <div class="reset-desc">请输入注册时使用的手机号来接收验证码</div>
-          <!-- 手机号-->
-          <div class="phone-input-line">
-            <el-input
-              v-model="phone"
-              placeholder="请输入手机号"
-              size="large"
-              class="phone-input"
-            />
-          </div>
-          <!-- 验证码输入 -->
-          <div class="code-input-line">
-            <el-input
-              maxlength="6"
-              placeholder="请输入验证码"
-              size="large"
-              class="phone-input"
-            />
-            <div
-              type="text"
-              class="resend-btn"
-              :disabled="countDown > 0"
-              @click="handleSend"
-            >
-              <template v-if="countDown > 0"
-                >重新发送({{ countDown }})</template
+          <el-form ref="phoneCodeForm" :model="phoneCodeForm" class="phone-input-line" :rules="phoneCodeFormRules">
+            <!-- 手机号-->
+            <el-form-item prop="phone">
+              <el-input
+                v-model="phoneCodeForm.phone"
+                placeholder="请输入手机号"
+                size="large"
+              />
+            </el-form-item>
+            <!-- 验证码输入 -->
+            <el-form-item prop="code">
+              <el-input
+                ref="codeInput"
+                v-model="phoneCodeForm.code"
+                maxlength="6"
+                placeholder="请输入验证码"
+                size="large"
+              />
+              <div
+                type="text"
+                class="resend-btn"
+                :disabled="countDown > 0"
+                @click="handleSend"
               >
-              <template v-else>发送验证码</template>
+                <template v-if="countDown > 0">重新发送({{ countDown }})</template>
+                <template v-else>发送验证码</template>
+              </div>
+            </el-form-item>
+            <!-- 下一步按钮 -->
+            <el-button
+              type="primary"
+              size="large"
+              class="login-btn-wrapper"
+              @click.native.prevent="handleNextStep"
+            >下一步</el-button>
+            <div class="back-login-wrapper">
+              <span class="back-login" @click="returnLogin">返回登录</span>
             </div>
-          </div>
-
-          <!-- 登录按钮 -->
-          <div class="login-btn-wrapper" @click="isPhoneLogin = false">下一步</div>
-          <div class="back-login-wrapper">
-            <span class="back-login" @click="returnLogin">返回登录</span>
-          </div>
+          </el-form>
         </div>
       </div>
     </div>
     <!-- 主卡片2 -->
-    <div class="login-card" v-if="!isPhoneLogin">
+    <div v-show="!isPhoneLogin" class="login-card">
       <!-- 主体内容 -->
       <div class="content-wrapper">
         <div class="tab-content phone-login" style="width: 100%">
           <div class="reset-title">重置登录密码</div>
           <div class="reset-desc">请输入注册时使用的手机号来接收验证码</div>
-          <!-- 手机号-->
-          <div class="phone-input-line">
-            <el-input
-              v-model="phone"
-              placeholder="请输入新密码"
-              size="large"
-              class="phone-input"
-            />
-          </div>
-          <!-- 验证码输入 -->
-          <div class="code-input-line">
-            <el-input
-              maxlength="6"
-              placeholder="请确认新密码"
-              size="large"
-              class="phone-input"
-            />
-          </div>
+          <el-form ref="resetPasswordForm" :model="resetPasswordForm" class="phone-input-line" :rules="resetPasswordFormRules">
+            <!-- 输入新密码, 确认新密码 -->
+            <el-form-item prop="newPassword">
+              <el-input
+                v-model="resetPasswordForm.newPassword"
+                type="password"
+                show-password
+                maxlength="20"
+                placeholder="请输入新密码"
+                size="large"
+              />
+            </el-form-item>
+            <el-form-item prop="confirmNewPassword">
+              <el-input
+                v-model="resetPasswordForm.confirmNewPassword"
+                type="password"
+                show-password
+                maxlength="20"
+                placeholder="请确认新密码"
+                size="large"
+              />
+            </el-form-item>
+          </el-form>
 
-          <!-- 登录按钮 -->
-          <div class="login-btn-wrapper">重置密码</div>
+          <!-- 重置密码按钮 -->
+          <el-button
+            type="primary"
+            size="large"
+            :loading="loading"
+            class="login-btn-wrapper"
+            @click.native.prevent="handleResetPassword"
+          >重置密码</el-button>
           <div class="back-login-wrapper">
             <span class="back-login" @click="isPhoneLogin = true">返回</span>
           </div>
@@ -94,38 +109,122 @@
 </template>
 
 <script>
+import { sendSmsCode, resetPassword } from '@/api/index'
+
 export default {
-  name: "LoginInterface",
+  name: 'ResetPassword',
   data() {
     return {
       isPhoneLogin: true,
-      phone: "",
-      password: "",
+      phoneCodeForm: {
+        phone: '',
+        code: ''
+      },
+      phoneCodeFormRules: {
+        phone: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { pattern: /^1[3-9]\d{9}$/, message: '请输入有效的手机号', trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '请输入验证码', trigger: 'blur' },
+          { pattern: /^\d{6}$/, message: '验证码必须为6位数字', trigger: 'blur' }
+        ]
+      },
+      resetPasswordForm: {
+        newPassword: '',
+        confirmNewPassword: ''
+      },
+      resetPasswordFormRules: {
+        newPassword: [
+          { required: true, message: '请输入新密码', trigger: 'blur' },
+          { min: 6, max: 20, message: '密码长度必须在6-20位之间', trigger: 'blur' }
+        ],
+        confirmNewPassword: [
+          { required: true, message: '请确认新密码', trigger: 'blur' },
+          { min: 6, max: 20, message: '密码长度必须在6-20位之间', trigger: 'blur' },
+          { validator: (rule, value, callback) => {
+            if (value !== this.resetPasswordForm.newPassword) {
+              callback(new Error('两次输入的密码不一致'))
+            } else {
+              callback()
+            }
+          }, trigger: 'blur' }
+        ]
+      },
+      loading: false,
       countDown: 0,
-      agree: true,
-      timer: null,
-    };
-  },
-  methods: {
-    handleSend() {
-      if (this.countDown > 0) return;
-      this.countDown = 60;
-      this.timer = setInterval(() => {
-        if (this.countDown > 0) {
-          this.countDown--;
-        } else {
-          clearInterval(this.timer);
-        }
-      }, 1000);
-    },
-    returnLogin() {
-      this.$router.push("/login");
-    },
+      timer: null
+    }
   },
   beforeDestroy() {
-    this.timer && clearInterval(this.timer);
+    this.timer && clearInterval(this.timer)
   },
-};
+  methods: {
+    handleNextStep() {
+      // 验证手机号和验证码
+      this.$refs.phoneCodeForm.validate((valid) => {
+        if (valid) {
+          this.isPhoneLogin = false
+          this.$refs.resetPasswordForm.resetFields() // 重置密码表单
+        } else {
+          return false
+        }
+      })
+    },
+    handleSend() {
+      if (this.countDown > 0) return
+      // 发送验证码逻辑
+      this.$refs.phoneCodeForm.validateField('phone', (errorMessage) => {
+        if (!errorMessage) {
+          this.countDown = 60
+          this.timer = setInterval(() => {
+            if (this.countDown > 0) {
+              this.countDown--
+            } else {
+              clearInterval(this.timer)
+            }
+          }, 1000)
+          sendSmsCode({
+            phone: this.phoneCodeForm.phone
+          }).then(() => {
+            this.$message.success('验证码已发送')
+            this.$refs.codeInput.focus()
+          }).catch(() => {
+            console.error('发送验证码失败')
+          })
+        }
+      })
+    },
+    handleResetPassword() {
+      this.$refs.resetPasswordForm.validate((valid) => {
+        if (valid) {
+          this.loading = true
+          // 调用重置密码 API
+          // 假设有一个 resetPassword API
+          resetPassword({
+            phone: this.phoneCodeForm.phone,
+            new_password: this.resetPasswordForm.newPassword,
+            new_password_confirm: this.resetPasswordForm.confirmNewPassword,
+            code: this.phoneCodeForm.code
+          }).then(() => {
+            this.$message.success('密码重置成功')
+            this.loading = false
+            this.$router.push('/login') // 跳转到登录页面
+          }).catch(() => {
+            this.loading = false
+            console.error('重置密码失败')
+          })
+        } else {
+          return false
+        }
+      })
+    },
+    // 返回登录页面
+    returnLogin() {
+      this.$router.push('/login')
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -183,15 +282,16 @@ export default {
   display: flex;
   box-sizing: border-box;
 }
-.phone-input-line,
-.code-input-line {
+.phone-input-line {
   width:320px;
-  display: flex;
-  align-items: center;
-  margin-bottom: 24px;
 }
 .tab-content {
   width: 100%;
+}
+::v-deep .el-form-item__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .resend-btn {
   width: 130px;
@@ -291,6 +391,6 @@ export default {
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  margin: 50px 0 20px 0;
+  margin: 28px 0 20px 0;
 }
 </style>

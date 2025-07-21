@@ -32,6 +32,7 @@
                 v-model="form.password"
                 type="password"
                 show-password
+                maxlength="20"
                 placeholder="请输入密码"
               />
             </el-form-item>
@@ -40,13 +41,15 @@
                 v-model="form.confirmPassword"
                 type="password"
                 show-password
+                maxlength="20"
                 placeholder="请再次输入密码"
               />
             </el-form-item>
-            <el-form-item class="form-code" prop="code">
+            <el-form-item prop="code">
               <el-input
                 ref="codeInput"
                 v-model="form.code"
+                maxlength="6"
                 placeholder="请输入验证码"
               />
               <div
