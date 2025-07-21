@@ -48,6 +48,13 @@ export function getProjectDetail(params) {
     params,
   });
 }
+// 删除用户生成的单张图片
+export function deleteGeneratedImage(id) {
+  return request({
+    url: `/genegerated_image/${id}`,
+    method: 'DELETE'
+  });
+}
 // 作为底图生成接口
 export function generateBaseImage(data) {
   return request({

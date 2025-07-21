@@ -507,7 +507,8 @@ import 'simplebar/dist/simplebar.min.css';
 import {
   getProjectDetail,
   getGalleryImages,
-  generateBaseImage
+  generateBaseImage,
+  deleteGeneratedImage
 } from '@/api/generate';
 export default {
   name: 'GenerateDetail',
@@ -760,55 +761,11 @@ export default {
       return filtered;
     }
   },
+  // 生命周期钩子
+  // 在组件挂载时加载画廊图片
   mounted() {
-    getGalleryImages().then((res) => {
-      const generationImages = res;
-      console.log(generationImages);
-      this.galleryItems = generationImages.map((item) => {
-        return {
-          date: item.generated_images[0].created_at.split('T')[0],
-          galleryItem: [
-            {
-              image: item.generated_images[0].url, // 使用require正确引入图片
-              images: [
-                {
-                  src: item.generated_images[0].url,
-                  generatedImageId: item.generated_images[0].id,
-                  isCollect: false
-                }
-              ],
-              projectParameters: {
-                prompt: item.prompt,
-                aspectRatio: item.aspect_ratio,
-                baseControlLevel: parseInt(item.base_image_control),
-                styleTransferLevel: parseInt(item.style_image_control),
-                generation_categories: item.generation_categories,
-                resolution: item.scale,
-                viewType: item.generation_categories.id,
-                styleCategory: item.generation_categories.id
-              },
-              semanticImgUrl: item.segment_images.url,
-              semanticImgUrlId: item.segment_images.id,
-              styleImgUrl: item.style_images,
-              styleImageId: item.style_image_id,
-              isFavorite: false
-            }
-          ]
-        };
-      });
-
-      // 初始化状态数组以匹配 galleryItems 的结构
-      this.favoriteStates = this.galleryItems.map((dateGroup) =>
-        new Array(dateGroup.galleryItem.length).fill(false)
-      );
-      this.favoriteHoverStates = this.galleryItems.map((dateGroup) =>
-        new Array(dateGroup.galleryItem.length).fill(false)
-      );
-      this.deleteHoverStates = this.galleryItems.map((dateGroup) =>
-        new Array(dateGroup.galleryItem.length).fill(false)
-      );
-
-      //   // 初始化显示最后一张图片
+    this.loadGalleryImages().then(() => {
+      // 初始化显示最后一张图片
       if (
         !this.$route.query.id &&
         this.galleryItems.length > 0
@@ -828,6 +785,8 @@ export default {
         }
       }
     });
+
+    // 如果有项目ID，则获取项目详情
     if (this.$route.query.id) {
       getProjectDetail(this.$route.query.id).then((res) => {
         console.log('getProjectDetail', res);
@@ -890,6 +849,118 @@ export default {
   // },
 
   methods: {
+    /**
+     * 加载画廊图片数据
+     */
+    async loadGalleryImages() {
+      try {
+        const res = await getGalleryImages();
+        const generationImages = res.data;
+        console.log('Loading gallery images:', generationImages);
+
+        // 转换数据并按日期分组
+        this.galleryItems = this.transformAndGroupGalleryData(generationImages);
+
+        // 初始化状态数组
+        this.initializeStateArrays();
+      } catch (error) {
+        console.error('Failed to load gallery images:', error);
+        this.$message.error('加载图片失败');
+      }
+    },
+
+    /**
+     * 转换并分组画廊数据
+     * @param {Array} generationImages 原始图片数据
+     * @returns {Array} 转换后的分组数据
+     */
+    transformAndGroupGalleryData(generationImages) {
+      const mappedItems = generationImages.map(this.transformGalleryItem);
+      return this.groupItemsByDate(mappedItems);
+    },
+
+    /**
+     * 转换单个画廊项目
+     * @param {Object} item 原始项目数据
+     * @returns {Object} 转换后的项目数据
+     */
+    transformGalleryItem(item) {
+      const generatedImage = item.generated_images[0];
+      return {
+        date: generatedImage.created_at.split('T')[0],
+        galleryItem: [{
+          image: generatedImage.url,
+          images: [{
+            src: generatedImage.url,
+            generatedImageId: generatedImage.id,
+            isCollect: false
+          }],
+          projectParameters: this.extractProjectParameters(item),
+          semanticImgUrl: item.segment_images?.url || null,
+          semanticImgUrlId: item.segment_images?.id || null,
+          styleImgUrl: item.style_images?.url || null,
+          styleImageId: item.style_image_id,
+          isFavorite: false
+        }]
+      };
+    },
+
+    /**
+     * 提取项目参数
+     * @param {Object} item 原始项目数据
+     * @returns {Object} 项目参数对象
+     */
+    extractProjectParameters(item) {
+      return {
+        prompt: item.prompt,
+        aspectRatio: item.aspect_ratio,
+        baseControlLevel: parseInt(item.base_image_control),
+        styleTransferLevel: parseInt(item.style_image_control),
+        generation_categories: item.generation_categories,
+        resolution: item.scale,
+        viewType: item.generation_categories.id,
+        styleCategory: item.generation_categories.id
+      };
+    },
+
+    /**
+     * 按日期分组项目
+     * @param {Array} items 映射后的项目数组
+     * @returns {Array} 按日期分组的数组
+     */
+    groupItemsByDate(items) {
+      return items.reduce((acc, item) => {
+        const date = item.date;
+        const existingGroup = acc.find(group => group.date === date);
+
+        if (existingGroup) {
+          existingGroup.galleryItem.push(...item.galleryItem);
+        } else {
+          acc.push({
+            date,
+            galleryItem: [...item.galleryItem]
+          });
+        }
+
+        return acc;
+      }, []);
+    },
+
+    /**
+     * 初始化状态数组
+     */
+    initializeStateArrays() {
+      this.favoriteStates = this.galleryItems.map(dateGroup =>
+        new Array(dateGroup.galleryItem.length).fill(false)
+      );
+      this.favoriteHoverStates = this.galleryItems.map(dateGroup =>
+        new Array(dateGroup.galleryItem.length).fill(false)
+      );
+      this.deleteHoverStates = this.galleryItems.map(dateGroup =>
+        new Array(dateGroup.galleryItem.length).fill(false)
+      );
+    },
+
     viewTypeFormat(row) {
       const statusMap = {
         1: '鸟瞰图',
