@@ -8,15 +8,15 @@
 import request from '@/utils/request'
 export default {
   name: 'WechatCallback',
-  created () {
+  created() {
     console.log('完整URL:', window.location.href)
     console.log('路由查询参数:', this.$route.query)
-    
+
     // 从路由查询参数获取code和state（通过中间页面传递）
     const { code, state } = this.$route.query
 
     console.log('获取到的 code,state:', code, state)
-    
+
     if (!code) {
       console.error('未获取到微信授权码')
       this.$message.error('微信登录失败，未获取到授权码')

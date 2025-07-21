@@ -68,10 +68,10 @@ const actions = {
   },
   // 用户名密码登录
   passwordLogin({ commit }, userInfo) {
-    const { nickname, password } = userInfo
+    const { phone, password } = userInfo
     return new Promise((resolve, reject) => {
       login({
-        nickname: nickname.trim(),
+        phone: phone.trim(),
         password: password
       })
         .then((response) => {
