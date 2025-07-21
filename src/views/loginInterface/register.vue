@@ -20,7 +20,7 @@
             所在地区仅支持手机号注册，拥有GIAI HUB账号，即可使用GAIA
             HUB进行创作。
           </div>
-          <el-form :model="form" class="phone-input-line" :rules="rules">
+          <el-form ref="registerForm" :model="form" class="phone-input-line" :rules="rules">
             <el-form-item prop="phone">
               <el-input
                 v-model="form.phone"
@@ -30,17 +30,22 @@
             <el-form-item prop="password">
               <el-input
                 v-model="form.password"
+                type="password"
+                show-password
                 placeholder="请输入密码"
               />
             </el-form-item>
             <el-form-item prop="confirmPassword">
               <el-input
                 v-model="form.confirmPassword"
+                type="password"
+                show-password
                 placeholder="请再次输入密码"
               />
             </el-form-item>
             <el-form-item class="form-code" prop="code">
               <el-input
+                ref="codeInput"
                 v-model="form.code"
                 placeholder="请输入验证码"
               />
@@ -61,9 +66,13 @@
             注册即代表已阅读并同意<span class="agree-word">服务条款</span>和<span class="agree-word">隐私政策</span>
           </div>
           <!-- 注册按钮 -->
-          <div class="login-btn-wrapper" @click="isPhoneLogin = false">
-            注册
-          </div>
+          <el-button
+            type="primary"
+            size="large"
+            :loading="loading"
+            class="login-btn-wrapper"
+            @click.native.prevent="handleRegister"
+          >注册</el-button>
           <div class="back-login-wrapper">
             <span class="back-login" @click="returnLogin">返回登录</span>
           </div>
@@ -74,19 +83,43 @@
 </template>
 
 <script>
+import { sendSmsCode, userRegister } from '@/api/index'
+
 export default {
-  name: 'LoginInterface',
+  name: 'Register',
   data() {
     return {
-      form: {},
+      loading: false,
+      form: {
+        phone: '',
+        password: '',
+        confirmPassword: '',
+        code: ''
+      },
       countDown: 0,
       rules: {
-        phone: [{ required: true, message: '请输入手机号', trigger: 'blur' }],
-        password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
-        confirmPassword: [
-          { required: true, message: '请再次输入密码', trigger: 'blur' }
+        phone: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { pattern: /^1[3-9]\d{9}$/, message: '请输入有效的手机号', trigger: 'blur' }
         ],
-        code: [{ required: true, message: '请输入验证码', trigger: 'blur' }]
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, max: 20, message: '密码长度为6-20位', trigger: 'blur' }
+        ],
+        confirmPassword: [
+          { required: true, message: '请再次输入密码', trigger: 'blur' },
+          { validator: (rule, value, callback) => {
+            if (value !== this.form.password) {
+              callback(new Error('两次输入的密码不一致'))
+            } else {
+              callback()
+            }
+          }, trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '请输入验证码', trigger: 'blur' },
+          { pattern: /^\d{6}$/, message: '验证码为6位数字', trigger: 'blur' }
+        ]
       },
       timer: null
     }
@@ -97,14 +130,59 @@ export default {
   methods: {
     handleSend() {
       if (this.countDown > 0) return
-      this.countDown = 60
-      this.timer = setInterval(() => {
-        if (this.countDown > 0) {
-          this.countDown--
+      // 发送验证码逻辑
+      this.$refs.registerForm.validateField('phone', (errorMessage) => {
+        if (!errorMessage) {
+          this.countDown = 60
+          this.timer = setInterval(() => {
+            if (this.countDown > 0) {
+              this.countDown--
+            } else {
+              clearInterval(this.timer)
+            }
+          }, 1000)
+          // reset code
+          this.form.code = ''
+          // 调用发送验证码 API
+          sendSmsCode({
+            phone: this.form.phone
+          })
+            .then((res) => {
+              this.$message.success(res.message || '验证码已发送，请注意查收')
+              this.$refs.codeInput.focus()
+            })
+            .catch(() => {
+              console.error('发送验证码失败')
+            })
         } else {
-          clearInterval(this.timer)
+          return false
         }
-      }, 1000)
+      })
+    },
+    handleRegister() {
+      this.$refs.registerForm.validate((valid) => {
+        if (valid) {
+          this.loading = true
+          userRegister({
+            phone: this.form.phone,
+            password: this.form.password,
+            password_confirm: this.form.confirmPassword,
+            code: this.form.code
+          })
+            .then((response) => {
+              this.$message.success('注册成功，请登录')
+              this.$router.push('/login')
+            })
+            .catch((error) => {
+              console.error(error.message || '注册失败，请稍后再试')
+            })
+            .finally(() => {
+              this.loading = false
+            })
+        } else {
+          this.$message.error('请填写完整信息')
+        }
+      })
     },
     returnLogin() {
       this.$router.push('/login')
