@@ -56,19 +56,6 @@ export const constantRoutes = [
       },
     ],
   },
-  // {
-  //   path: "/loginInterface",
-  //   component: Layout,
-  //   redirect: "/loginInterface",
-  //   children: [
-  //     {
-  //       path: "",
-  //       name: "LoginInterface",
-  //       component: () => import("@/views/loginInterface/loginInterface"),
-  //       meta: { title: "登录界面", icon: "login" },
-  //     },
-  //   ],
-  // },
   {
     path: "/resetPassword",
     component: () => import("@/views/loginInterface/resetPassword"),
@@ -224,7 +211,7 @@ export const constantRoutes = [
   },
   // 微信扫码回调路由
   {
-    path: '/api/auth/wechat/callback',
+    path: '/auth/wechat/callback',
     component: () => import('@/views/wechatCallback/index.vue'),
     hidden: true
   },

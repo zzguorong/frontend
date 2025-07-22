@@ -147,3 +147,10 @@ export function blobToBase64Async(blob) {
     worker.postMessage(blob);
   });
 }
+
+// 生成包含时间戳的16位随机字符串
+export function generateRandomString() {
+  const timestamp = Date.now().toString(16); // 获取当前时间戳并转换为16进制字符串
+  const randomPart = Math.random().toString(16).slice(2, 10); // 生成8位随机数
+  return timestamp + randomPart; // 拼接时间戳和随机数
+}

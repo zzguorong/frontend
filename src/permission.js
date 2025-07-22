@@ -15,7 +15,7 @@ const whiteList = [
   "/resetPassword",
   "/termOfservice", //服务条款
   "/privacyPolicy", //隐私政策
-  "/api/auth/wechat/callback", // 微信 OAuth 回调（history 模式）
+  "/auth/wechat/callback", // 微信 OAuth 回调（history 模式）
 ];
 
 router.beforeEach(async (to, from, next) => {
