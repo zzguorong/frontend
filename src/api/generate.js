@@ -108,3 +108,27 @@ export function deleteImage(type, id) {
     method: "DELETE",
   });
 }
+// 获取用户收藏的生成图片列表
+export function getUserFavoriteImages() {
+  return request({
+    url: "/user_favorites",
+    method: "get"
+  });
+}
+// 收藏生成图片
+export function favoriteGeneratedImage(generatedImageId) {
+  return request({
+    url: "/user_favorites",
+    method: "post",
+    data: {
+      generated_image_id: generatedImageId
+    }
+  });
+}
+// 取消收藏生成图片
+export function unfavoriteGeneratedImage(generatedImageId) {
+  return request({
+    url: `/user_favorites/${generatedImageId}`,
+    method: "DELETE",
+  });
+}

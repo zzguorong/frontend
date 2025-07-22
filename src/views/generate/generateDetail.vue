@@ -428,7 +428,8 @@ import {
   getProjectDetail,
   getGalleryImages,
   generateBaseImage,
-  deleteGeneratedImage
+  deleteGeneratedImage,
+  getUserFavoriteImages
 } from '@/api/generate';
 export default {
   name: 'GenerateDetail',
@@ -718,18 +719,57 @@ export default {
      */
     async loadGalleryImages() {
       try {
-        const res = await getGalleryImages();
-        const generationImages = res.data;
+        const res = await Promise.all([
+          getGalleryImages(),
+          this.getUserFavoriteImages()
+        ]);
+        const generationImages = res[0].data;
+        const userFavoriteImages = res[1]?.favorites || [];
         console.log('Loading gallery images:', generationImages);
+        console.log('Loading userFavorite images:', userFavoriteImages);
 
         // 转换数据并按日期分组
         this.galleryItems = this.transformAndGroupGalleryData(generationImages);
-
         // 初始化状态数组
         this.initializeStateArrays();
+        // 如果有用户收藏的图片，更新收藏状态
+        if (userFavoriteImages.length > 0) {
+          this.galleryItems.forEach((dateGroup, dateIndex) => {
+            dateGroup.galleryItem.forEach((item, itemIndex) => {
+              // 检查当前项目是否在用户收藏列表中
+              const isFavorite = userFavoriteImages.some(
+                (fav) => fav === item.images[0].generatedImageId
+              );
+              // 更新收藏状态
+              item.isFavorite = isFavorite;
+              if (this.favoriteStates[dateIndex]) {
+                this.favoriteStates[dateIndex][itemIndex] = isFavorite;
+              } else {
+                // 如果没有对应的日期组，初始化状态数组
+                this.favoriteStates[dateIndex] = [];
+                this.favoriteStates[dateIndex][itemIndex] = isFavorite;
+              }
+            });
+          });
+        }
       } catch (error) {
         console.error('Failed to load gallery images:', error);
         this.$message.error('加载图片失败');
+      }
+    },
+
+    /**
+     * 获取用户收藏的生成图片列表
+     */
+    async getUserFavoriteImages() {
+      try {
+        const res = await getUserFavoriteImages();
+        const favoriteImages = res.data;
+        console.log('获取用户收藏的生成图片列表:', favoriteImages);
+
+        return favoriteImages;
+      } catch (error) {
+        console.error('获取用户收藏的生成图片列表失败:', error);
       }
     },
 
@@ -776,7 +816,7 @@ export default {
      */
     extractProjectParameters(item) {
       return {
-        prompt: item.prompt,
+        promptText: item.prompt,
         aspectRatio: item.aspect_ratio,
         baseControlLevel: parseInt(item.base_image_control),
         styleTransferLevel: parseInt(item.style_image_control),
