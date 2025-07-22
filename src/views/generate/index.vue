@@ -27,30 +27,27 @@
             <div class="thumbnail-section">
               <div class="thumbnail-gallery-wrapper" ref="thumbWrapper" @scroll="onThumbScroll">
                 <div class="thumbnail-gallery">
-                  <template v-for="(thumb, index) in thumbnails">
+                  <!-- 取前 6 个元素渲染。 -->
+                  <template v-for="(thumb, index) in thumbnails.slice(0, 6)">
                     <div :key="index" class="thumbnail" :class="{ active: selectedThumbnail === index }"
                       @click="selectThumbnail(thumb, index)">
-                      <img v-if="thumb.url" :src="thumb.url" alt="缩略图" width="100%" height="100%" />
+                      <img v-if="thumb.url" :src="thumb.url" alt="缩略图" class="thumb-img" />
                       <!-- 当无图时显示占位图标 -->
                       <svg-icon v-else icon-class="generateImage" class="placeholder-icon" />
                       <div class="thumbnail-actions" v-if="thumb && index > 1">
-                          <svg-icon
-    class="action-icon favorite-icon"
-    icon-class="collection"
-    :style="(favoriteStates[index] || favoriteHoverStates[index])
-      ? { color: '#f56565' }
-      : { color: '#000' }"
-    @click.stop="toggleFavorite(index)"
-    @mouseenter="onFavoriteHover(index, true)"
-    @mouseleave="onFavoriteHover(index, false)"
-  />
+                        <svg-icon class="action-icon favorite-icon" icon-class="collection" :style="(favoriteStates[index] || favoriteHoverStates[index])
+                          ? { color: '#f56565' }
+                          : { color: '#000' }" @click.stop="toggleFavorite(index)"
+                          @mouseenter="onFavoriteHover(index, true)" @mouseleave="onFavoriteHover(index, false)" />
 
                         <svg-icon class="action-icon delete-icon" icon-class="delete" :style="deleteHoverStates[index]
                           ? '{color:#f56565}'
                           : '#000'
                           " @click.stop="deleteThumbnail(index)" @mouseenter="onDeleteHover(index, true)"
                           @mouseleave="onDeleteHover(index, false)" />
+
                       </div>
+
                       <!-- 底图标签 -->
                       <div v-if="thumb && index === 0" class="image-label">
                         底图
@@ -59,6 +56,7 @@
                       <div v-if="thumb && index === 1" class="image-label">
                         语义分割图
                       </div>
+                      <GlobalMask :ref="`globalMask-${thumb.id}`" />
                     </div>
                   </template>
                 </div>
@@ -84,6 +82,7 @@
             <!-- 生成控制区域 -->
             <div class="generate-container">
               <div class="generate-section">
+
                 <!-- <div class="generate-controls">
                   <span class="control-label">生成图片数量</span>
                   <draggable-progress
@@ -92,10 +91,12 @@
                   ></draggable-progress>
                 </div> -->
                 <div class="generate-btn-container">
-                  <div type="primary" size="large" class="generate-btn" @click="handleGenerate"
+
+                  <div type="primary" size="large" class="generate-btn"  :class="{ 'disabled-btn': isGenerating }" @click="!isGenerating && handleGenerate()"
                     :style="{ backgroundColor: isGenerating ? '#bbb' : '#fff' }">
                     {{ isGenerating ? "正在生成中" : "点击生成" }}
                   </div>
+                  <el-checkbox v-model="semanticEnabled" label="启用语义分割功能" border size="medium"></el-checkbox>
                 </div>
                 <div class="download-controls">
                   <div @click="downloadJPG" style="
@@ -213,7 +214,7 @@
                         </el-tooltip>
                       </div>
                       <div class="section-content">
-                        <upload-file finalApi="/base_image" :imgUrl.sync="basemapUrl" describeText="上传底图"
+                        <upload-file ref="uploadRef" finalApi="/base_image" :imgUrl.sync="basemapUrl" describeText="上传底图"
                           @upload-success="onBasemapUpload($event, 1)" @update:imgUrl="onBasemapUrlUpdate"
                           @delete="onImageDelete(1)"></upload-file>
                         <div class="slider-control-content">
@@ -291,6 +292,8 @@
                     <div class="section-item">
                       <div class="section-title">图纸比例</div>
                       <el-select v-model="aspectRatio" placeholder="选择比例" style="width: 100%">
+                        <!-- TODO:对接口字段 -->
+                        <el-option label="原始比例" value="1:1"></el-option>
                         <el-option label="1:1" value="1:1"></el-option>
                         <el-option label="3:2" value="3:2"></el-option>
                         <el-option label="4:3" value="4:3"></el-option>
@@ -321,7 +324,7 @@
                     </div>
                     <el-switch v-model="semanticEnabled" style="float: right" />
                   </div> -->
-                  <div class="semantic-controls" v-if="semanticEnabled">
+                  <div class="semantic-controls">
                     <!-- 上传语义分割图 -->
                     <div class="semantic-upload-section">
                       <upload-file finalApi="/segment_image" :imgUrl.sync="semanticImgUrl" describeText="上传语义分割图"
@@ -335,7 +338,7 @@
                           disabled:
                             viewType === 'aerial' ||
                             viewType === 'engineering' ||
-                            !semanticImgUrl,
+                            !basemapUrlId,
                         },
                       ]" style="position: relative" @click="automaticRecognition">自动识别
                         <el-tooltip class="auto-identify" content="功能目前只对人视图和室内图开发" placement="top"
@@ -344,7 +347,6 @@
                           <!-- <i class="question-icon">?</i> -->
                         </el-tooltip>
                       </span>
-                      <span class="tempo-store" @click="temporaryStore">暂存</span>
                     </div>
                   </div>
                   <!-- 工具栏 -->
@@ -387,7 +389,12 @@
                                   : 'lasso-area'
                               "
                           /></span> -->
-                          <span class="tool-buttons-item-text">套索 <svg-icon icon-class="lasso" /></span>
+                          <span class="tool-buttons-item-text tip">套索
+                            <el-tooltip class="auto-identify" content="鼠标右键结束绘制" placement="top"
+                              style="position: absolute; top: 0px; left: 30px">
+                              <svg-icon icon-class="question" class="icon-style"></svg-icon>
+                              <!-- <i class="question-icon">?</i> -->
+                            </el-tooltip><svg-icon icon-class="lasso" /></span>
                         </div>
                         <div class="tool-buttons-item" :class="{ active: currentTool === 'fill' }"
                           @click="setTool('fill')" @mouseenter="onToolHover('fill', true)"
@@ -434,6 +441,24 @@
                           /></span> -->
                           <span class="tool-buttons-item-text">清空<svg-icon icon-class="clear-area" /></span>
                         </div>
+                        <div class="tool-buttons-item" @click="undoCanvas">
+                          <span class="tool-buttons-item-text">撤销<svg-icon icon-class="clear-area" /></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- 暂存 -->
+                  <div class="save">
+                    <div class="tool-category">
+                      <span class="category-label">暂存
+                        <el-tooltip class="auto-identify" content="绘制内容将通过点击 [暂存] 同步到预览区。" placement="top"
+                          style="position: absolute; top: 2px; left: 34px">
+                          <svg-icon icon-class="question" class="icon-style"></svg-icon>
+                          <!-- <i class="question-icon">?</i> -->
+                        </el-tooltip>
+                      </span>
+                      <div class="tool-buttons">
+                        <span class="tempo-store" @click="temporaryStore">暂存</span>
                       </div>
                     </div>
                   </div>
@@ -441,12 +466,16 @@
                   <div class="element-category">
                     <span class="category-label">元素类别</span>
                     <!-- 颜色选择 -->
-                    <div class="color-palette">
-                      <div class="color-palette-item" v-for="(item, index) in aerialviewGroups" :key="index"
-                        @click="selectWaterColor(item.color)">
-                        <div class="swatches-color" :style="{ background: item.color }"></div>
-                        <div class="swatches-name">{{ item.label }}</div>
+                    <div class="color-palette" v-for="(items, categoryName) in aerialviewGroups">
+                      <!-- <div>{{ categoryName }}</div> -->
+                      <div class="color-palette-group">
+                        <div class="color-palette-item" v-for="item in items" :key="item.label"
+                          @click="selectWaterColor(item.color)">
+                          <div class="swatches-color" :style="{ background: item.color }"></div>
+                          <div class="swatches-name">{{ item.zh }}</div>
+                        </div>
                       </div>
+
                     </div>
                   </div>
                 </div>
@@ -456,7 +485,6 @@
         </el-col>
       </el-row>
     </div>
-    <GlobalMask ref="globalMask" />
   </div>
 </template>
 
@@ -466,13 +494,16 @@ import uploadFile from "@/components/uploadFile";
 import "simplebar/dist/simplebar.min.css";
 import { mapMutations, mapState } from "vuex";
 import GlobalMask from '../../layout/components/GlobalMask.vue';
+
 // import laravelEcho from "@/utils/laravel-echo";
 import {
-deleteImage,
-generateImages,
-getImageDetail,
-getPerspectiveStyle,
-preprocessSegment
+  deleteImage,
+  generateImages,
+  getImageDetail,
+  getPerspectiveStyle,
+  preprocessSegment,
+  deleteGeneratedImage,
+  collectImage
 } from "@/api/generate";
 import { blobUrlToBase64 } from "@/utils/index";
 
@@ -493,7 +524,8 @@ export default {
       materialFixed: 5,
       basemapUrl: "",
       basemapUrlId: null,
-      semanticImgUrlId: null,
+      semanticImgUrlId: null,// 语义分割图Id
+      semanticImgUrl: "", // 语义分割图片URL
       basemapUrlBase64: null,
       baseControlLevel: 5,
       // 风格迁移
@@ -512,7 +544,10 @@ export default {
       pollingTimer: null,
       // 预览图
       previewImage: null,
-      thumbnails: Array(6).fill({ url: null }),
+      thumbnails: Array.from({ length: 6 }, (_, i) => ({
+        url: null,
+        id: `thumb-${i + 1}`   // 用反引号包裹整个字符串
+      })),
       selectedThumbnail: -1,
 
       // 收藏状态
@@ -523,8 +558,8 @@ export default {
       deleteHoverStates: [false, false, false, false, false, false],
 
       // 语义分割
-      semanticEnabled: true,
-      currentTool: "",
+      semanticEnabled: false,
+      currentTool: "",//line 套索  eraser 擦除  clear清空  fill自由涂抹
       toolHoverStates: {
         smart: false,
         line: false,
@@ -532,45 +567,39 @@ export default {
         eraser: false,
         clear: false,
       },
-      semanticImgUrl: "", // 语义分割图片URL
 
       selectedGroundColor: "#FFE4B5",
       selectedWaterColor: "#87CEEB",
       // 鸟瞰图颜色类别
-      aerialviewGroups: [
-        { color: "#B47878", label: "建筑" },
-        { color: "#06E6E6", label: "天空" },
-        { color: "#04C803", label: "树" },
-        { color: "#8C8C8C", label: "道路" },
-        { color: "#04FA07", label: "草地" },
-        { color: "#EBFF07", label: "人行道" },
-        { color: "#96053D", label: "人" },
-        { color: "#787846", label: "地面" },
-        { color: "#8FFF8C", label: "山" },
-        { color: "#CCFF04", label: "植物" },
-        { color: "#0066C8", label: "汽车" },
-        { color: "#3DE6FA", label: "水" },
-        { color: "#FF09E0", label: "房子" },
-        { color: "#0907E6", label: "海" },
-        { color: "#7009FF", label: "田地" },
-        { color: "#FF3D06", label: "铁轨" },
-        { color: "#A09614", label: "沙子" },
-        { color: "#8C8C8C", label: "大厦" },
-        { color: "#FF1F00", label: "小径" },
-        { color: "#99FF00", label: "跑道" },
-        { color: "#FF5200", label: "桥" },
-        { color: "#FF6600", label: "小山丘" },
-        { color: "#FF00F5", label: "巴士" },
-        { color: "#FF0014", label: "货车" },
-        { color: "#FFB8B8", label: "塔楼" },
-        { color: "#0047FF", label: "路灯" },
-        { color: "#00FF52", label: "飞机" },
-        { color: "#FFEB00", label: "船" },
-        { color: "#00FF5C", label: "林荫" },
-        { color: "#00B8FF", label: "游泳池" },
-        { color: "#0ABED4", label: "湖泊" },
-        { color: "#2900FF", label: "车流" },
-      ],
+      aerialviewGroups: {
+        "鸟瞰图&人视图&平面": [
+          { "label": "sky", "color": "#06E6E6", "zh": "天空" },
+          { "label": "building", "color": "#B47878", "zh": "建筑物" },
+          { "label": "road", "color": "#8C8C8C", "zh": "道路" },
+          { "label": "sidewalk", "color": "#EBFF07", "zh": "人行道" },
+          { "label": "water", "color": "#3D6EFA", "zh": "水体" },
+          { "label": "tree", "color": "#04C803", "zh": "树" },
+          { "label": "grass", "color": "#04FA07", "zh": "草地" },
+          { "label": "mountain", "color": "#8FFF8C", "zh": "山体" },
+          { "label": "field", "color": "#7009FF", "zh": "田野" },
+          { "label": "person", "color": "#96053D", "zh": "人" },
+          { "label": "car", "color": "#0066C8", "zh": "汽车" },
+        ],
+
+        "室内": [
+          { "label": "wall", "color": "#787878", "zh": "墙" },
+          { "label": "ceiling", "color": "#787850", "zh": "天花板" },
+          { "label": "floor", "color": "#503232", "zh": "地板" },
+          { "label": "rug/carpet", "color": "#FF095C", "zh": "地毯" },
+          { "label": "bed", "color": "#CC05FF", "zh": "床" },
+          { "label": "cabinet", "color": "#E005FF", "zh": "柜子" },
+          { "label": "shelf", "color": "#FF0747", "zh": "书架" },
+          { "label": "table", "color": "#FF0652", "zh": "桌子" },
+          { "label": "chair", "color": "#CC4603", "zh": "椅子" },
+          { "label": "sofa", "color": "#0B66FF", "zh": "沙发" },
+          { "label": "door", "color": "#08FF33", "zh": "门" },
+        ]
+      },
       // 表单验证状态
       formErrors: {
         viewType: false,
@@ -619,6 +648,8 @@ export default {
       thumbScrollLeft: 0,
       isDraggingThumb: false,
       activeName: "left",
+
+      historyStack: [], // 保存绘图历史
     };
   },
   computed: {
@@ -700,6 +731,7 @@ export default {
     },
   },
   mounted() {
+
     // 组件挂载后设置默认风格类别
     this.initializeStyleCategory();
 
@@ -780,14 +812,14 @@ export default {
     },
     // 自动识别
     automaticRecognition() {
-      // 若尚未上传语义分割图则阻止调用
-      if (!this.semanticImgUrl) {
+      // 若尚未上传底图图则阻止调用
+      if (!this.basemapUrl) {
+        this.$message.warning("请先上传底图后再使用自动识别");
         return;
       }
+      const rawFiles = this.$refs.uploadRef.getRawFiles();
       // 调用后端接口获取 base64 图
-      preprocessSegment({
-        image_id: this.semanticImgUrlId,
-      }).then((res) => {
+      preprocessSegment(rawFiles[0]).then((res) => {
         console.log("automaticRecognition", res);
 
         // 1. 兼容不同字段结构，优先取 res.data
@@ -797,7 +829,7 @@ export default {
         if (base64Str) {
           this.previewImage = base64Str;
 
-          // 4. 同步更新缩略图第 1 张（语义分割图）
+          // 4. 同步更新缩略图第 2 张（语义分割图）
           this.$set(this.thumbnails, 1, { url: base64Str });
 
           // 5. 更新分割图 URL 方便后续操作
@@ -944,11 +976,12 @@ export default {
     // 生成图片
     cleanup() {
       this.isGenerating = false;
-      this.$refs.globalMask.hide();
+      this.$refs["globalMask-thumb-3"][0].hide();
     },
 
     // 主生成方法
     async handleGenerate() {
+
       // 1. 重置错误状态
       this.formErrors = {
         viewType: false,
@@ -978,46 +1011,67 @@ export default {
         return;
       }
 
+      // 构造请求体
+      const payload = {
+        default_prompt_id: "1",
+        base_image_id: this.basemapUrlId,
+        style_image_id: this.styleImageId,
+        prompt: this.promptText,
+        scale: this.resolution,
+        batch_size: 1,
+        generate_count: this.generateCount,
+        // seg: this.semanticEnabled,
+        aspect_ratio: this.aspectRatio,
+      };
+
+      // 控制程度不为0时传入
+      if (this.baseControlLevel !== 0) {
+        payload.base_image_control_weight = this.baseControlLevel;
+      }
+      if (this.styleTransferLevel !== 0) {
+        payload.style_image_control_weight = this.styleTransferLevel;
+      }
+
+      // 判断用户是否再启用语义分割状态下上传了语义分割图
+      if ((this.thumbnails[1] && this.thumbnails[1].url) && this.semanticEnabled) {
+
+        if (!this.thumbnails[1] || !this.thumbnails[1].url || !this.thumbnails[1].url.startsWith('data:') || !this.thumbnails[1].url.includes(';base64,')) {
+
+          const base64 = await blobUrlToBase64(this.thumbnails[1].url);
+    this.$set(this.thumbnails, 1, { url: base64 });
+    this.semanticImgUrl = base64;
+    payload.segment_image = base64;
+        }else{
+          payload.segment_image = this.thumbnails[1].url
+        }
+
+      } else {
+        this.$message.warning("启用语义分割时请上传语义分割图");
+      }
+
       // 3. 开始请求前：设置状态 + 显示遮罩
       this.isGenerating = true;
-      this.$refs.globalMask.show("生成中...");
-
+      //索引 2 位置插入一个图片位置
+      this.thumbnails.splice(2, 0, { url: "", id: "globalMask-thumb-3" });
+      this.$nextTick(() => {
+        this.$refs["globalMask-thumb-3"][0].show("生成中...");
+      });
       try {
-        // 4. 调用生成接口
-        const res = await generateImages({
-          default_prompt_id: "1",
-          base_image_id: this.basemapUrlId,
-          style_image_id: this.styleImageId,
-          segment_image: this.basemapUrlBase64,
-          prompt: this.promptText,
-          scale: this.resolution,
-          batch_size: 1,
-          generate_count: this.generateCount,
-          seg: this.semanticEnabled,
-          aspect_ratio: this.aspectRatio,
-          base_image_control_weight: this.baseControlLevel,
-          style_image_control_weight: this.styleTransferLevel,
-        });
-
+        console.log("生成接口请求参数:", payload);
+        const res = await generateImages(payload);
         // 5. 校验接口返回
         if (res && res.generation_request_id) {
           this.$message.success("开始生成图片...");
           this.startPolling(res.generation_request_id); // 轮询生成结果
-        } else {
-          this.$message.error(res?.msg || "生成任务创建失败，请稍后重试。");
-
         }
       } catch (err) {
         // 6. 异常处理
         console.error("生成接口错误:", err);
-        const msg =
-          err?.response?.data?.msg || err?.message || "请求失败，请稍后重试。";
-        this.$message.error(`生成失败：${msg}`);
         this.cleanup();
-
+        // 删除第三个位置
+        this.thumbnails.splice(2, 1);
       }
     },
-
 
     // ===== 轮询相关 =====
     startPolling(requestId) {
@@ -1026,9 +1080,6 @@ export default {
         clearInterval(this.pollingTimer);
         this.pollingTimer = null;
       }
-
-      // 显示遮罩层
-      this.$refs.globalMask.show("正在生成图片，请稍候...");
 
       this.pollingTimer = setInterval(() => {
         getImageDetail(requestId)
@@ -1039,32 +1090,26 @@ export default {
               // 停止轮询
               clearInterval(this.pollingTimer);
               this.pollingTimer = null;
-
               const imageUrls = res.data.generated_images.map((item) => item);
-              const startIndex = 2;
               imageUrls.forEach((item, idx) => {
-                const targetIndex = startIndex + idx;
-                if (targetIndex < this.thumbnails.length) {
-                  this.$set(this.thumbnails, targetIndex, item);
-                } else {
-                  this.thumbnails.push(item);
-                }
+                // 生成图倒序排列，索引为2
+                this.thumbnails.splice(2, 1, item);
               });
+              this.cleanup()
+              // 保存 语义分割图
+              // 判断后端是否传递回来了语义分割图的URL
+              if (res.data && res.data.segment_image_id) {
+                this.semanticImgUrlId = res.data.segment_image_id;
+              }
 
-              this.isGenerating = false;
               this.$message.success("图片生成完成！");
-
-              // 关闭遮罩层
-              this.$refs.globalMask.hide();
-
             } else if (status === "failed") {
               clearInterval(this.pollingTimer);
               this.pollingTimer = null;
-              this.isGenerating = false;
               this.$message.error("图片生成失败！");
-
-              // 关闭遮罩层
-              this.$refs.globalMask.hide();
+              this.cleanup()
+              // 删除第三个位置
+              this.thumbnails.splice(2, 1);
             }
             // 如果是其他状态（比如 "pending"），继续轮询
           })
@@ -1072,15 +1117,14 @@ export default {
             console.error("轮询 getImageDetail 失败", err);
             clearInterval(this.pollingTimer);
             this.pollingTimer = null;
-            this.isGenerating = false;
             this.$message.error("生成过程中出现错误，请重试");
 
-            // 关闭遮罩层
-            this.$refs.globalMask.hide();
+            this.cleanup()
+            // 删除第三个位置
+            this.thumbnails.splice(2, 1);
           });
       }, 4000); // 每4秒轮询一次
     },
-
 
     stopPolling() {
       if (this.pollingTimer) {
@@ -1091,13 +1135,12 @@ export default {
 
     // 选择缩略图
     selectThumbnail(params, index) {
-      console.log("selectThumbnail", params, index);
       // 若选择底图（索引 0）直接返回
-      if (index === 0) return;
+      // if (index === 0) return;
 
-      // 若该缩略图为空，则不做任何操作（不跳转、不更新预览）
+      // 若该缩略图为空，则不做任何操作（不更新预览）
       const thumb = this.thumbnails[index];
-      if (!thumb) {
+      if (!thumb || !thumb.url) {
         return;
       }
 
@@ -1106,7 +1149,9 @@ export default {
       //   console.log("thumb", thumb);
       //   this.$router.push("/generateDetail?id=" + thumb.id);
       // }
-      // TODO: 待更改
+
+      // 更新主预览图
+      this.previewImage = params.url;
 
       // 保存当前画布状态
       const currentCanvasState = {
@@ -1126,6 +1171,11 @@ export default {
 
     // 工具选择
     setTool(tool) {
+      if (!this.isActionAllowed()) {
+        return;
+      }
+
+
       // 智能选区（smart）与套索工具共享同一套索画布逻辑
       if (tool === "smart") {
         if (!this.previewImage) {
@@ -1334,8 +1384,17 @@ export default {
 
     // 清空画布
     clearCanvas() {
-      // 所有绘制内容（套索、涂抹、擦除）都在同一张画布上，统一清除
+      console.log(!this.isActionAllowed(), '!this.isActionAllowed()')
+      if (!this.isActionAllowed()) {
+        return;
+      }
+      // 保存当前画布状态到历史栈中
+      const canvas = this.$refs.lassoCanvas;
+      const ctx = canvas.getContext("2d");
+      const imageData = ctx.getImageData(0, 0, this.$refs.lassoCanvas.width, this.$refs.lassoCanvas.height);
+      this.historyStack.push(imageData);
 
+      // 所有绘制内容（套索、涂抹、擦除）都在同一张画布上，统一清除
       // 清空套索画布（包含所有内容）
       if (this.$refs.lassoCanvas) {
         this.clearLassoPath();
@@ -1363,12 +1422,33 @@ export default {
       this.currentTool = "";
     },
 
+    // 撤销画布
+    undoCanvas() {
+      if (this.historyStack.length === 0) {
+        this.$message.warning("没有可撤销的操作");
+        return;
+      }
+      const canvas = this.$refs.lassoCanvas;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      const lastImage = this.historyStack.pop();
+      ctx.putImageData(lastImage, 0, 0);
+
+      // 重置当前工具，让用户显式再次选择
+      this.currentTool = "";
+    },
     // 颜色选择
     selectGroundColor(color) {
       this.selectedGroundColor = color;
     },
 
     selectWaterColor(color) {
+      if (!this.isActionAllowed()) {
+        return;
+      }
+
+
       // 若重复点击相同颜色，直接返回，避免再次着色导致视觉加深
       if (color === this.selectedWaterColor) return;
 
@@ -1383,12 +1463,34 @@ export default {
       this.recolorCanvas(this.getUnifiedColor(0.6));
     },
 
+    // 校验是都可以使用语义分割功能
+    isActionAllowed() {
+
+
+      if (this.previewImage !== this.thumbnails[1].url) {
+        //不可点击
+        this.$message.warning("请从预览区选择语义分割图后操作");
+        return false;
+        console.log('true')
+      } else {
+        return true;
+        console.log('false')
+      }
+    },
+
     // 切换收藏状态
-    toggleFavorite(index) {
-      this.$set(this.favoriteStates, index, !this.favoriteStates[index]);
-      const message = this.favoriteStates[index] ? "已收藏" : "取消收藏";
-      this.$message.success(`图片 ${index + 1} ${message}`);
-      console.log("切换收藏:", index, this.favoriteStates[index]);
+    async toggleFavorite(id) {
+
+      try {
+        await collectImage({ generated_image_id })
+        this.$set(this.favoriteStates, index, !this.favoriteStates[index]);
+        const message = this.favoriteStates[index] ? "已收藏" : "取消收藏";
+        this.$message.success(`图片 ${index + 1} ${message}`);
+        console.log("切换收藏:", index, this.favoriteStates[index]);
+      } catch (error) {
+
+      }
+
     },
 
     // 收藏悬停处理
@@ -1418,7 +1520,9 @@ export default {
           closeOnPressEscape: false,
         }
       )
-        .then(() => {
+        .then(async () => {
+
+          await deleteGeneratedImage(this.thumbnails[index].id);
           // 确认删除：将对应位置设为null
           this.$set(this.thumbnails, index, { url: null });
 
@@ -1430,7 +1534,9 @@ export default {
 
           this.$message.success("删除成功");
           console.log("删除缩略图:", index);
-        })
+        }
+
+        )
         .catch(() => {
           // 取消删除：弹框消失，不做任何操作
           console.log("取消删除缩略图:", index);
@@ -1438,7 +1544,7 @@ export default {
     },
 
     // 底图上传成功处理
-    onBasemapUpload(uploadData, type) {
+   async  onBasemapUpload(uploadData, type) {
       console.log("接收到上传事件:", uploadData);
       // 兼容不同的数据格式
       let imageUrl;
@@ -1451,18 +1557,11 @@ export default {
         this.basemapUrlId = uploadData.res.data.id;
         // 清除底图错误状态
         this.formErrors.basemapUrl = false;
-        this.$message.success("底图上传成功！");
+
         // 更新缩略图第一个位置（底图）
         this.$set(this.thumbnails, 0, { url: imageUrl });
-        if (this.semanticImgUrl) {
-          this.$set(this.thumbnails, 1, { url: this.semanticImgUrl });
-          this.previewImage = this.semanticImgUrl;
-        } else {
-          // 将底图自动传输到语义分割图位置（索引1）
-          this.$set(this.thumbnails, 1, { url: imageUrl });
-          // 更新主预览图
-          this.previewImage = imageUrl;
-        }
+        // 更新主预览图
+        this.previewImage = imageUrl;
       } else if (type === 2) {
         this.styleImageId = uploadData.res.data.id;
         this.styleImgUrl = imageUrl;
@@ -1470,15 +1569,22 @@ export default {
         this.formErrors.styleImgUrl = false;
         this.$message.success("风格图上传成功！");
       } else if (type === 3) {
-        // 更新语义分割图URL
-        this.semanticImgUrl = imageUrl;
-        this.semanticImgUrlId = uploadData.res.data.id;
-        console.log("semanticImgUrlId", this.semanticImgUrlId);
-        // 更新缩略图第二个位置（语义分割图）
-        this.$set(this.thumbnails, 1, { url: imageUrl });
-        // 更新主预览图
-        this.previewImage = imageUrl;
-        this.$message.success("语义分割图上传成功，已更新到缩略图和预览区域！");
+        // ***更新语义分割图URL 用户上传后服务器不保存，使用该图生成后才保存
+
+        // this.semanticImgUrl = imageUrl;
+        // this.semanticImgUrlId = uploadData.res.data.id;
+        // console.log("semanticImgUrlId", this.semanticImgUrlId);
+        // blobUrlToBase64(imageUrl).then(base64 => {
+        //   // 更新主预览图
+        //   this.previewImage = base64;
+        //   // 更新缩略图第二个位置（语义分割图）
+        //   this.$set(this.thumbnails, 1, { url: base64 });
+        //   this.$message.success("语义分割图上传成功，已更新到缩略图和预览区域！");
+        // })
+        //   .catch(err => {
+        //     this.$message.error("语义分割图上传失败");
+        //   });
+
       }
       // 重新初始化所有canvas以支持工具切换时的叠加效果
       this.$nextTick(() => {
@@ -1486,9 +1592,8 @@ export default {
         this.initPaintCanvas();
       });
       console.log("previewImage", this.previewImage);
-      blobUrlToBase64(this.previewImage).then((base64) => {
-        this.basemapUrlBase64 = base64;
-      });
+      const base64 = await blobUrlToBase64(this.thumbnails[1].url);
+      this.basemapUrlBase64 = base64;
     },
 
     // 底图URL更新处理（备用方法）
@@ -1568,7 +1673,7 @@ export default {
       console.log("通过URL更新事件更新语义分割图缩略图和预览区域成功");
     },
 
-    // 底图删除处理
+    // 删除图片处理
     onImageDelete(type) {
       console.log("接收到图片删除事件", type);
       let imageId = "";
@@ -1581,7 +1686,7 @@ export default {
         imageId = this.semanticImgUrlId;
       }
 
-      if (!imageId) {
+      if (!imageId && type !== 3) {
         this.$message.warning("当前没有可删除的图片！");
         return;
       }
@@ -1594,7 +1699,13 @@ export default {
           else if (type === 3) typeStr = "segment";
 
           // 调用删除接口
-          return deleteImage(typeStr, imageId);
+          console.log(type, imageId, 'type !== 3 && !imageId')
+          if (type === 3 && !imageId) {
+            // 语义分割图生图之后才需要调用删除接口
+          } else {
+            // 调用逻辑
+            return deleteImage(typeStr, imageId);
+          }
         })
         .then(() => {
           if (type === 1) {
@@ -1611,6 +1722,22 @@ export default {
           }
           this.previewImage = "";
           this.$message.success("图片删除成功！");
+
+          // 停用所有画布交互，要求用户重新选择工具
+          if (this.$refs.lassoCanvas) {
+            const lassoCanvas = this.$refs.lassoCanvas;
+            lassoCanvas.classList.remove("canvas-active");
+            lassoCanvas.style.pointerEvents = "none";
+          }
+
+          if (this.$refs.paintCanvas) {
+            const paintCanvas = this.$refs.paintCanvas;
+            paintCanvas.classList.remove("canvas-active");
+            paintCanvas.style.pointerEvents = "none";
+          }
+
+          // 重置当前工具，让用户显式再次选择
+          this.currentTool = "";
         })
         .catch(error => {
           this.$message.error("删除失败");
@@ -1619,9 +1746,51 @@ export default {
     ,
     // 暂存功能 - 将预览图片传输到语义分割图框
     temporaryStore() {
+      if (!this.previewImage) {
+        this.$message.warning("请先上传图片后再进行暂存");
+        return;
+      }
+      if (!this.isActionAllowed()) {
+        return;
+      }
+
+      // 获取背景图和涂抹层引用
+      const img = this.$refs.previewImg;
+      const lassoCanvas = this.$refs.lassoCanvas;
+      if (!img || !lassoCanvas) return;
+
+
+      // 获取图片在页面中的实际显示宽高
+      const imgWidth = img.clientWidth;
+      const imgHeight = img.clientHeight;
+
+      // 创建临时canvas
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = imgWidth;
+      tempCanvas.height = imgHeight;
+      const ctx = tempCanvas.getContext('2d');
+
+      // 画背景图
+      ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
+      ctx.globalAlpha = 0.6; // 设置透明度
+      // **关键：将 lassoCanvas 缩放到背景图大小**
+      ctx.drawImage(
+        lassoCanvas,
+        0, 0, lassoCanvas.width, lassoCanvas.height,
+        0, 0, imgWidth, imgHeight
+      );
+
+      // 生成 base64
+      const mergedImageBase64 = tempCanvas.toDataURL('image/png');
+      console.log(mergedImageBase64, 'mergedImageBase64')
       // 将预览图片传输到语义分割图位置（索引1）
-      this.$set(this.thumbnails, 1, { url: this.semanticImgUrl });
+      this.$set(this.thumbnails, 1, { url: mergedImageBase64 });
       this.$message.success("图片已暂存到语义分割图框！");
+      // 更新预览区
+      this.selectThumbnail(this.thumbnails[1], 1)
+
+      // 重置当前工具，让用户显式再次选择
+      this.currentTool = "";
     },
 
     // 跳转到详情页面
@@ -1642,19 +1811,46 @@ export default {
 
     // 套索功能相关方法
     onImageLoad() {
-      // 图片加载完成后，初始化所有画布以支持工具切换时的叠加效果
       this.$nextTick(() => {
-        // 始终初始化套索画布
-        if (!this.lassoCanvasReady) {
-          this.initLassoCanvas();
-        }
-        // 始终初始化涂抹画布
-        if (!this.paintCanvasReady) {
-          this.initPaintCanvas();
-        }
-      });
-    },
+        const img = this.$refs.previewImg;
+        if (!img) return;
 
+        const container = img.parentNode;
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        const imgRatio = img.naturalWidth / img.naturalHeight;
+        const containerRatio = containerWidth / containerHeight;
+
+        // 设置图片宽高（短边撑满）
+        if (containerRatio > imgRatio) {
+          img.style.height = '100%';
+          img.style.width = 'auto';
+        } else {
+          img.style.width = '100%';
+          img.style.height = 'auto';
+        }
+
+        // **计算图片相对于容器的偏移量**
+        const offsetLeft = (containerWidth - img.clientWidth) / 2;
+        const offsetTop = (containerHeight - img.clientHeight) / 2;
+
+        // **设置 canvas 尺寸和位置**
+        const lassoCanvas = this.$refs.lassoCanvas;
+        if (lassoCanvas) {
+          lassoCanvas.width = img.clientWidth;
+          lassoCanvas.height = img.clientHeight;
+          lassoCanvas.style.left = `${offsetLeft}px`;
+          lassoCanvas.style.top = `${offsetTop}px`;
+          lassoCanvas.style.position = 'absolute'; // 确保定位
+        }
+
+        // 再初始化画布
+        if (!this.lassoCanvasReady) this.initLassoCanvas();
+        if (!this.paintCanvasReady) this.initPaintCanvas();
+      });
+    }
+
+    ,
     initLassoCanvas() {
       this.$nextTick(() => {
         const canvas = this.$refs.lassoCanvas;
@@ -1729,23 +1925,11 @@ export default {
       });
     },
 
-    // 处理鼠标事件时的坐标转换
-    getCanvasPoint(e) {
-      const canvas = this.$refs.lassoCanvas;
-      if (!canvas) return { x: 0, y: 0 };
-
-      const rect = canvas.getBoundingClientRect();
-      return {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      };
-    },
 
     // 更新鼠标事件处理函数
     onCanvasMouseDown(e) {
       if (!this.currentTool) return;
-
-      const point = this.getCanvasPoint(e);
+      const point = this.getMousePos(e);
 
       if (this.currentTool === "brush") {
         this.isMouseDown = true;
@@ -1757,13 +1941,20 @@ export default {
           // 第一个点
           this.fixedPoints = [point];
           this.isFirstPoint = false;
-
+          const canvas = this.$refs.lassoCanvas;
+          const ctx = canvas.getContext("2d");
+          const savedCanvasData = ctx.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          );
+          this.historyStack.push(savedCanvasData);
           // 绘制第一个点并保存画布状态
           this.drawCurrentPath(this.$refs.lassoCanvas.getContext("2d"), true);
 
           // 保存当前画布状态，用于预览线绘制
-          const canvas = this.$refs.lassoCanvas;
-          const ctx = canvas.getContext("2d");
+
           this.savedCanvasData = ctx.getImageData(
             0,
             0,
@@ -1778,7 +1969,7 @@ export default {
     onCanvasMouseMove(e) {
       if (!this.currentTool) return;
 
-      const point = this.getCanvasPoint(e);
+      const point = this.getMousePos(e);
 
       if (this.currentTool === "line") {
         // 更新临时点，但只绘制预览线
@@ -1795,13 +1986,13 @@ export default {
 
       if (this.currentTool === "brush") {
         this.isMouseDown = false;
-        const point = this.getCanvasPoint(e);
+        const point = this.getMousePos(e);
         this.brushPath.push(point);
         this.drawBrushPath();
       } else if (this.currentTool === "line") {
         // 套索工具逻辑
         if (this.isMouseDown) {
-          const point = this.getCanvasPoint(e);
+          const point = this.getMousePos(e);
           this.fixedPoints.push(point);
           this.isMouseDown = false;
 
@@ -1835,7 +2026,7 @@ export default {
 
       // 如果点击了起始点且已经有至少3个点，则闭合路径
       if (this.fixedPoints.length >= 3) {
-        const point = this.getCanvasPoint(e);
+        const point = this.getMousePos(e);
         const startPoint = this.fixedPoints[0];
         const distance = Math.sqrt(
           Math.pow(point.x - startPoint.x, 2) +
@@ -1888,6 +2079,7 @@ export default {
         this.lassoDrawing = false;
 
         this.$message.success("套索已完成！");
+
       } else {
         // 点数不足，按原逻辑视为取消
         this.clearLassoPath();
@@ -1899,16 +2091,23 @@ export default {
       console.log("Paint mouse down");
       if (!["fill", "eraser"].includes(this.currentTool)) return;
 
+      // 保存当前画布状态,用于撤销
+      const tempCanvas = this.$refs.lassoCanvas;
+      const teampCtx = tempCanvas.getContext("2d");
+      this.savedCanvasData = teampCtx.getImageData(
+        0,
+        0,
+        tempCanvas.width,
+        tempCanvas.height
+      );
+      this.historyStack.push(this.savedCanvasData);
+
       // 直接在套索画布上绘制，确保颜色完全一致
       const canvas = this.$refs.lassoCanvas; // 改为使用套索画布
       if (!canvas) return;
-
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
+      const pos = this.getMousePos(event);
       this.isPainting = true;
-      this.lastPoint = { x, y };
+      this.lastPoint = { x: pos.x, y: pos.y };
 
       // 开始新的路径
       const ctx = canvas.getContext("2d");
@@ -1923,7 +2122,7 @@ export default {
 
         // 开始新的擦除路径
         ctx.beginPath();
-        ctx.moveTo(x, y);
+        ctx.moveTo(pos.x, pos.y);
       } else {
         // 自由涂抹：使用丝滑的线条绘制
         const exactColor = "rgba(87, 81, 220, 0.6)";
@@ -1936,10 +2135,10 @@ export default {
 
         // 开始新的路径用于连续绘制
         ctx.beginPath();
-        ctx.moveTo(x, y);
+        ctx.moveTo(pos.x, pos.y);
       }
 
-      console.log("Started painting at:", x, y);
+      console.log("Started painting at:", pos.x, pos.y);
     },
 
     onPaintMouseMove(e) {
@@ -1954,9 +2153,7 @@ export default {
       const canvas = this.$refs.lassoCanvas; // 改为使用套索画布
       if (!canvas) return;
 
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+      const pos = this.getMousePos(event);
 
       const ctx = canvas.getContext("2d");
 
@@ -1973,7 +2170,7 @@ export default {
         if (this.lastPoint) {
           ctx.beginPath();
           ctx.moveTo(this.lastPoint.x, this.lastPoint.y);
-          ctx.lineTo(x, y);
+          ctx.lineTo(pos.x, pos.y);
           ctx.stroke();
         }
       } else {
@@ -1990,14 +2187,13 @@ export default {
         if (this.lastPoint) {
           ctx.beginPath();
           ctx.moveTo(this.lastPoint.x, this.lastPoint.y);
-          ctx.lineTo(x, y);
+          ctx.lineTo(pos.x, pos.y);
           ctx.stroke();
         }
       }
+      this.lastPoint = { x: pos.x, y: pos.y };
 
-      this.lastPoint = { x, y };
-
-      console.log("Painting at:", x, y);
+      console.log("Painting at:", pos.x, pos.y);
     },
 
     onPaintMouseLeave(e) {
@@ -2013,6 +2209,23 @@ export default {
       this.lastPoint = null;
       console.log("Finished painting");
     },
+
+
+    // 处理鼠标事件时的坐标转换
+    getMousePos(e) {
+      const canvas = this.$refs.lassoCanvas;
+      if (!canvas) return { x: 0, y: 0 };
+
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+
+      return {
+        x: (e.clientX - rect.left) * scaleX,
+        y: (e.clientY - rect.top) * scaleY
+      };
+    }
+    ,
 
     // 清空涂抹路径（现在在套索画布上）
     clearPaintPath() {
@@ -3042,9 +3255,9 @@ export default {
 
 .thumbnail {
   width: 100%;
-  /* 自适应列宽，铺满父级 */
-  aspect-ratio: 12 / 7;
   /* 宽高比 12:7 */
+  aspect-ratio: 12 / 7;
+  /* 父容器固定比例 */
   border: 1px solid #dcdfe6;
   overflow: hidden;
   cursor: pointer;
@@ -3053,6 +3266,15 @@ export default {
   align-items: center;
   justify-content: center;
   position: relative;
+
+  .thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* 保持比例，不裁剪，短边撑满 */
+    background-color: #fff;
+    /* 留白区域显示底色 */
+  }
 }
 
 .thumbnail.active {
@@ -3155,6 +3377,57 @@ export default {
   gap: 10px;
 }
 
+::v-deep.el-checkbox {
+  border: 1px solid #dcdfe6 !important;
+}
+
+::v-deep.el-checkbox.is-bordered.el-checkbox--medium {
+  padding: 2px 20px 2px 10px !important;
+  border-radius: 4px !important;
+  height: 24px !important;
+}
+
+::.el-checkbox__input.is-checked+.el-checkbox__label {
+  color: #dcdfe6 !important;
+}
+
+::v-deep.el-checkbox.el-checkbox__label {
+  font-size: 16px;
+  color: #dcdfe6;
+}
+
+::v-deep.el-checkbox.is-bordered.is-checked {
+  border: 1px solid #000 !important;
+}
+
+::v-deep.el-checkbox__input.is-checked .el-checkbox__inner,
+.el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  background-color: #000 !important;
+  border-color: #000 !important;
+}
+
+/* 对勾样式 */
+::v-deep.el-checkbox__inner::after {
+  border: 3px solid #fff;
+  border-left: 0;
+  border-top: 0;
+  left: 6px;
+  top: 3px;
+}
+
+/* 勾选后的边框和背景颜色改为黑色 */
+::v-deep.el-checkbox__input.is-checked .el-checkbox__inner {
+  background-color: #000 !important;
+  /* 黑色背景 */
+  border-color: #000 !important;
+  /* 黑色边框 */
+}
+
+/* 勾选符号颜色（白色对比黑底） */
+::v-deep.el-checkbox__input.is-checked .el-checkbox__inner::after {
+  border-color: #fff !important;
+}
+
 .generate-controls {
   display: flex;
   flex-direction: column;
@@ -3168,6 +3441,7 @@ export default {
   justify-content: center;
   align-items: center;
   flex: 1;
+  gap: 18px;
 }
 
 .download-controls {
@@ -3208,6 +3482,12 @@ export default {
 .generate-btn:hover {
   background: #000 !important;
   color: #fff;
+}
+
+.generate-btn.disabled-btn:hover {
+  background: inherit !important;
+  color: inherit !important;
+  cursor: not-allowed;
 }
 
 .progress-tip {
@@ -3386,6 +3666,10 @@ export default {
   margin-left: 20px;
 }
 
+.tip {
+  position: relative;
+}
+
 .tool-buttons .tool-buttons-item:hover {
   color: #000;
   background-color: #ecf5ff;
@@ -3406,6 +3690,12 @@ export default {
   left: -24px;
   width: 15px;
   height: 15px;
+}
+
+/* 暂存 */
+.save {
+  width: 100%;
+  margin-top: 10px;
 }
 
 /* 套索配置面板 */
@@ -3462,15 +3752,23 @@ export default {
   border-radius: 6px;
   background: #eee;
   padding: 10px;
+  flex-direction: column;
+  margin-bottom: 10px;
 }
 
-.color-palette-item {
-  width: 25%;
+.color-palette-group {
   display: flex;
-  margin-bottom: 8px;
-  /* 垂直间隔 */
-  cursor: pointer;
+  flex-wrap: wrap;
+
+  .color-palette-item {
+    width: 25%;
+    display: flex;
+    margin-bottom: 8px;
+    /* 垂直间隔 */
+    cursor: pointer;
+  }
 }
+
 
 .swatches-color {
   width: 15px;
@@ -3525,11 +3823,17 @@ export default {
   width: 100%;
   height: 100%;
   background: #fff;
+  /* 居中显示 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .preview-container img {
-  width: 100%;
-  max-height: 500px;
+  /* 动态指定短边100% */
+  /* width: 100%; */
+  /* object-position: left top; */
+  /* max-height: 500px; */
 }
 
 .empty-preview {
@@ -3568,8 +3872,9 @@ export default {
   left: 0;
   pointer-events: auto;
   touch-action: none;
-  width: 100%;
-  height: 100%;
+  /* 去掉百分百，lasso-canvas画布和图片大小保持一致 */
+  /* width: 100%;
+  height: 100%; */
 }
 
 .canvas-container {

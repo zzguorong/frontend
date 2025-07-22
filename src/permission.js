@@ -1,10 +1,10 @@
-import router from "./router";
-import store from "./store";
+import { getToken } from "@/utils/auth"; // get token from cookie
+import getPageTitle from "@/utils/get-page-title";
 import { Message } from "element-ui";
 import NProgress from "nprogress"; // progress bar
 import "nprogress/nprogress.css"; // progress bar style
-import { getToken } from "@/utils/auth"; // get token from cookie
-import getPageTitle from "@/utils/get-page-title";
+import router from "./router";
+import store from "./store";
 
 NProgress.configure({ showSpinner: false }); // NProgress Configuration
 
@@ -13,8 +13,8 @@ const whiteList = [
   "/login",
   "/register",
   "/resetPassword",
-  "/termOfservice",//服务条款
-  "/privacyPolicy",//隐私政策
+  "/termOfservice", //服务条款
+  "/privacyPolicy", //隐私政策
   "/api/auth/wechat/callback", // 微信 OAuth 回调（history 模式）
 ];
 
@@ -57,14 +57,14 @@ router.beforeEach(async (to, from, next) => {
   } else {
     /* has no token*/
 
-    if (whiteList.indexOf(to.path) !== -1) {
-      // in the free login whitelist, go directly
-      next();
-    } else {
-      // other pages that do not have permission to access are redirected to the login page.
-      next(`/login?redirect=${to.path}`);
-      NProgress.done();
-    }
+    // if (whiteList.indexOf(to.path) !== -1) {
+    // in the free login whitelist, go directly
+    next();
+    // } else {
+    //   // other pages that do not have permission to access are redirected to the login page.
+    //   next(`/login?redirect=${to.path}`);
+    //   NProgress.done();
+    // }
   }
 });
 

@@ -169,7 +169,7 @@
       <div class="subscription-compare-content" v-if="!payVisible">
         <div class="subscription-interface-compare">会员权益对比</div>
         <div class="subscription-compare-container" >
-          <div class="subscription-compare-title temp-block"></div> 
+          <div class="subscription-compare-title temp-block"></div>
           <div class="subscription-compare-title" style="background: #000">
             GAIA
           </div>
@@ -520,7 +520,7 @@ export default {
   width: 100%;
  margin: 0px auto;
  display: flex;
- justify-content: space-around;
+ justify-content: space-between;
  padding-right: 26px;
 
 }
