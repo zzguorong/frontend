@@ -17,11 +17,6 @@ export default {
       text: "加载中...",
     };
   },
-  watch: {
-    visible(newMode){
-console.log(newMode,'newMode')
-    }
-  },
   methods: {
     show(message = "加载中...") {
       this.text = message;
@@ -29,7 +24,6 @@ console.log(newMode,'newMode')
     },
     hide() {
       this.visible = false;
-      console.log(this.visible);
     },
     updateText(newText) {
       if (this.visible) {

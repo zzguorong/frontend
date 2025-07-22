@@ -83,7 +83,6 @@ export default {
       // this.$message.success("图片上传成功！");
     },
     beforeAvatarUpload(file) {
-      console.log("上传文件:", file);
       // 将当前文件同步到请求体额外字段
       if (this.finalApi === "/segment_image") {
         this.uploadData.segment_image = file;
