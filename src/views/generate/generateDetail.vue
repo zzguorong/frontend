@@ -429,7 +429,9 @@ import {
   getGalleryImages,
   generateBaseImage,
   deleteGeneratedImage,
-  getUserFavoriteImages
+  getUserFavoriteImages,
+  unfavoriteGeneratedImage,
+  favoriteGeneratedImage
 } from '@/api/generate';
 export default {
   name: 'GenerateDetail',
@@ -779,7 +781,9 @@ export default {
      * @returns {Array} 转换后的分组数据
      */
     transformAndGroupGalleryData(generationImages) {
-      const mappedItems = generationImages.map(this.transformGalleryItem);
+      const mappedItems = generationImages
+        .filter((item) => item.generated_images && item.generated_images.length)
+        .map(this.transformGalleryItem);
       return this.groupItemsByDate(mappedItems);
     },
 
@@ -1066,6 +1070,31 @@ export default {
       this.deleteThumbnail(dateIndex, itemIndex);
     },
 
+    // 根据newState不同状态，调用对应API：封装调用收藏API与取消收藏API的处理逻辑
+    postFavoriteState(generatedImageId, newState) {
+      if (newState) {
+        // 收藏状态：调用收藏API
+        return favoriteGeneratedImage(generatedImageId).then(() => {
+          console.log('收藏成功');
+          return true; // 返回成功状态
+        }).catch((error) => {
+          console.error('收藏失败:', error);
+          this.$message.error('收藏失败，请稍后再试');
+          throw error; // 重新抛出错误以便调用方处理
+        });
+      } else {
+        // 取消收藏状态：调用取消收藏API
+        return unfavoriteGeneratedImage(generatedImageId).then(() => {
+          console.log('取消收藏成功');
+          return true; // 返回成功状态
+        }).catch((error) => {
+          console.error('取消收藏失败:', error);
+          this.$message.error('取消收藏失败，请稍后再试');
+          throw error; // 重新抛出错误以便调用方处理
+        });
+      }
+    },
+
     // 切换收藏状态
     toggleFavorite(dateIndex, itemIndex) {
       console.log('=== 点击收藏按钮 ===');
@@ -1080,43 +1109,56 @@ export default {
 
       // 切换收藏状态
       const newState = !this.favoriteStates[dateIndex][itemIndex];
-      this.$set(this.favoriteStates[dateIndex], itemIndex, newState);
+      // 根据newState不同状态，调用对应API；API返回成功后更新状态
+      this.postFavoriteState(
+        this.galleryItems[dateIndex].galleryItem[itemIndex].images[0]
+          .generatedImageId,
+        newState
+      )
+        .then(() => {
+          // 更新收藏状态
+          this.$set(this.favoriteStates[dateIndex], itemIndex, newState);
 
-      // 同步更新数据源中的收藏字段
-      const targetItem =
-        this.galleryItems[dateIndex] &&
-        this.galleryItems[dateIndex].galleryItem[itemIndex];
-      if (targetItem) {
-        // 记录文件夹级收藏状态
-        this.$set(targetItem, 'isFavorite', newState);
+          // 同步更新数据源中的收藏字段
+          const targetItem =
+            this.galleryItems[dateIndex] &&
+            this.galleryItems[dateIndex].galleryItem[itemIndex];
+          if (targetItem) {
+            // 记录文件夹级收藏状态
+            this.$set(targetItem, 'isFavorite', newState);
 
-        // 同步更新内部图片收藏标记
-        if (Array.isArray(targetItem.images)) {
-          targetItem.images.forEach((img, idx) => {
-            // 若对象是简单字符串则跳过
-            if (img && typeof img === 'object') {
-              this.$set(targetItem.images[idx], 'isCollect', newState);
+            // 同步更新内部图片收藏标记
+            if (Array.isArray(targetItem.images)) {
+              targetItem.images.forEach((img, idx) => {
+                // 若对象是简单字符串则跳过
+                if (img && typeof img === 'object') {
+                  this.$set(targetItem.images[idx], 'isCollect', newState);
+                }
+              });
             }
-          });
-        }
-      }
+          }
 
-      console.log('切换后状态:', newState);
-      console.log('完整状态数组:', JSON.stringify(this.favoriteStates));
+          console.log('切换后状态:', newState);
+          console.log('完整状态数组:', JSON.stringify(this.favoriteStates));
 
-      // 根据新状态显示消息和切换图标
-      const globalIndex = this.getGlobalIndex(dateIndex, itemIndex);
-      if (newState) {
-        // 收藏状态：显示 favorate-active 图标
-        this.$message.success(`图片 ${globalIndex + 1} 已收藏`);
-        console.log(
-          `图片 ${globalIndex + 1} 已收藏，应该显示 favorate-active 图标`
-        );
-      } else {
-        // 取消收藏状态：显示 favorate 图标
-        this.$message.success(`图片 ${globalIndex + 1} 取消收藏`);
-        console.log(`图片 ${globalIndex + 1} 取消收藏，应该显示 favorate 图标`);
-      }
+          // 根据新状态显示消息和切换图标
+          const globalIndex = this.getGlobalIndex(dateIndex, itemIndex);
+          if (newState) {
+            // 收藏状态：显示 favorate-active 图标
+            this.$message.success(`图片 ${globalIndex + 1} 已收藏`);
+            console.log(
+              `图片 ${globalIndex + 1} 已收藏，应该显示 favorate-active 图标`
+            );
+          } else {
+            // 取消收藏状态：显示 favorate 图标
+            this.$message.success(`图片 ${globalIndex + 1} 取消收藏`);
+            console.log(`图片 ${globalIndex + 1} 取消收藏，应该显示 favorate 图标`);
+          }
+        })
+        .catch((error) => {
+          console.error('切换收藏状态失败:', error);
+          // 如果API调用失败，保持原状态不变
+        });
 
       // 强制更新组件
       this.$forceUpdate();
@@ -1289,47 +1331,55 @@ export default {
         }
       )
         .then(() => {
-          // 确认删除：删除对应的画廊项目
-          this.galleryItems[dateIndex].galleryItem.splice(itemIndex, 1);
+          // 调用删除生图API，成功后再更新页面状态
+          const generatedImageId = this.galleryItems[dateIndex].galleryItem[itemIndex].images[0].generatedImageId;
+          console.log('准备删除生成图片ID:', generatedImageId);
+          deleteGeneratedImage(generatedImageId).then(() => {
+            // 确认删除：删除对应的画廊项目
+            this.galleryItems[dateIndex].galleryItem.splice(itemIndex, 1);
 
-          // 同时删除状态数组中的对应元素
-          this.favoriteStates[dateIndex].splice(itemIndex, 1);
-          this.favoriteHoverStates[dateIndex].splice(itemIndex, 1);
-          this.deleteHoverStates[dateIndex].splice(itemIndex, 1);
+            // 同时删除状态数组中的对应元素
+            this.favoriteStates[dateIndex].splice(itemIndex, 1);
+            this.favoriteHoverStates[dateIndex].splice(itemIndex, 1);
+            this.deleteHoverStates[dateIndex].splice(itemIndex, 1);
 
-          // 如果整个日期组没有项目了，删除日期组
-          if (this.galleryItems[dateIndex].galleryItem.length === 0) {
-            this.galleryItems.splice(dateIndex, 1);
-            this.favoriteStates.splice(dateIndex, 1);
-            this.favoriteHoverStates.splice(dateIndex, 1);
-            this.deleteHoverStates.splice(dateIndex, 1);
-          }
-
-          // 如果删除的是当前显示的项目，需要重新设置预览图片
-          if (globalIndex === this.currentImageIndex) {
-            // 计算总项目数
-            let totalItems = 0;
-            for (let i = 0; i < this.galleryItems.length; i++) {
-              totalItems += this.galleryItems[i].galleryItem.length;
+            // 如果整个日期组没有项目了，删除日期组
+            if (this.galleryItems[dateIndex].galleryItem.length === 0) {
+              this.galleryItems.splice(dateIndex, 1);
+              this.favoriteStates.splice(dateIndex, 1);
+              this.favoriteHoverStates.splice(dateIndex, 1);
+              this.deleteHoverStates.splice(dateIndex, 1);
             }
 
-            if (totalItems > 0) {
-              const newIndex = Math.min(globalIndex, totalItems - 1);
-              const { dateIndex: newDateIndex, itemIndex: newItemIndex } =
-                this.getDateAndItemIndex(newIndex);
-              this.selectGalleryItem(newIndex, newDateIndex, newItemIndex);
-            } else {
-              // 画廊完全为空，清空预览图
-              this.currentPreviewImage = '';
-              this.currentImageIndex = -1;
-              this.currentImageInSet = 0;
-            }
-          } else if (globalIndex < this.currentImageIndex) {
-            this.currentImageIndex--;
-          }
+            // 如果删除的是当前显示的项目，需要重新设置预览图片
+            if (globalIndex === this.currentImageIndex) {
+              // 计算总项目数
+              let totalItems = 0;
+              for (let i = 0; i < this.galleryItems.length; i++) {
+                totalItems += this.galleryItems[i].galleryItem.length;
+              }
 
-          this.$message.success('删除成功');
-          console.log('删除画廊项目:', dateIndex, itemIndex);
+              if (totalItems > 0) {
+                const newIndex = Math.min(globalIndex, totalItems - 1);
+                const { dateIndex: newDateIndex, itemIndex: newItemIndex } =
+                  this.getDateAndItemIndex(newIndex);
+                this.selectGalleryItem(newIndex, newDateIndex, newItemIndex);
+              } else {
+                // 画廊完全为空，清空预览图
+                this.currentPreviewImage = '';
+                this.currentImageIndex = -1;
+                this.currentImageInSet = 0;
+              }
+            } else if (globalIndex < this.currentImageIndex) {
+              this.currentImageIndex--;
+            }
+
+            this.$message.success('删除成功');
+            console.log('删除画廊项目:', dateIndex, itemIndex);
+          }).catch((error) => {
+            console.error('删除画廊项目失败:', error);
+            this.$message.error('删除失败，请稍后再试');
+          });
         })
         .catch(() => {
           // 取消删除：弹框消失，不做任何操作
