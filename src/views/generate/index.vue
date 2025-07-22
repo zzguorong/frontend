@@ -1057,7 +1057,6 @@ export default {
         this.$refs["globalMask-thumb-3"][0].show("生成中...");
       });
       try {
-        console.log("生成接口请求参数:", payload);
         const res = await generateImages(payload);
         // 5. 校验接口返回
         if (res && res.generation_request_id) {
@@ -1384,7 +1383,6 @@ export default {
 
     // 清空画布
     clearCanvas() {
-      console.log(!this.isActionAllowed(), '!this.isActionAllowed()')
       if (!this.isActionAllowed()) {
         return;
       }
@@ -1471,10 +1469,8 @@ export default {
         //不可点击
         this.$message.warning("请从预览区选择语义分割图后操作");
         return false;
-        console.log('true')
       } else {
         return true;
-        console.log('false')
       }
     },
 
@@ -1675,7 +1671,6 @@ export default {
 
     // 删除图片处理
     onImageDelete(type) {
-      console.log("接收到图片删除事件", type);
       let imageId = "";
 
       if (type === 1) {
@@ -1699,7 +1694,7 @@ export default {
           else if (type === 3) typeStr = "segment";
 
           // 调用删除接口
-          console.log(type, imageId, 'type !== 3 && !imageId')
+
           if (type === 3 && !imageId) {
             // 语义分割图生图之后才需要调用删除接口
           } else {
@@ -1782,7 +1777,6 @@ export default {
 
       // 生成 base64
       const mergedImageBase64 = tempCanvas.toDataURL('image/png');
-      console.log(mergedImageBase64, 'mergedImageBase64')
       // 将预览图片传输到语义分割图位置（索引1）
       this.$set(this.thumbnails, 1, { url: mergedImageBase64 });
       this.$message.success("图片已暂存到语义分割图框！");
@@ -2137,8 +2131,6 @@ export default {
         ctx.beginPath();
         ctx.moveTo(pos.x, pos.y);
       }
-
-      console.log("Started painting at:", pos.x, pos.y);
     },
 
     onPaintMouseMove(e) {
