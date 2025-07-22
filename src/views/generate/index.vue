@@ -1036,7 +1036,7 @@ export default {
       // 判断用户是否再启用语义分割状态下上传了语义分割图
       if ((this.thumbnails[1] && this.thumbnails[1].url) && this.semanticEnabled) {
 
-        if (!this.thumbnails[1] || !this.thumbnails[1].url || !this.thumbnails[1].url.startsWith('data:') || !this.thumbnails[1].url.includes(';base64,')) {
+        if ( !this.thumbnails[1].url.startsWith('data:') || !this.thumbnails[1].url.includes(';base64,')) {
 
           const base64 = await blobUrlToBase64(this.thumbnails[1].url);
           this.$set(this.thumbnails, 1, { url: base64 });
