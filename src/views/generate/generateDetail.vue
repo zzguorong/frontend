@@ -808,7 +808,8 @@ export default {
           semanticImgUrlId: item.segment_images?.id || null,
           styleImgUrl: item.style_images?.url || null,
           styleImageId: item.style_image_id,
-          isFavorite: false
+          isFavorite: false,
+          created_at: generatedImage.created_at // 添加创建时间用于排序
         }]
       };
     },
@@ -832,26 +833,38 @@ export default {
     },
 
     /**
-     * 按日期分组项目
+     * 按日期分组项目并按日期倒序排序
      * @param {Array} items 映射后的项目数组
-     * @returns {Array} 按日期分组的数组
+     * @returns {Array} 按日期分组并倒序排序的数组
      */
     groupItemsByDate(items) {
-      return items.reduce((acc, item) => {
-        const date = item.date;
-        const existingGroup = acc.find(group => group.date === date);
+      // 使用 Map 进行分组，提高查找效率
+      const groupMap = new Map();
 
-        if (existingGroup) {
-          existingGroup.galleryItem.push(...item.galleryItem);
+      // 按日期分组
+      items.forEach(item => {
+        const date = item.date;
+        if (groupMap.has(date)) {
+          groupMap.get(date).galleryItem.push(...item.galleryItem);
         } else {
-          acc.push({
+          groupMap.set(date, {
             date,
             galleryItem: [...item.galleryItem]
           });
         }
+      });
 
-        return acc;
-      }, []);
+      // 对每个日期分组内的项目按 created_at 倒序排序
+      groupMap.forEach(group => {
+        group.galleryItem.sort((a, b) => {
+          return new Date(b.created_at) - new Date(a.created_at);
+        });
+      });
+
+      // 转换为数组并按日期倒序排序（最新日期在前）
+      return Array.from(groupMap.values()).sort((a, b) => {
+        return new Date(b.date) - new Date(a.date);
+      });
     },
 
     /**
