@@ -177,8 +177,8 @@
 </template>
 
 <script>
-import { getWechatLoginUrl, wechatLogin } from '@/api/generate'
-import { sendSmsCode } from '@/api/index'
+import { getWechatLoginUrl, wechatLogin } from '@/api/generate';
+import { sendSmsCode } from '@/api/index';
 export default {
   name: 'LoginInterface',
   data() {
@@ -224,21 +224,21 @@ export default {
       agree: false,
       timer: null,
       wxLoginLoaded: false
-    }
+    };
   },
 
   watch: {
     $route: {
       handler: function(route) {
-        this.redirect = route.query && route.query.redirect
+        this.redirect = route.query && route.query.redirect;
       },
       immediate: true
     }
   },
   mounted() {
     getWechatLoginUrl().then((res) => {
-      console.log(res)
-    })
+      console.log(res);
+    });
     // this.initWechatLogin();
     // this.startWechatLogin();
     new WxLogin({
@@ -251,49 +251,49 @@ export default {
       ), // 扫完码授权成功跳转到的路径
       state: 'STATE', // 用于保持请求和回调的状态，授权请求后原样带回给第三方。该参数可用于防止 csrf 攻击（跨站请求伪造攻击），建议第三方带上该参数，可设置为简单的随机数加 session 进行校验
       style: 'white' // 提供"black"、"white"可选，默认为黑色文字描述
-    })
+    });
     // 渲染完二维码后缩放到 100×100
     this.$nextTick(() => {
-      setTimeout(this.adjustQrIframe, 100)
-    })
-    const code = this.getUrlParam('code')
+      setTimeout(this.adjustQrIframe, 100);
+    });
+    const code = this.getUrlParam('code');
   },
   beforeDestroy() {
-    this.timer && clearInterval(this.timer)
-    window.removeEventListener('resize', this.adjustQrIframe)
+    this.timer && clearInterval(this.timer);
+    window.removeEventListener('resize', this.adjustQrIframe);
   },
   methods: {
     handleCodeDigitInput(index, event) {
-      const value = event.target.value.replace(/\D/g, '')
-      this.codeDigits[index] = value
-      this.phoneLoginForm.code = this.codeDigits.join('')
+      const value = event.target.value.replace(/\D/g, '');
+      this.codeDigits[index] = value;
+      this.phoneLoginForm.code = this.codeDigits.join('');
 
       if (value && index < 5) {
         this.$nextTick(() => {
-          this.$refs.codeDigitInputs[index + 1].focus()
-        })
+          this.$refs.codeDigitInputs[index + 1].focus();
+        });
       }
     },
     handleCodeDigitDelete(index) {
       if (!this.codeDigits[index] && index > 0) {
-        this.$refs.codeDigitInputs[index - 1].focus()
+        this.$refs.codeDigitInputs[index - 1].focus();
       }
     },
     handleCodeDigitPaste(event) {
-      event.preventDefault()
-      const pasteData = event.clipboardData.getData('text').replace(/\D/g, '')
+      event.preventDefault();
+      const pasteData = event.clipboardData.getData('text').replace(/\D/g, '');
       if (pasteData.length === 6) {
-        this.codeDigits = pasteData.split('').slice(0, 6)
-        this.phoneLoginForm.code = this.codeDigits.join('')
+        this.codeDigits = pasteData.split('').slice(0, 6);
+        this.phoneLoginForm.code = this.codeDigits.join('');
       }
     },
     // 跳转服务条款
     handleTermOfservice() {
-      this.$router.push('/termOfservice')
+      this.$router.push('/termOfservice');
     },
     // 跳转隐私政策
     handlePrivacyPolicy() {
-      this.$router.push('/privacyPolicy')
+      this.$router.push('/privacyPolicy');
     },
     handleLogin() {
       if (this.activeTab === 'phone') {
@@ -301,49 +301,49 @@ export default {
           if (valid) {
             // 判断是否同意协议
             if (!this.agree) {
-              this.$message.error('请同意服务条款和隐私政策')
-              return false
+              this.$message.error('请同意服务条款和隐私政策');
+              return false;
             }
-            this.phoneLogin()
+            this.phoneLogin();
           } else {
-            return false
+            return false;
           }
-        })
+        });
       } else {
         this.$refs.passwordLoginForm.validate((valid) => {
           if (valid) {
-            this.loginWithPassword()
+            this.loginWithPassword();
           } else {
-            return false
+            return false;
           }
-        })
+        });
       }
     },
     // 手机登录
     phoneLogin() {
       this.$refs.phoneLoginForm.validate((valid) => {
         if (valid) {
-          this.loading = true
+          this.loading = true;
           this.$store
             .dispatch('user/phoneLogin', {
               phone: this.phoneLoginForm.phonePrefix + this.phoneLoginForm.phone,
               code: this.phoneLoginForm.code
             })
             .then(() => {
-              this.$router.push({ path: this.redirect || '/generate' })
-              this.loading = false
+              this.$router.push({ path: this.redirect || '/generate' });
+              this.loading = false;
             })
             .catch(() => {
-              this.loading = false
-            })
+              this.loading = false;
+            });
         } else {
-          return false
+          return false;
         }
-      })
+      });
     },
     // 密码登录
     loginWithPassword() {
-      this.loading = true
+      this.loading = true;
 
       this.$store
         .dispatch('user/passwordLogin', {
@@ -351,13 +351,13 @@ export default {
           password: this.passwordLoginForm.password
         })
         .then(() => {
-          console.log(this.redirect)
-          this.$router.push({ path: this.redirect || '/generate' })
-          this.loading = false
+          console.log(this.redirect);
+          this.$router.push({ path: this.redirect || '/generate' });
+          this.loading = false;
         })
         .catch(() => {
-          this.loading = false
-        })
+          this.loading = false;
+        });
     },
     //   try {
     //     const res = await getWechatLoginUrl();
@@ -411,80 +411,80 @@ export default {
     //   });
     // },
     getUrlParam(name) {
-      const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)')
-      const r = window.location.search.substr(1).match(reg)
+      const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)');
+      const r = window.location.search.substr(1).match(reg);
       if (r != null) {
         // ok
-        return unescape(r[2])
+        return unescape(r[2]);
       }
       // false
-      return null
+      return null;
     },
     adjustQrIframe() {
-      const box = this.$refs.qrBox
-      if (!box) return
-      const iframe = box.querySelector('iframe')
-      if (!iframe) return // 脚本还没插入 iframe
+      const box = this.$refs.qrBox;
+      if (!box) return;
+      const iframe = box.querySelector('iframe');
+      if (!iframe) return; // 脚本还没插入 iframe
 
       // 1. 基本尺寸
-      const BOX = box.clientWidth // = box.clientHeight，因为 qr-box 是正方形
-      const W0 = 300 // 微信二维码原始宽
-      const H0 = 60 // 标题条大约 60px
+      const BOX = box.clientWidth; // = box.clientHeight，因为 qr-box 是正方形
+      const W0 = 300; // 微信二维码原始宽
+      const H0 = 60; // 标题条大约 60px
 
       // 2. 计算缩放与位移
-      const S = BOX / W0 // 缩放系数
-      const tx = (BOX - W0 * S) / 2 // 水平居中
-      const ty = -H0 * S // 把标题区推出可视区
+      const S = BOX / W0; // 缩放系数
+      const tx = (BOX - W0 * S) / 2; // 水平居中
+      const ty = -H0 * S; // 把标题区推出可视区
 
       // 3. 一次写入 transform
-      iframe.style.width = W0 + 'px'
-      iframe.style.height = '360px' // 原始高即可
-      iframe.style.border = 'none'
-      iframe.style.pointerEvents = 'none'
-      iframe.style.transformOrigin = 'top left'
-      iframe.style.transform = `translate(${tx}px, ${ty}px) scale(${S})`
+      iframe.style.width = W0 + 'px';
+      iframe.style.height = '360px'; // 原始高即可
+      iframe.style.border = 'none';
+      iframe.style.pointerEvents = 'none';
+      iframe.style.transformOrigin = 'top left';
+      iframe.style.transform = `translate(${tx}px, ${ty}px) scale(${S})`;
     },
     handleSend() {
-      if (this.countDown > 0) return
+      if (this.countDown > 0) return;
 
       // 发送验证码逻辑
       this.$refs.phoneLoginForm.validateField('phone', (errorMessage) => {
         if (!errorMessage) {
-          this.countDown = 60
+          this.countDown = 60;
           this.timer = setInterval(() => {
             if (this.countDown > 0) {
-              this.countDown--
+              this.countDown--;
             } else {
-              clearInterval(this.timer)
+              clearInterval(this.timer);
             }
-          }, 1000)
+          }, 1000);
           // reset code digits
-          this.codeDigits = Array(6).fill('')
-          this.phoneLoginForm.code = ''
+          this.codeDigits = Array(6).fill('');
+          this.phoneLoginForm.code = '';
           // 调用发送验证码 API
           sendSmsCode({
             phone: this.phoneLoginForm.phonePrefix + this.phoneLoginForm.phone
           })
             .then((res) => {
-              this.$message.success(res.message || '验证码已发送，请注意查收')
-              this.$refs.codeDigitInputs[0].focus()
+              this.$message.success(res.message || '验证码已发送，请注意查收');
+              this.$refs.codeDigitInputs[0].focus();
             })
             .catch(() => {
-              console.error('发送验证码失败')
-            })
+              console.error('发送验证码失败');
+            });
         } else {
-          return false
+          return false;
         }
-      })
+      });
     },
     handleForgetPassword() {
-      this.$router.push('/resetPassword')
+      this.$router.push('/resetPassword');
     },
     handleRegister() {
-      this.$router.push('/register')
+      this.$router.push('/register');
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

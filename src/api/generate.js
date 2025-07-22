@@ -48,6 +48,13 @@ export function getProjectDetail(params) {
     params,
   });
 }
+// 删除用户生成的单张图片
+export function deleteGeneratedImage(id) {
+  return request({
+    url: `/genegerated_image/${id}`,
+    method: 'DELETE'
+  });
+}
 // 作为底图生成接口
 export function generateBaseImage(data) {
   return request({
@@ -98,6 +105,30 @@ export function deleteImage(type, id) {
   }
   return request({
     url,
+    method: "DELETE",
+  });
+}
+// 获取用户收藏的生成图片列表
+export function getUserFavoriteImages() {
+  return request({
+    url: "/user_favorites",
+    method: "get"
+  });
+}
+// 收藏生成图片
+export function favoriteGeneratedImage(generatedImageId) {
+  return request({
+    url: "/user_favorites",
+    method: "post",
+    data: {
+      generated_image_id: generatedImageId
+    }
+  });
+}
+// 取消收藏生成图片
+export function unfavoriteGeneratedImage(generatedImageId) {
+  return request({
+    url: `/user_favorites/${generatedImageId}`,
     method: "DELETE",
   });
 }
