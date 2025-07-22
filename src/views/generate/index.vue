@@ -92,7 +92,8 @@
                 </div> -->
                 <div class="generate-btn-container">
 
-                  <div type="primary" size="large" class="generate-btn"  :class="{ 'disabled-btn': isGenerating }" @click="!isGenerating && handleGenerate()"
+                  <div type="primary" size="large" class="generate-btn" :class="{ 'disabled-btn': isGenerating }"
+                    @click="!isGenerating && handleGenerate()"
                     :style="{ backgroundColor: isGenerating ? '#bbb' : '#fff' }">
                     {{ isGenerating ? "正在生成中" : "点击生成" }}
                   </div>
@@ -1038,10 +1039,10 @@ export default {
         if (!this.thumbnails[1] || !this.thumbnails[1].url || !this.thumbnails[1].url.startsWith('data:') || !this.thumbnails[1].url.includes(';base64,')) {
 
           const base64 = await blobUrlToBase64(this.thumbnails[1].url);
-    this.$set(this.thumbnails, 1, { url: base64 });
-    this.semanticImgUrl = base64;
-    payload.segment_image = base64;
-        }else{
+          this.$set(this.thumbnails, 1, { url: base64 });
+          this.semanticImgUrl = base64;
+          payload.segment_image = base64;
+        } else {
           payload.segment_image = this.thumbnails[1].url
         }
 
@@ -1540,7 +1541,7 @@ export default {
     },
 
     // 底图上传成功处理
-   async  onBasemapUpload(uploadData, type) {
+    async onBasemapUpload(uploadData, type) {
       console.log("接收到上传事件:", uploadData);
       // 兼容不同的数据格式
       let imageUrl;
