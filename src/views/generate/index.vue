@@ -97,7 +97,7 @@
                     :style="{ backgroundColor: isGenerating ? '#bbb' : '#fff' }">
                     {{ isGenerating ? "正在生成中" : "点击生成" }}
                   </div>
-                  <el-checkbox v-model="semanticEnabled" label="启用语义分割功能" border size="medium"></el-checkbox>
+                  <el-checkbox class="agree-checkbox" v-model="semanticEnabled" label="启用语义分割"  size="medium"></el-checkbox>
                 </div>
                 <div class="download-controls">
                   <div @click="downloadJPG" style="
@@ -2868,7 +2868,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style  lang="scss" scoped>
 .app-container {
   /* // 根据顶部导航栏的高度 */
   height: calc(100vh - 70px);
@@ -3370,6 +3370,20 @@ export default {
   gap: 10px;
 }
 
+::v-deep .agree-checkbox {
+  .el-checkbox__label {
+    color: #000;
+  }
+  .link {
+    color: #000;
+  }
+}
+::v-deep .el-checkbox__input.is-checked .el-checkbox__inner,
+.el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  background: #000;
+  border-color: #000;
+}
+
 ::v-deep.el-checkbox {
   border: 1px solid #dcdfe6 !important;
 }
@@ -3380,13 +3394,17 @@ export default {
   height: 24px !important;
 }
 
-::.el-checkbox__input.is-checked+.el-checkbox__label {
+::v-deep.el-checkbox__input.is-checked+.el-checkbox__label {
   color: #dcdfe6 !important;
 }
 
 ::v-deep.el-checkbox.el-checkbox__label {
   font-size: 16px;
-  color: #dcdfe6;
+  color:#000 !important;
+}
+::v-deep.el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner{
+  background-color: #000 !important;
+    border-color: #000 !important;
 }
 
 ::v-deep.el-checkbox.is-bordered.is-checked {
@@ -3395,8 +3413,8 @@ export default {
 
 ::v-deep.el-checkbox__input.is-checked .el-checkbox__inner,
 .el-checkbox__input.is-indeterminate .el-checkbox__inner {
-  background-color: #000 !important;
-  border-color: #000 !important;
+  background: #000000 !important;
+  border: 1px solid #000 !important;
 }
 
 /* 对勾样式 */
