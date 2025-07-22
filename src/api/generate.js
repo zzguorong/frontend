@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from "@/utils/request";
 
 // 销售/移库配货查询
 export function salesOrTRansferQuery(params) {
@@ -16,7 +16,7 @@ export function generateImages(data) {
     data,
   });
 }
-// 生图获取图片
+// 获取用户单个生成请求详情
 export function getImageDetail(params) {
   return request({
     url: "/generation_request/single/" + params,
@@ -33,13 +33,17 @@ export function getPerspectiveStyle(data) {
   });
 }
 // 自动识别
-export function preprocessSegment(data) {
+export function preprocessSegment(file) {
+  const formData = new FormData();
+  formData.append("segment_image", file);
   return request({
     url: "/preprocess/segment",
     method: "post",
-    data,
+    data: formData,
+    headers: { "Content-Type": "multipart/form-data" },
   });
 }
+
 // 详情接口
 export function getProjectDetail(params) {
   return request({
@@ -52,7 +56,7 @@ export function getProjectDetail(params) {
 export function deleteGeneratedImage(id) {
   return request({
     url: `/genegerated_image/${id}`,
-    method: 'DELETE'
+    method: "DELETE",
   });
 }
 // 作为底图生成接口
@@ -112,7 +116,7 @@ export function deleteImage(type, id) {
 export function getUserFavoriteImages() {
   return request({
     url: "/user_favorites",
-    method: "get"
+    method: "get",
   });
 }
 // 收藏生成图片
@@ -121,8 +125,8 @@ export function favoriteGeneratedImage(generatedImageId) {
     url: "/user_favorites",
     method: "post",
     data: {
-      generated_image_id: generatedImageId
-    }
+      generated_image_id: generatedImageId,
+    },
   });
 }
 // 取消收藏生成图片

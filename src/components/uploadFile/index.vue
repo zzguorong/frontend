@@ -80,7 +80,7 @@ export default {
       }
       this.$emit("update:imgUrl", imageUrl);
       this.$emit("upload-success", { res, file, imageUrl });
-      this.$message.success("图片上传成功！");
+      // this.$message.success("图片上传成功！");
     },
     beforeAvatarUpload(file) {
       // 将当前文件同步到请求体额外字段
@@ -92,13 +92,13 @@ export default {
         this.uploadData.base_image = file;
       }
       const isImage = file && file.type && file.type.startsWith("image/");
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isLt500M = file.size / 1024 / 1024 < 500;
       if (!isImage) {
         this.$message.error("只能上传图片文件!");
         return false;
       }
-      if (!isLt2M) {
-        this.$message.error("上传图片大小不能超过 2MB!");
+      if (!isLt500M) {
+        this.$message.error("上传图片大小不能超过 500MB!");
         return false;
       }
       return true;
@@ -106,6 +106,9 @@ export default {
     // 新增：删除按钮事件
     handleDelete() {
       this.$emit("delete");
+    },
+    getRawFiles() {
+      return this.$refs.upload.uploadFiles.map(f => f.raw);
     },
   },
 };
