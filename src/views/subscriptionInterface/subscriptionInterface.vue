@@ -161,7 +161,7 @@
       </div>
 
       <!-- 会员权益 -->
-      <div v-if="!payVisible" class="subscription-compare-content">
+      <div class="subscription-compare-content">
         <div class="subscription-interface-compare">会员权益对比</div>
         <div class="subscription-compare-container">
           <div class="subscription-compare-title temp-block" />
@@ -260,7 +260,7 @@
     </div>
     <el-dialog
       :visible.sync="payVisible"
-      width="28%"
+      width="400px"
       :before-close="handlePayClose"
       :show-close="false"
       :lock-scroll="false"
@@ -388,8 +388,8 @@ export default {
       canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
       // 创建二维码
       QRCode.toCanvas(canvas, 'https://example.com/pay', {
-        width: 200,
-        height: 200
+        width: 150,
+        height: 150
       }, function(error) {
         if (error) console.error(error);
         console.log('success!');

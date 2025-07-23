@@ -84,6 +84,10 @@ service.interceptors.response.use(
       type: 'error',
       duration: 5 * 1000
     });
+    if (error.response && error.response.status === 401) {
+      // 401 Unauthorized 错误，可能是 token 过期或无效
+      store.dispatch('user/resetToken');
+    }
     return Promise.reject(error);
   }
 );

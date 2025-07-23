@@ -1047,7 +1047,9 @@ export default {
           this.$message.warning("启用语义分割时请上传语义分割图");
           return;
         }
-
+      } else {
+        // 如果没有启用语义分割，则不传递 segment_image 字段
+        payload.segment_image = null;
       }
 
       // 3. 开始请求前：设置状态 + 显示遮罩
@@ -1166,15 +1168,13 @@ export default {
     downloadJPG() {
       // 下载图像展示区展示的页面
       this.$message.success("开始下载JPG格式");
-
-
       const link = document.createElement('a');
-  link.href = this.previewImage;;
-  link.download =  'image.png';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  this.$message.success("开始下载JPG格式");
+      link.href = this.previewImage;
+      link.download =  'image.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      this.$message.success("开始下载JPG格式");
     },
 
     downloadPSD() { },
@@ -1184,7 +1184,6 @@ export default {
       if (!this.isActionAllowed()) {
         return;
       }
-
 
       // 智能选区（smart）与套索工具共享同一套索画布逻辑
       if (tool === "smart") {
