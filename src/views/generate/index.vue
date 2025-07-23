@@ -34,7 +34,7 @@
                       <img v-if="thumb.url" :src="thumb.url" alt="缩略图" class="thumb-img" />
                       <!-- 当无图时显示占位图标 -->
                       <svg-icon v-else icon-class="generateImage" class="placeholder-icon" />
-                      <div class="thumbnail-actions" v-if="thumb && index > 1">
+                      <div class="thumbnail-actions" v-if="thumb && thumb.url && index > 1">
                         <svg-icon class="action-icon favorite-icon" icon-class="collection" :style="(favoriteStates[index] || favoriteHoverStates[index])
                           ? { color: '#f56565' }
                           : { color: '#000' }" @click.stop="toggleFavorite(index)"
@@ -97,7 +97,8 @@
                     :style="{ backgroundColor: isGenerating ? '#bbb' : '#fff' }">
                     {{ isGenerating ? "正在生成中" : "点击生成" }}
                   </div>
-                  <el-checkbox class="agree-checkbox" v-model="semanticEnabled" label="启用语义分割"  size="medium"></el-checkbox>
+                  <el-checkbox class="agree-checkbox" v-model="semanticEnabled" label="启用语义分割"
+                    size="medium"></el-checkbox>
                 </div>
                 <div class="download-controls">
                   <div @click="downloadJPG" style="
@@ -193,8 +194,8 @@
                           <!-- <i class="question-icon">?</i> -->
                         </el-tooltip>
                       </div>
-                      <el-select v-model="styleCategory" placeholder="选择风格" style="width: 100%"
-                        @change="clearStyleCategoryError">
+                      <!--  @change="clearStyleCategoryError"数据写死，目前不需要方法 -->
+                      <el-select v-model="styleCategory" placeholder="选择风格" style="width: 100%">
                         <el-option v-for="item in styleOptions" :key="item.value" :label="item.label"
                           :value="item.value"></el-option>
                       </el-select>
@@ -259,6 +260,7 @@
                             <!-- <i class="question-icon">?</i> -->
                           </el-tooltip>
                         </div>
+                        <!-- 风格迁移开关 -->
                         <el-switch v-model="styleTransferEnabled" />
                       </div>
                       <div class="section-content" v-if="styleTransferEnabled">
@@ -294,7 +296,7 @@
                       <div class="section-title">图纸比例</div>
                       <el-select v-model="aspectRatio" placeholder="选择比例" style="width: 100%">
                         <!-- TODO:对接口字段 -->
-                        <el-option label="原始比例" value="1:1"></el-option>
+                        <el-option label="原始比例" value="detect"></el-option>
                         <el-option label="1:1" value="1:1"></el-option>
                         <el-option label="3:2" value="3:2"></el-option>
                         <el-option label="4:3" value="4:3"></el-option>
@@ -334,7 +336,7 @@
                     </div>
                     <div class="tool-actions">
                       <span :class="[
-                        'auto-detect',
+                        'auto-detect select-type',
                         {
                           disabled:
                             viewType === 'aerial' ||
@@ -343,7 +345,7 @@
                         },
                       ]" style="position: relative" @click="automaticRecognition">自动识别
                         <el-tooltip class="auto-identify" content="功能目前只对人视图和室内图开发" placement="top"
-                          style="position: absolute; top: 8px; left: 75px">
+                          style="position: absolute; top: 11px; left: 78px">
                           <svg-icon icon-class="question" class="icon-style"></svg-icon>
                           <!-- <i class="question-icon">?</i> -->
                         </el-tooltip>
@@ -448,21 +450,7 @@
                       </div>
                     </div>
                   </div>
-                  <!-- 暂存 -->
-                  <div class="save">
-                    <div class="tool-category">
-                      <span class="category-label">暂存
-                        <el-tooltip class="auto-identify" content="绘制内容将通过点击 [暂存] 同步到预览区。" placement="top"
-                          style="position: absolute; top: 2px; left: 34px">
-                          <svg-icon icon-class="question" class="icon-style"></svg-icon>
-                          <!-- <i class="question-icon">?</i> -->
-                        </el-tooltip>
-                      </span>
-                      <div class="tool-buttons">
-                        <span class="tempo-store" @click="temporaryStore">暂存</span>
-                      </div>
-                    </div>
-                  </div>
+
                   <!-- 元素类别 -->
                   <div class="element-category">
                     <span class="category-label">元素类别</span>
@@ -478,6 +466,15 @@
                       </div>
 
                     </div>
+                  </div>
+                  <!-- 暂存 -->
+                  <div class="tool-buttons">
+                    <span class="tempo-store select-type" @click="temporaryStore">暂存
+                      <el-tooltip class="auto-identify" content="绘制内容将通过点击 [暂存] 同步到预览区。" placement="top"
+                        style="position: absolute; top: 11px; left: 237px">
+                        <svg-icon icon-class="question" class="icon-style"></svg-icon>
+                        <!-- <i class="question-icon">?</i> -->
+                      </el-tooltip></span>
                   </div>
                 </div>
               </el-tab-pane>
@@ -498,13 +495,13 @@ import GlobalMask from '../../layout/components/GlobalMask.vue';
 
 // import laravelEcho from "@/utils/laravel-echo";
 import {
-  deleteImage,
-  generateImages,
-  getImageDetail,
-  getPerspectiveStyle,
-  preprocessSegment,
-  deleteGeneratedImage,
-  collectImage
+collectImage,
+deleteGeneratedImage,
+deleteImage,
+generateImages,
+getImageDetail,
+getPerspectiveStyle,
+preprocessSegment
 } from "@/api/generate";
 import { blobUrlToBase64 } from "@/utils/index";
 
@@ -515,11 +512,14 @@ export default {
     return {
       // 基础控制
       promptText: "",
-      viewType: "aerial", // 默认选择鸟瞰图
-      styleCategory: "", // 初始为空，根据视角类型自动设置
-      perspectiveOptions: [],
+      viewType: 1, // 选择的视角类型
+      styleCategory: "",
+      perspectiveOptions: [],// 视角类型
       // 风格类别配置
-      styleOptions: [],
+      styleOptions: [{
+        value: '选项1',
+        label: '通用类别'
+      }],// 初始为空，默认显示"通用类别"
       // 上传控制
       // controlLevel: 5,
       materialFixed: 5,
@@ -529,7 +529,7 @@ export default {
       semanticImgUrl: "", // 语义分割图片URL
       basemapUrlBase64: null,
       baseControlLevel: 5,
-      // 风格迁移
+      // 风格迁移开关
       styleTransferEnabled: false,
       materialPercentage: 5,
       styleTransferLevel: 0,
@@ -537,7 +537,7 @@ export default {
       styleImageId: null,
       // 图片设置
       resolution: 2,
-      aspectRatio: "1:1",
+      aspectRatio: "detect",
       // 生成控制
       generateCount: 1,
       isGenerating: false,
@@ -667,7 +667,7 @@ export default {
       this.perspectiveOptions = res.data.map((item) => ({
         label: item.name,
         value: item.id,
-        raw: item, // 保留原始对象方便后面找 default_prompts
+        raw: item,
       }));
       this.viewType = this.perspectiveOptions[0].value;
       this.updateStyleOptions();
@@ -688,6 +688,8 @@ export default {
     styleTransferEnabled(val) {
       if (!val) {
         this.styleTransferLevel = 0;
+      }else{
+        this.styleTransferLevel = 5;
       }
     },
     // 以下字段变化时实时保存到 Vuex
@@ -838,18 +840,11 @@ export default {
         }
       });
     },
-    updateStyleOptions() {
-      const cat = this.perspectiveOptions.find(
-        (p) => p.value === this.viewType
-      );
-      this.styleOptions =
-        cat && cat.raw.default_prompts
-          ? cat.raw.default_prompts.map((d) => ({ label: d.name, value: d.id }))
-          : [];
-      this.styleCategory = this.styleOptions.length
-        ? this.styleOptions[0].value
-        : null;
-      console.log("styleCategory1", this.styleCategory);
+    updateStyleOptions(e) {
+      console.log("updateStyleOptions", e);
+      // 保存视角类型
+
+
     },
     switchSemantic() {
       console.log("switchSemantic", this.semanticEnabled);
@@ -1014,12 +1009,11 @@ export default {
 
       // 构造请求体
       const payload = {
-        default_prompt_id: "1",
+        generation_category_id: this.viewType,
         base_image_id: this.basemapUrlId,
-        style_image_id: this.styleImageId,
         prompt: this.promptText,
         scale: this.resolution,
-        batch_size: 1,
+        // batch_size: 1,
         generate_count: this.generateCount,
         // seg: this.semanticEnabled,
         aspect_ratio: this.aspectRatio,
@@ -1029,25 +1023,31 @@ export default {
       if (this.baseControlLevel !== 0) {
         payload.base_image_control_weight = this.baseControlLevel;
       }
-      if (this.styleTransferLevel !== 0) {
+      // 风格图开关关闭时不传入
+      if (this.styleTransferEnabled) {
         payload.style_image_control_weight = this.styleTransferLevel;
+        payload.style_image_id = this.styleImageId;
       }
 
-      // 判断用户是否再启用语义分割状态下上传了语义分割图
-      if ((this.thumbnails[1] && this.thumbnails[1].url) && this.semanticEnabled) {
+      // 判断用户是否启用语义分割
+      if (this.semanticEnabled) {
+        // 是否上传了语义分割图
+        if (this.thumbnails[1] && this.thumbnails[1].url) {
+          if (!this.thumbnails[1].url.startsWith('data:') || !this.thumbnails[1].url.includes(';base64,')) {
 
-        if ( !this.thumbnails[1].url.startsWith('data:') || !this.thumbnails[1].url.includes(';base64,')) {
+            const base64 = await blobUrlToBase64(this.thumbnails[1].url);
+            this.$set(this.thumbnails, 1, { url: base64 });
+            this.semanticImgUrl = base64;
+            payload.segment_image = base64;
+          } else {
+            payload.segment_image = this.thumbnails[1].url
+          }
 
-          const base64 = await blobUrlToBase64(this.thumbnails[1].url);
-          this.$set(this.thumbnails, 1, { url: base64 });
-          this.semanticImgUrl = base64;
-          payload.segment_image = base64;
         } else {
-          payload.segment_image = this.thumbnails[1].url
+          this.$message.warning("启用语义分割时请上传语义分割图");
+          return;
         }
 
-      } else {
-        this.$message.warning("启用语义分割时请上传语义分割图");
       }
 
       // 3. 开始请求前：设置状态 + 显示遮罩
@@ -1164,7 +1164,17 @@ export default {
 
     // 下载功能
     downloadJPG() {
+      // 下载图像展示区展示的页面
       this.$message.success("开始下载JPG格式");
+
+
+      const link = document.createElement('a');
+  link.href = this.previewImage;;
+  link.download =  'image.png';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  this.$message.success("开始下载JPG格式");
     },
 
     downloadPSD() { },
@@ -3374,10 +3384,12 @@ export default {
   .el-checkbox__label {
     color: #000;
   }
+
   .link {
     color: #000;
   }
 }
+
 ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner,
 .el-checkbox__input.is-indeterminate .el-checkbox__inner {
   background: #000;
@@ -3400,11 +3412,13 @@ export default {
 
 ::v-deep.el-checkbox.el-checkbox__label {
   font-size: 16px;
-  color:#000 !important;
+  color: #000 !important;
 }
-::v-deep.el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner{
+
+::v-deep.el-checkbox__input.is-checked .el-checkbox__inner,
+.el-checkbox__input.is-indeterminate .el-checkbox__inner {
   background-color: #000 !important;
-    border-color: #000 !important;
+  border-color: #000 !important;
 }
 
 ::v-deep.el-checkbox.is-bordered.is-checked {
@@ -3588,21 +3602,33 @@ export default {
   gap: 8px;
   flex-direction: column;
 }
-
-.auto-detect,
-.tempo-store {
+/* 公共样式：选择视角/模式的按钮 */
+.select-type {
+  position: relative;
   font-size: 12px;
-  color: #666;
   display: inline-block;
   width: 100%;
-  height: 30px;
-  line-height: 30px;
+  height: 36px;
+  line-height: 36px;
   text-align: center;
   border: 1px solid #d9d9d9;
-  color: #000;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
+  color: #000; /* 默认字体颜色 */
+  background-color: #fff; /* 默认背景色 */
+}
+
+/* 自动检测状态 */
+.select-type.auto-detect {
+  /* 特殊样式可在这里单独覆盖 */
+}
+
+/* 临时存储状态 */
+.select-type.tempo-store {
+  background-color: #000;
+  color: #fff;
+  border-color: #000;
 }
 
 .auto-detect:hover,
@@ -3745,7 +3771,7 @@ export default {
 
 /* 元素类别 */
 .element-category {
-  margin: 15px 0 0 0;
+  margin: 15px 0 30px 0;
   width: 100%;
   background: #fff;
   border: 1px solid #d9d9d9;

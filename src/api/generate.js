@@ -75,6 +75,15 @@ export function getGalleryImages(params) {
     params,
   });
 }
+
+// 获取用户信息
+export function getUserInfo() {
+  return request({
+    url: "/profile",
+    method: "get",
+  });
+}
+
 // 删除图片
 export function deleteImage(type, id) {
   let url = "";

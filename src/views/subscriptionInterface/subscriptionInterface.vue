@@ -49,7 +49,7 @@
               </div>
               <div class="subscription-text">GAIA_PLUS</div>
               <div class="subscription-description">
-                为进阶人士和进阶人士打造
+                为专业人士与小型团队打造
               </div>
               <!-- 下拉选择价格周期 -->
               <el-dropdown trigger="click" class="price-dropdown" @command="handlePlusPriceChange">
@@ -72,7 +72,7 @@
                 专为中小团队项目周期优化，服务期内畅享稳定服务、高清输出与参数保留功能。适配方案迭代、阶段呈现与成果整合等全流程，助力团队高效推进设计进度。
               </div>
 
-              <div class="subscription-btn" style="background: #9a9a9a" @click="payVisible = true">
+              <div class="subscription-btn" @click="payVisible = true">
                 订阅计划
               </div>
               <div class="subscription-detail-list">
@@ -98,12 +98,6 @@
                   <li>
                     <svg-icon icon-class="check" class="check-icon" />生图排队优先权
                   </li>
-                  <li>
-                    <svg-icon icon-class="check" class="check-icon" />专属用户培训计划
-                  </li>
-                  <li>
-                    <svg-icon icon-class="check" class="check-icon" />专属技术咨询支持
-                  </li>
                 </ul>
               </div>
             </div>
@@ -118,7 +112,7 @@
                 GAIA_Business
               </div>
               <div class="subscription-description" style="color: #000">
-                为专家人士和专家人士打造
+                为专业机构与中大型企业、事务所打造
               </div>
               <div class="subscription-price">咨询客服</div>
               <div class="subscription-detail">
@@ -261,82 +255,6 @@
             >/</span><span class="item-word-item">√</span><span class="item-word-item last">√</span>
           </div>
         </div>
-      </div>
-      <!-- 生成次数 -->
-      <div v-if="payVisible">
-        <div class="subscription-interface-compare">订阅计划对比</div>
-
-        <table>
-          <!-- 表头：第一列为空，用于放置字段名称 -->
-          <thead>
-            <tr>
-              <th style="border: none" />
-              <th class="table-style">
-                <div class="table-theme" style="background: #cecece">
-                  基础计划
-                </div>
-              </th>
-              <th class="table-style">
-                <div class="table-theme" style="background: #9a9a9a">
-                  进阶计划
-                </div>
-              </th>
-              <th class="table-style">
-                <div class="table-theme" style="background: #000">专家计划</div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>生成次数</td>
-              <td />
-              <td />
-              <td />
-            </tr>
-            <tr>
-              <td>安全性</td>
-              <td />
-              <td />
-              <td />
-            </tr>
-            <tr>
-              <td>高级功能</td>
-              <td />
-              <td />
-              <td />
-            </tr>
-            <tr>
-              <td>高级功能</td>
-              <td />
-              <td />
-              <td />
-            </tr>
-            <tr>
-              <td>高级功能</td>
-              <td />
-              <td />
-              <td />
-            </tr>
-            <tr>
-              <td>高级功能</td>
-              <td />
-              <td />
-              <td />
-            </tr>
-            <tr>
-              <td>高级功能</td>
-              <td />
-              <td />
-              <td />
-            </tr>
-            <tr>
-              <td>高级功能</td>
-              <td />
-              <td />
-              <td />
-            </tr>
-          </tbody>
-        </table>
       </div>
       <div class="subscription-contact-customer" @click="toAboutUs"><span>联系专属客服</span></div>
     </div>
@@ -561,7 +479,7 @@ export default {
 .subscription-btn {
   font-size: 20px;
   color: #fff;
-  background: #cecece;
+  background: #000;
   text-align: center;
   padding: 10px 0;
   border-radius: 20px;
@@ -597,13 +515,12 @@ export default {
   font-size: 18px;
 }
 
-.subscription-compare-container{
+.subscription-compare-container {
   width: 100%;
- margin: 0px auto;
- display: flex;
- justify-content: space-between;
- padding-right: 26px;
-
+  margin: 0px auto;
+  display: flex;
+  justify-content: space-between;
+  padding-right: 26px;
 }
 
 .subscription-compare-content-item{
