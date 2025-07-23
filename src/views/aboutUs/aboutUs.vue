@@ -1,8 +1,13 @@
 <template>
   <div class="about-us">
     <div class="about-us-content">关于我们</div>
-    <div class="about-us-title">
-      <img src="@/assets/images/weixin.jpg" alt="" />
+    <div class="about-us-code">
+      <div class="about-us-title">
+        <img src="@/assets/images/weixin.jpg" alt="" />
+      </div>
+      <div class="about-us-title">
+        <img src="@/assets/images/weixin.jpg" alt="" />
+      </div>
     </div>
     <div class="about-us-text">请使用微信扫描二维码</div>
     <div class="about-us-detail">
@@ -31,24 +36,35 @@
   flex-direction: column;
   align-items: center;
   height: calc(100vh - 50px);
+
   .about-us-title {
     margin-top: 40px;
     border: 1px solid #ccc;
+
     img {
       width: 150px;
       height: 150px;
     }
   }
+
   .about-us-content {
     text-align: center;
     font-size: 18px;
     margin-top: 80px;
   }
+  .about-us-code {
+      display: flex;
+      justify-content: center;
+      gap: 19px;
+      margin-bottom: 16px;
+    }
+
   .about-us-text {
     text-align: center;
     font-size: 12px;
     margin-top: 5px;
   }
+
   .about-us-detail {
     font-size: 14px;
     margin-top: 20px;
@@ -58,5 +74,4 @@
     flex-direction: column;
     gap: 20px;
   }
-}
-</style>
+}</style>

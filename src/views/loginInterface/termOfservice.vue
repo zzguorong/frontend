@@ -1,5 +1,6 @@
 <template>
   <div class="service-container">
+    <i class="el-icon-close close-icon" @click="close"></i>
     <div class="service-title">GAIA 服务协议</div>
     <div class="service-date">生效日期：2025年6月22日星期日</div>
     <div class="service-intro">介绍</div>
@@ -252,13 +253,19 @@
       >若监护人为未成年人注册账户、设置支付密码、开通订阅服务等行为，本平台将视为监护人已同意并授权该未成年使用平台及其相关服务，监护人应妥善保管相关设备及支付方式，避免账户被误用。</span
     ><br />
     </div>
-   
+
   </div>
 </template>
 
 <script>
 export default {
   name: "TermOfservice",
+  methods: {
+    close() {
+      // 返回上一页
+      this.$router.go(-1);
+    }
+  },
 };
 </script>
 <style lang="scss" scoped>
@@ -267,6 +274,20 @@ export default {
   margin: 0 auto;
   margin-top: 40px;
   padding-bottom: 700px;
+  position: relative;
+ .close-icon{
+  background: rgb(154, 154, 154);
+    color: #fff;
+    padding: 7px;
+    border: 1px solid #ccc;
+    border-radius: 22px;
+    font-weight: 500;
+    font-size: 20px;
+    font-size: 20px;
+    position: fixed;
+    top: 50px;
+    left: 1250px;
+ }
   .service-title {
     font-size: 22px;
   }
