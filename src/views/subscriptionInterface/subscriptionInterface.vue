@@ -23,19 +23,19 @@
               <div class="subscription-detail-list">
                 <ul>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>GAIA模型支持
+                    <svg-icon icon-class="check" class="check-icon" />GAIA模型支持
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>当日3次图像生成次数
+                    <svg-icon icon-class="check" class="check-icon" />当日3次图像生成次数
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>当日3次语义分割功能使用次数
+                    <svg-icon icon-class="check" class="check-icon" />当日3次语义分割功能使用次数
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>当日3次语义分割工具包使用次数
+                    <svg-icon icon-class="check" class="check-icon" />当日3次语义分割工具包使用次数
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>当日3次JPG下载次数
+                    <svg-icon icon-class="check" class="check-icon" />当日3次JPG下载次数
                   </li>
                 </ul>
               </div>
@@ -52,14 +52,15 @@
                 为专业人士与小型团队打造
               </div>
               <!-- 下拉选择价格周期 -->
-              <el-dropdown trigger="click" @command="handlePlusPriceChange" class="price-dropdown">
+              <el-dropdown trigger="click" class="price-dropdown" @command="handlePlusPriceChange">
                 <div class="subscription-price price-trigger">
                   <span class="price-amount"><span class="price-amount-symbol">￥</span><span
-                      class="price-amount-number">{{
-                        plusPriceDisplay.amount
-                      }}</span></span>
+                    class="price-amount-number"
+                  >{{
+                    plusPriceDisplay.amount
+                  }}</span></span>
                   <span class="price-unit">RMB&nbsp;/{{ plusPriceDisplay.unit }}</span>
-                  <i class="el-icon-arrow-down price-arrow"></i>
+                  <i class="el-icon-arrow-down price-arrow" />
                 </div>
                 <el-dropdown-menu slot="dropdown" class="price-dropdown-menu">
                   <el-dropdown-item v-for="item in plusPriceOptions" :key="item.unit" :command="item.unit">
@@ -71,31 +72,31 @@
                 专为中小团队项目周期优化，服务期内畅享稳定服务、高清输出与参数保留功能。适配方案迭代、阶段呈现与成果整合等全流程，助力团队高效推进设计进度。
               </div>
 
-              <div class="subscription-btn"  @click="payVisible = true">
+              <div class="subscription-btn" @click="payVisible = true">
                 订阅计划
               </div>
               <div class="subscription-detail-list">
                 <ul>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>GAIA模型支持
+                    <svg-icon icon-class="check" class="check-icon" />GAIA模型支持
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>服务期内无限图像生成次数
+                    <svg-icon icon-class="check" class="check-icon" />服务期内无限图像生成次数
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>服务期内无限语义分割功能使用次数
+                    <svg-icon icon-class="check" class="check-icon" />服务期内无限语义分割功能使用次数
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>服务期内无限语义分割工具包使用次数
+                    <svg-icon icon-class="check" class="check-icon" />服务期内无限语义分割工具包使用次数
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>服务期内无限JPG下载次数
+                    <svg-icon icon-class="check" class="check-icon" />服务期内无限JPG下载次数
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>服务期内无限PSD下载次数
+                    <svg-icon icon-class="check" class="check-icon" />服务期内无限PSD下载次数
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>生图排队优先权
+                    <svg-icon icon-class="check" class="check-icon" />生图排队优先权
                   </li>
                 </ul>
               </div>
@@ -123,34 +124,34 @@
               <div class="subscription-detail-list">
                 <ul>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>专人提供企业AI技术培训辅导
+                    <svg-icon icon-class="check" class="check-icon" />专人提供企业AI技术培训辅导
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>专人提供技术支持
+                    <svg-icon icon-class="check" class="check-icon" />专人提供技术支持
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>本地化部署专用服务器
+                    <svg-icon icon-class="check" class="check-icon" />本地化部署专用服务器
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>GAIA模型支持
+                    <svg-icon icon-class="check" class="check-icon" />GAIA模型支持
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>服务期内无限图像生成次数
+                    <svg-icon icon-class="check" class="check-icon" />服务期内无限图像生成次数
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>服务期内无限语义分割功能使用次数
+                    <svg-icon icon-class="check" class="check-icon" />服务期内无限语义分割功能使用次数
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>服务期内无限语义分割工具包使用次数
+                    <svg-icon icon-class="check" class="check-icon" />服务期内无限语义分割工具包使用次数
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>服务期内无限JPG下载次数
+                    <svg-icon icon-class="check" class="check-icon" />服务期内无限JPG下载次数
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>服务期内无限PSD下载次数
+                    <svg-icon icon-class="check" class="check-icon" />服务期内无限PSD下载次数
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>服务器内生图排队优先权
+                    <svg-icon icon-class="check" class="check-icon" />服务器内生图排队优先权
                   </li>
                 </ul>
               </div>
@@ -160,10 +161,10 @@
       </div>
 
       <!-- 会员权益 -->
-      <div class="subscription-compare-content" v-if="!payVisible">
+      <div class="subscription-compare-content">
         <div class="subscription-interface-compare">会员权益对比</div>
-        <div class="subscription-compare-container" >
-          <div class="subscription-compare-title temp-block"></div>
+        <div class="subscription-compare-container">
+          <div class="subscription-compare-title temp-block" />
           <div class="subscription-compare-title" style="background: #000">
             GAIA
           </div>
@@ -191,136 +192,79 @@
           <div class="item-word">
             <span class="item-word-title">生成次数</span>
             <span class="item-word-item">3次免费生成</span><span class="item-word-item">当周无限</span><span
-              class="item-word-item">当月无限</span><span class="item-word-item">无限</span><span
-              class="item-word-item last">无限</span>
+              class="item-word-item"
+            >当月无限</span><span class="item-word-item">无限</span><span
+              class="item-word-item last"
+            >无限</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">排队优先权</span>
             <span class="item-word-item">/</span><span class="item-word-item">/</span><span
-              class="item-word-item">√</span><span class="item-word-item">√</span><span class="item-word-item last">√</span>
+              class="item-word-item"
+            >√</span><span class="item-word-item">√</span><span class="item-word-item last">√</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">GAIA模型</span>
             <span class="item-word-item">√</span><span class="item-word-item">√</span><span
-              class="item-word-item">√</span><span class="item-word-item">√</span><span class="item-word-item last">√</span>
+              class="item-word-item"
+            >√</span><span class="item-word-item">√</span><span class="item-word-item last">√</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">语义分割功能</span>
             <span class="item-word-item">3次</span><span class="item-word-item">当周无限</span><span
-              class="item-word-item">当月无限</span><span class="item-word-item">当年无限</span><span
-              class="item-word-item last">无限</span>
+              class="item-word-item"
+            >当月无限</span><span class="item-word-item">当年无限</span><span
+              class="item-word-item last"
+            >无限</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">语义分割工具包</span>
             <span class="item-word-item">3次</span><span class="item-word-item">当周无限</span><span
-              class="item-word-item">当月无限</span><span class="item-word-item">当年无限</span><span
-              class="item-word-item last">无限</span>
+              class="item-word-item"
+            >当月无限</span><span class="item-word-item">当年无限</span><span
+              class="item-word-item last"
+            >无限</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">JPG下载</span>
             <span class="item-word-item">3次</span><span class="item-word-item">当周无限</span><span
-              class="item-word-item">当月无限</span><span class="item-word-item">当年无限</span><span
-              class="item-word-item last">无限</span>
+              class="item-word-item"
+            >当月无限</span><span class="item-word-item">当年无限</span><span
+              class="item-word-item last"
+            >无限</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">PSD下载</span>
             <span class="item-word-item">/</span><span class="item-word-item">当周无限</span><span
-              class="item-word-item">当月无限</span><span class="item-word-item">当年无限</span><span
-              class="item-word-item last">无限</span>
+              class="item-word-item"
+            >当月无限</span><span class="item-word-item">当年无限</span><span
+              class="item-word-item last"
+            >无限</span>
           </div>
           <div class="item-title item-title-last">支持服务</div>
           <div class="item-word">
             <span class="item-word-title">用户培训计划</span>
             <span class="item-word-item">/</span><span class="item-word-item">/</span><span
-              class="item-word-item">/</span><span class="item-word-item">√</span><span class="item-word-item last">√</span>
+              class="item-word-item"
+            >/</span><span class="item-word-item">√</span><span class="item-word-item last">√</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">技术咨询</span>
             <span class="item-word-item">/</span><span class="item-word-item">/</span><span
-              class="item-word-item">/</span><span class="item-word-item">√</span><span class="item-word-item last">√</span>
+              class="item-word-item"
+            >/</span><span class="item-word-item">√</span><span class="item-word-item last">√</span>
           </div>
         </div>
       </div>
-      <!-- 生成次数 -->
-      <div >
-        <div class="subscription-interface-compare">订阅计划对比</div>
-
-        <table>
-          <!-- 表头：第一列为空，用于放置字段名称 -->
-          <thead>
-            <tr>
-              <th style="border: none"></th>
-              <th class="table-style">
-                <div class="table-theme" style="background: #cecece">
-                  基础计划
-                </div>
-              </th>
-              <th class="table-style">
-                <div class="table-theme" style="background: #9a9a9a">
-                  进阶计划
-                </div>
-              </th>
-              <th class="table-style">
-                <div class="table-theme" style="background: #000">专家计划</div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>生成次数</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>安全性</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>高级功能</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>高级功能</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>高级功能</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>高级功能</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>高级功能</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>高级功能</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
       <div class="subscription-contact-customer" @click="toAboutUs"><span>联系专属客服</span></div>
     </div>
-    <el-dialog :visible.sync="payVisible" width="28%" :before-close="handlePayClose" :show-close="false"
-      :lock-scroll="false">
+    <el-dialog
+      :visible.sync="payVisible"
+      width="400px"
+      :before-close="handlePayClose"
+      :show-close="false"
+      :lock-scroll="false"
+    >
       <div class="pay-dialog-container">
         <div class="plan-container">
           <div class="pay-dialog-plan">
@@ -344,7 +288,8 @@
           </div>
           <div class="pay-content-item">
             <span class="pay-content-item-title">生效时间</span><span
-              class="pay-content-item-value">2025-06-01-2025-06-01</span>
+              class="pay-content-item-value"
+            >2025-06-01-2025-06-01</span>
           </div>
           <div class="pay-content-item">
             <span class="pay-content-item-title">付款方式</span><span class="pay-content-item-value">微信支付</span>
@@ -352,38 +297,73 @@
         </div>
         <div class="pay-content" style="margin-top: 25px">
           <div class="pay-content-item">
-            <span class="pay-content-item-title">应付款</span><span class="pay-content-item-value"
-              style="color: #000; font-size: 20px">￥570</span>
+            <span class="pay-content-item-title">应付款</span><span
+              class="pay-content-item-value"
+              style="color: #000; font-size: 20px"
+            >￥570</span>
           </div>
         </div>
         <div class="pay-btn-container">
           <div class="pay-btn-item" @click="payVisible = false">返回</div>
-          <div class="pay-btn-pay">支付</div>
+          <div class="pay-btn-pay" @click="handleQRCodePayAction">扫码支付</div>
+        </div>
+      </div>
+    </el-dialog>
+    <el-dialog
+      :visible.sync="qrcodePayVisible"
+      title="微信支付"
+      width="400px"
+      :before-close="handleQRCodePayClose"
+      :show-close="true"
+      :lock-scroll="false"
+      :destroy-on-close="true"
+      @opened="generateQRCode"
+    >
+      <div class="pay-dialog-content">
+        <div class="pay-dialog-body">
+          <canvas id="qrCodeCanvas" />
+          <span>请使用微信扫码</span>
+        </div>
+      </div>
+      <div slot="footer" class="pay-dialog-footer">
+        <div class="footer-left">
+          <i class="el-icon-alarm-clock" />
+          <span class="desc">支付剩余时间：00:43:51</span>
+        </div>
+        <div class="footer-right">
+          <div>
+            <span>实付金额</span><span>￥</span><span>48.00</span>
+          </div>
         </div>
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
+import QRCode from 'qrcode';
+
 export default {
-  name: "SubscriptionInterface",
+  name: 'SubscriptionInterface',
   data() {
     return {
       payVisible: false,
+      qrcodePayVisible: false,
+      orderId: null,
+      codeUrl: null,
       plusPriceOptions: [
-        { unit: "周", amount: 49, label: "￥49 RMB / 周" },
-        { unit: "月", amount: 129, label: "￥129 RMB / 月" },
-        { unit: "年", amount: 999, label: "￥999 RMB / 年" },
+        { unit: '周', amount: 49, label: '￥49 RMB / 周' },
+        { unit: '月', amount: 129, label: '￥129 RMB / 月' },
+        { unit: '年', amount: 999, label: '￥999 RMB / 年' }
       ],
-      plusPriceDisplay: { unit: "月", amount: 129 },
+      plusPriceDisplay: { unit: '月', amount: 129 }
     };
   },
   methods: {
     toGenerate() {
-      this.$router.push("/generate");
+      this.$router.push('/generate');
     },
     toAboutUs() {
-      this.$router.push("/aboutus");
+      this.$router.push('/aboutus');
     },
     handlePayClose() {
       this.payVisible = false;
@@ -394,7 +374,32 @@ export default {
         this.plusPriceDisplay = { unit: found.unit, amount: found.amount };
       }
     },
-  },
+    handleQRCodePayAction() {
+      this.payVisible = false;
+      // TODO 提交订单获取code_url
+      // 这里可以添加支付逻辑
+      this.qrcodePayVisible = true;
+    },
+    // 使用qrcode lib生成二维码
+    generateQRCode() {
+      const canvas = document.getElementById('qrCodeCanvas');
+      if (!canvas) return;
+      // reset canvas
+      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+      // 创建二维码
+      QRCode.toCanvas(canvas, 'https://example.com/pay', {
+        width: 150,
+        height: 150
+      }, function(error) {
+        if (error) console.error(error);
+        console.log('success!');
+      });
+    },
+    handleQRCodePayClose() {
+      this.qrcodePayVisible = false;
+      // TODO 处理支付关闭逻辑
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -510,13 +515,12 @@ export default {
   font-size: 18px;
 }
 
-.subscription-compare-container{
+.subscription-compare-container {
   width: 100%;
- margin: 0px auto;
- display: flex;
- justify-content: space-between;
- padding-right: 26px;
-
+  margin: 0px auto;
+  display: flex;
+  justify-content: space-between;
+  padding-right: 26px;
 }
 
 .subscription-compare-content-item{
@@ -782,5 +786,85 @@ table tbody tr:nth-child(odd) {
 ::v-deep .el-dropdown-menu__item:hover {
   background: #ccc;
   color: #fff
+}
+
+/* 支付二维码对话框样式 */
+.pay-dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  min-height: 200px;
+}
+
+.pay-dialog-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px 0;
+}
+
+.pay-dialog-body canvas {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.pay-dialog-body span {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+}
+
+.pay-dialog-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px 0;
+  border-top: 1px solid #f0f0f0;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-left .desc {
+  font-size: 12px;
+  color: #999;
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.footer-right div {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.footer-right span:first-child {
+  color: #666;
+  margin-right: 8px;
+}
+
+.footer-right span:nth-child(2) {
+  color: #ff4d4f;
+  font-size: 12px;
+}
+
+.footer-right span:last-child {
+  color: #ff4d4f;
+  font-size: 18px;
+  font-weight: 600;
 }
 </style>
