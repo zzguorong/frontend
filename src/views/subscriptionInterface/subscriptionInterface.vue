@@ -49,7 +49,7 @@
               </div>
               <div class="subscription-text">GAIA_PLUS</div>
               <div class="subscription-description">
-                为进阶人士和进阶人士打造
+                为专业人士与小型团队打造
               </div>
               <!-- 下拉选择价格周期 -->
               <el-dropdown trigger="click" @command="handlePlusPriceChange" class="price-dropdown">
@@ -71,7 +71,7 @@
                 专为中小团队项目周期优化，服务期内畅享稳定服务、高清输出与参数保留功能。适配方案迭代、阶段呈现与成果整合等全流程，助力团队高效推进设计进度。
               </div>
 
-              <div class="subscription-btn" style="background: #9a9a9a" @click="payVisible = true">
+              <div class="subscription-btn"  @click="payVisible = true">
                 订阅计划
               </div>
               <div class="subscription-detail-list">
@@ -97,12 +97,6 @@
                   <li>
                     <svg-icon icon-class="check" class="check-icon"></svg-icon>生图排队优先权
                   </li>
-                  <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>专属用户培训计划
-                  </li>
-                  <li>
-                    <svg-icon icon-class="check" class="check-icon"></svg-icon>专属技术咨询支持
-                  </li>
                 </ul>
               </div>
             </div>
@@ -117,7 +111,7 @@
                 GAIA_Business
               </div>
               <div class="subscription-description" style="color: #000">
-                为专家人士和专家人士打造
+                为专业机构与中大型企业、事务所打造
               </div>
               <div class="subscription-price">咨询客服</div>
               <div class="subscription-detail">
@@ -248,7 +242,7 @@
         </div>
       </div>
       <!-- 生成次数 -->
-      <div v-if="payVisible">
+      <div >
         <div class="subscription-interface-compare">订阅计划对比</div>
 
         <table>
@@ -480,7 +474,7 @@ export default {
 .subscription-btn {
   font-size: 20px;
   color: #fff;
-  background: #cecece;
+  background: #000;
   text-align: center;
   padding: 10px 0;
   border-radius: 20px;

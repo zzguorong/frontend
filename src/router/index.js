@@ -71,6 +71,11 @@ export const constantRoutes = [
     component: () => import("@/views/loginInterface/termOfservice"),
     hidden: true,
   },
+  {
+    path: "/privacyPolicy",
+    component: () => import("@/views/loginInterface/privacyPolicy"),
+    hidden: true,
+  },
 
   {
     path: "/",
@@ -140,7 +145,8 @@ export const constantRoutes = [
       {
         path: "",
         name: "communityExploration",
-        component: () => import("@/views/communityExploration/communityExploration"),
+        component: () =>
+          import("@/views/communityExploration/communityExploration"),
         meta: { title: "社区探索", icon: "communityExploration" },
       },
     ],
@@ -211,9 +217,9 @@ export const constantRoutes = [
   },
   // 微信扫码回调路由
   {
-    path: '/auth/wechat/callback',
-    component: () => import('@/views/wechatCallback/index.vue'),
-    hidden: true
+    path: "/auth/wechat/callback",
+    component: () => import("@/views/wechatCallback/index.vue"),
+    hidden: true,
   },
 
   // 404 page must be placed at the end !!!
@@ -222,7 +228,7 @@ export const constantRoutes = [
 
 const createRouter = () =>
   new Router({
-    mode: 'history', // 启用 HTML5 history 模式，支持微信回调等不带 # 的路径
+    mode: "history", // 启用 HTML5 history 模式，支持微信回调等不带 # 的路径
     scrollBehavior: () => ({ y: 0 }),
     routes: constantRoutes,
   });
