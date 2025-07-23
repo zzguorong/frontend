@@ -637,18 +637,19 @@ export default {
         !this.$route.query.id &&
         this.galleryItems.length > 0
       ) {
-        // 找到最后一个日期组
-        const lastDateIndex = this.galleryItems.length - 1;
-        const lastDateGroup = this.galleryItems[lastDateIndex];
+        // 显示第一个日期组
+        // 找到第一个日期组
+        const firstDateIndex = 0;
+        const firstDateGroup = this.galleryItems[firstDateIndex];
 
-        // 确保最后一个日期组有图片
-        if (lastDateGroup.galleryItem.length > 0) {
-          // 找到该日期组内的最后一个项目
-          const lastItemIndex = lastDateGroup.galleryItem.length - 1;
+        // 确保第一个日期组有图片
+        if (firstDateGroup.galleryItem.length > 0) {
+          // 找到该日期组内的第一个项目
+          const firstItemIndex = 0;
           // 计算全局索引
-          const globalIndex = this.getGlobalIndex(lastDateIndex, lastItemIndex);
-          // 选中最后一张图片
-          this.selectGalleryItem(globalIndex, lastDateIndex, lastItemIndex);
+          const globalIndex = this.getGlobalIndex(firstDateIndex, firstItemIndex);
+          // 选中第一个图片
+          this.selectGalleryItem(globalIndex, firstDateIndex, firstItemIndex);
         }
       }
     });
