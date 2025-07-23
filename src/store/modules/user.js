@@ -2,7 +2,7 @@
 import { getInfo } from '@/api/user';
 import { getToken, setToken, removeToken } from '@/utils/auth';
 import { resetRouter } from '@/router';
-import { login, phoneLogin, userLogout } from '@/api/index';
+import { login, phoneLogin, wechatLogin, userLogout } from '@/api/index';
 
 const getDefaultState = () => {
   return {
@@ -30,22 +30,6 @@ const mutations = {
 };
 
 const actions = {
-  // user login
-  // login({ commit }, userInfo) {
-  //   const { username, password } = userInfo;
-  //   return new Promise((resolve, reject) => {
-  //     login({ username: username.trim(), password: password })
-  //       .then((response) => {
-  //         const { data } = response;
-  //         commit("SET_TOKEN", data.token);
-  //         setToken(data.token);
-  //         resolve();
-  //       })
-  //       .catch((error) => {
-  //         reject(error);
-  //       });
-  //   });
-  // },
   // 手机号加验证码登录
   phoneLogin({ commit }, userInfo) {
     const { phone, code } = userInfo;
@@ -82,6 +66,21 @@ const actions = {
         })
         .catch((error) => {
           console.log('error', error);
+          reject(error);
+        });
+    });
+  },
+  // 微信登录
+  wechatLogin({ commit }, authInfo) {
+    const { code } = authInfo;
+    return new Promise((resolve, reject) => {
+      wechatLogin({ code })
+        .then((response) => {
+          commit('SET_TOKEN', response.access_token);
+          setToken(response.access_token);
+          resolve();
+        })
+        .catch((error) => {
           reject(error);
         });
     });

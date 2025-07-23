@@ -5,37 +5,51 @@
 </template>
 
 <script>
-import request from '@/utils/request'
 export default {
   name: 'WechatCallback',
   created() {
-    console.log('完整URL:', window.location.href)
-    console.log('路由查询参数:', this.$route.query)
+    console.log('完整URL:', window.location.href);
+    console.log('路由查询参数:', this.$route.query);
 
     // 从路由查询参数获取code和state（通过中间页面传递）
-    const { code, state } = this.$route.query
+    const { code, state } = this.$route.query;
 
-    console.log('获取到的 code,state:', code, state)
+    // 验证wechatLoginState
+    const storedState = sessionStorage.getItem('wechatLoginState');
+    if (state !== storedState) {
+      console.error('状态验证失败，可能是CSRF攻击');
+      this.$message.error('微信登录失败，状态验证失败');
+      setTimeout(() => {
+        this.$router.replace('/login');
+      }, 1000);
+      return;
+    }
 
     if (!code) {
-      console.error('未获取到微信授权码')
-      this.$message.error('微信登录失败，未获取到授权码')
+      console.error('未获取到微信授权码');
+      this.$message.error('微信登录失败，未获取到授权码');
       setTimeout(() => {
-        this.$router.replace('/loginInterface')
-      }, 2000)
-      return
+        this.$router.replace('/login');
+      }, 1000);
+      return;
     }
-    request.post('/api/wechat_login', { code, state })
+
+    this.$store.dispatch('user/wechatLogin', { code })
       .then(() => {
-        this.$message.success('登录成功')
-        this.$router.replace('/')
+        this.$message.success('登录成功');
+        setTimeout(() => {
+          this.$router.replace('/');
+        }, 1000);
       })
-      .catch(() => {
-        this.$message.error('微信登录失败')
-        this.$router.replace('/loginInterface')
-      })
+      .catch((error) => {
+        console.error('微信登录失败:', error);
+        this.$message.error('微信登录失败，请稍后重试');
+        setTimeout(() => {
+          this.$router.replace('/login');
+        }, 1000);
+      });
   }
-}
+};
 </script>
 
 <style scoped>

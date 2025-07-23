@@ -75,22 +75,6 @@ export function getGalleryImages(params) {
     params,
   });
 }
-// 获取微信登录地址
-export function getWechatLoginUrl(params) {
-  return request({
-    url: "/auth/wechat",
-    method: "get",
-    params,
-  });
-}
-// 微信登录
-export function wechatLogin(data) {
-  return request({
-    url: "/wechat_login",
-    method: "post",
-    data,
-  });
-}
 
 // 获取用户信息
 export function getUserInfo() {

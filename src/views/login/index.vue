@@ -177,8 +177,8 @@
 </template>
 
 <script>
-import { getWechatLoginUrl, wechatLogin } from '@/api/generate';
 import { sendSmsCode } from '@/api/index';
+import { generateRandomString } from '@/utils/index';
 export default {
   name: 'LoginInterface',
   data() {
@@ -222,8 +222,7 @@ export default {
       },
       countDown: 0,
       agree: false,
-      timer: null,
-      wxLoginLoaded: false
+      timer: null
     };
   },
 
@@ -236,27 +235,26 @@ export default {
     }
   },
   mounted() {
-    getWechatLoginUrl().then((res) => {
-      console.log(res);
-    });
-    // this.initWechatLogin();
-    // this.startWechatLogin();
+    const state = generateRandomString();
+    // 保存state到会话存储，以便后续验证
+    sessionStorage.setItem('wechatLoginState', state);
+    // 初始化微信登录二维码
     new WxLogin({
-      self_redirect: true, // 默认为false(保留当前二维码)  true(当前二维码所在的地方通过iframe 内跳转到 redirect_uri)
+      self_redirect: false, // 默认为false(保留当前二维码)  true(当前二维码所在的地方通过iframe 内跳转到 redirect_uri)
       id: 'wechat-login-container', // 容器的id
       appid: 'wxaebb39450f19b3fa', // 应用唯一标识，在微信开放平台提交应用审核通过后获得
       scope: 'snsapi_login', // 应用授权作用域，拥有多个作用域用逗号（,）分隔，网页应用目前仅填写snsapi_login即可
       redirect_uri: encodeURIComponent(
-        'https://www.gaiass.com/api/auth/wechat/callback'
+        'https://www.gaiass.com/auth/wechat/callback'
       ), // 扫完码授权成功跳转到的路径
-      state: 'STATE', // 用于保持请求和回调的状态，授权请求后原样带回给第三方。该参数可用于防止 csrf 攻击（跨站请求伪造攻击），建议第三方带上该参数，可设置为简单的随机数加 session 进行校验
+      state: state, // 用于保持请求和回调的状态，授权请求后原样带回给第三方。该参数可用于防止 csrf 攻击（跨站请求伪造攻击），建议第三方带上该参数，可设置为简单的随机数加 session 进行校验
       style: 'white' // 提供"black"、"white"可选，默认为黑色文字描述
     });
     // 渲染完二维码后缩放到 100×100
     this.$nextTick(() => {
       setTimeout(this.adjustQrIframe, 100);
     });
-    const code = this.getUrlParam('code');
+    window.addEventListener('resize', this.adjustQrIframe);
   },
   beforeDestroy() {
     this.timer && clearInterval(this.timer);
@@ -358,67 +356,6 @@ export default {
         .catch(() => {
           this.loading = false;
         });
-    },
-    //   try {
-    //     const res = await getWechatLoginUrl();
-    //     // 跳转到微信扫码页（或iframe嵌入）
-    //     this.initWechatLogin();
-    //   } catch (error) {
-    //     console.error("获取微信登录地址失败", error);
-    //   }
-    // },
-    // initWechatLogin() {
-    //   // 若脚本已存在直接渲染
-    //   if (window.WxLogin) {
-    //     this.renderWxLogin();
-    //     return;
-    //   }
-
-    //   // 动态加载官方脚本
-    //   const script = document.createElement("script");
-    //   script.src =
-    //     "https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js";
-    //   script.onload = () => {
-    //     this.wxLoginLoaded = true;
-    //     this.renderWxLogin();
-    //   };
-    //   document.body.appendChild(script);
-    // },
-
-    // renderWxLogin() {
-    //   if (!window.WxLogin) return;
-    //   const appid = "wxaebb39450f19b3fa";
-    //   // 重定向到前端页面处理微信回调
-    //   const redirect_uri = encodeURIComponent(
-    //     "https://www.gaiass.com/api/auth/wechat/callback"
-    //   );
-    //   const state = "wx_" + Date.now();
-
-    //   /* global WxLogin */
-    //   new WxLogin({
-    //     id: "wechat-login-container",
-    //     appid,
-    //     scope: "snsapi_login",
-    //     redirect_uri,
-    //     state,
-    //     style: "", // 纯二维码，无标题
-    //     self_redirect: false,
-    //   });
-    //   // ⬇️ 关键：等待 iframe 插入后做位置 / 缩放调整
-    //   this.$nextTick(() => {
-    //     setTimeout(this.adjustQrIframe, 500); // 首次
-    //     window.addEventListener("resize", this.adjustQrIframe); // 浏览器缩放时重算
-    //   });
-    // },
-    getUrlParam(name) {
-      const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)');
-      const r = window.location.search.substr(1).match(reg);
-      if (r != null) {
-        // ok
-        return unescape(r[2]);
-      }
-      // false
-      return null;
     },
     adjustQrIframe() {
       const box = this.$refs.qrBox;
