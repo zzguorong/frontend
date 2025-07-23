@@ -328,7 +328,7 @@
       <div slot="footer" class="pay-dialog-footer">
         <div class="footer-left">
           <i class="el-icon-alarm-clock" />
-          <span class="desc">支付剩余时间：00:43:51</span>
+          <span class="desc">支付剩余时间：{{ remainingTimeString }}</span>
         </div>
         <div class="footer-right">
           <div>
@@ -355,8 +355,20 @@ export default {
         { unit: '月', amount: 129, label: '￥129 RMB / 月' },
         { unit: '年', amount: 999, label: '￥999 RMB / 年' }
       ],
-      plusPriceDisplay: { unit: '月', amount: 129 }
+      plusPriceDisplay: { unit: '月', amount: 129 },
+      remainingTime: 0, // 支付剩余时间
+      remainingTimeString: '',
+      remainingTimeTimer: null, // 定时器
+      monitorOrderInterval: null // 监控订单状态的定时器
     };
+  },
+  destroyed() {
+    if (this.remainingTimeTimer) {
+      clearInterval(this.remainingTimeTimer);
+    }
+    if (this.monitorOrderInterval) {
+      clearInterval(this.monitorOrderInterval);
+    }
   },
   methods: {
     toGenerate() {
@@ -377,6 +389,8 @@ export default {
     handleQRCodePayAction() {
       this.payVisible = false;
       // TODO 提交订单获取code_url
+      this.orderId = '123456789'; // 模拟订单ID
+      this.codeUrl = 'https://example.com/pay'; // 模拟支付链接
       // 这里可以添加支付逻辑
       this.qrcodePayVisible = true;
     },
@@ -387,17 +401,67 @@ export default {
       // reset canvas
       canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
       // 创建二维码
-      QRCode.toCanvas(canvas, 'https://example.com/pay', {
+      QRCode.toCanvas(canvas, this.codeUrl, {
         width: 150,
         height: 150
       }, function(error) {
         if (error) console.error(error);
         console.log('success!');
       });
+      // 启动支付定时器和订单监控
+      this.startPaymentTimer();
+      this.startMonitorOrder();
     },
     handleQRCodePayClose() {
       this.qrcodePayVisible = false;
       // TODO 处理支付关闭逻辑
+      // stop timers
+      if (this.remainingTimeTimer) {
+        clearInterval(this.remainingTimeTimer);
+      }
+      if (this.monitorOrderInterval) {
+        clearInterval(this.monitorOrderInterval);
+      }
+      this.remainingTime = 0;
+      this.remainingTimeString = '';
+      this.orderId = null;
+      this.codeUrl = null;
+    },
+    startPaymentTimer() {
+      this.remainingTime = 60 * 60; // 1小时
+      this.remainingTimeTimer = setInterval(() => {
+        if (this.remainingTime > 0) {
+          this.remainingTime--;
+          // 更新支付剩余时间显示
+          const hours = String(Math.floor(this.remainingTime / 3600)).padStart(2, '0');
+          const minutes = String(Math.floor((this.remainingTime % 3600) / 60)).padStart(2, '0');
+          const seconds = String(this.remainingTime % 60).padStart(2, '0');
+          this.remainingTimeString = `${hours}:${minutes}:${seconds}`;
+        } else {
+          clearInterval(this.remainingTimeTimer);
+          this.qrcodePayVisible = false; // 支付超时关闭对话框
+        }
+      }, 1000);
+    },
+    startMonitorOrder() {
+      this.monitorOrderInterval = setInterval(() => {
+        // TODO: 轮询订单状态
+        // 模拟订单状态检查
+        console.log('Checking order status for order ID:', this.orderId);
+        // 假设支付成功后调用handlePaymentSuccess
+        // 这里可以添加实际的订单状态检查逻辑
+        // 如果支付成功，调用handlePaymentSuccess
+        // this.handlePaymentSuccess();
+      }, 1000);
+    },
+    // 假设支付成功后调用
+    handlePaymentSuccess() {
+      clearInterval(this.remainingTimeTimer);
+      clearInterval(this.monitorOrderInterval);
+      this.qrcodePayVisible = false;
+      this.$message.success('支付成功！');
+      // 跳转到用户界面
+      this.$router.push('/userInterface/userInterface');
     }
   }
 };
