@@ -21,12 +21,25 @@
             HUB进行创作。
           </div>
           <el-form ref="registerForm" :model="form" class="phone-input-line" :rules="rules">
-            <el-form-item prop="phone">
+            <div class="phone-input">
+            <el-form-item prop="phonePrefix" class="phone-prefix">
+                  <el-select
+                    v-model="form.phonePrefix"
+                    class="phone-prefix"
+                    size="large"
+                    popper-class="phone-prefix-select"
+                  >
+                    <el-option label="+86" value="+86" />
+                    <!-- 可扩展其他区号 -->
+                  </el-select>
+                </el-form-item>
+            <el-form-item prop="phone" class="phone">
               <el-input
                 v-model="form.phone"
                 placeholder="请输入手机号"
               />
             </el-form-item>
+          </div>
             <el-form-item prop="password">
               <el-input
                 v-model="form.password"
@@ -94,6 +107,7 @@ export default {
     return {
       loading: false,
       form: {
+        phonePrefix: '+86',
         phone: '',
         password: '',
         confirmPassword: '',
@@ -253,6 +267,17 @@ export default {
 }
 .phone-input-line {
   width: 320px;
+
+  .phone-input{
+    display: flex;
+
+    .phone-prefix{
+      flex: 1;
+    }
+    .phone{
+      flex: 3;
+    }
+  }
 }
 .tab-content {
   width: 100%;

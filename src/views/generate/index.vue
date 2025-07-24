@@ -101,33 +101,32 @@
                     size="medium"></el-checkbox>
                 </div>
                 <div class="download-controls">
-                  <div @click="downloadJPG" style="
-                      height: 35px;
-                      line-height: 35px;
-                      border: 1px solid #dcdfe6;
-                      border-radius: 5px;
-                      width: 120px;
-                      font-size: 12px;
-                      text-align: center;
-                      margin-left: 5px;
-                      background-color: #fff;
-                      cursor: pointer;
-                    ">
-                    JPG下载
+                  <div @click="downloadPNG(previewImage)" :style="{
+                    height: '35px',
+                    lineHeight: '35px',
+                    border: '1px solid #dcdfe6',
+                    borderRadius: '5px',
+                    width: '120px',
+                    fontSize: '12px',
+                    textAlign: 'center',
+                    marginLeft: '5px',
+                    cursor: previewImage ? 'pointer' : 'not-allowed',
+                    backgroundColor: previewImage ? '#fff' : '#ccc'
+                  }">
+                    PNG下载
                   </div>
-                  <div @click="downloadPSD" style="
-                      height: 35px;
-                      line-height: 35px;
-                      border: 1px solid #dcdfe6;
-                      border-radius: 5px;
-                      width: 120px;
-                      text-align: center;
-                      font-size: 12px;
-                      background-color: #ccc;
-                      cursor: pointer;
-                      position: relative;
-                      cursor: not-allowed;
-                    ">
+                  <div @click="downloadPSD" :style="{
+                     height: '35px',
+                    lineHeight: '35px',
+                    border: '1px solid #dcdfe6',
+                    borderRadius: '5px',
+                    width: '120px',
+                    fontSize: '12px',
+                    textAlign: 'center',
+                    marginLeft: '5px',
+                      cursor: canClickPsd ? 'pointer' : 'not-allowed',
+                    backgroundColor: canClickPsd ? '#fff' : '#ccc' }"
+                    >
                     PSD下载
                     <el-tooltip content="PSD下载功能" placement="top">
                       <svg-icon icon-class="question" class="icon-style"
@@ -445,7 +444,7 @@
                           <span class="tool-buttons-item-text">清空<svg-icon icon-class="clear-area" /></span>
                         </div>
                         <div class="tool-buttons-item" @click="undoCanvas">
-                          <span class="tool-buttons-item-text">撤销<svg-icon icon-class="clear-area" /></span>
+                          <span class="tool-buttons-item-text">撤销<svg-icon icon-class="undo" /></span>
                         </div>
                       </div>
                     </div>
@@ -495,15 +494,17 @@ import GlobalMask from '../../layout/components/GlobalMask.vue';
 
 // import laravelEcho from "@/utils/laravel-echo";
 import {
-collectImage,
-deleteGeneratedImage,
-deleteImage,
-generateImages,
-getImageDetail,
-getPerspectiveStyle,
-preprocessSegment
+  collectImage,
+  deleteGeneratedImage,
+  deleteImage,
+  generateImages,
+  getImageDetail,
+  getPerspectiveStyle,
+  preprocessSegment
 } from "@/api/generate";
 import { blobUrlToBase64 } from "@/utils/index";
+import { downloadPNG } from "@/utils/downLoad";
+
 
 export default {
   name: "GenerateFile",
@@ -513,7 +514,7 @@ export default {
       // 基础控制
       promptText: "",
       viewType: 1, // 选择的视角类型
-      styleCategory: "",
+      styleCategory: "选项1",
       perspectiveOptions: [],// 视角类型
       // 风格类别配置
       styleOptions: [{
@@ -656,6 +657,14 @@ export default {
   computed: {
     // 将 Vuex 中保存的参数映射到本组件
     ...mapState("generation", ["generationParams"]),
+    canClickPsd() {
+      // 遍历thumbnails找到和图像展示区展示的是生成的图地址一样并且有语义分割图才可以点击
+
+            return this.thumbnails.some(item => {
+      return item.url === this.previewImage && item.segmentation
+    })
+
+    }
   },
   created() {
     // laravelEcho.connector.pusher.connection.bind("connected", () => {
@@ -686,10 +695,13 @@ export default {
     },
     // 风格迁移隐藏时将控制程度置0
     styleTransferEnabled(val) {
-      if (!val) {
+      if (val) {
+        //非我的项目传值控制
+        if (this.styleTransferLevel === 0) {
+          this.progress = 5;
+        }
+      } else {
         this.styleTransferLevel = 0;
-      }else{
-        this.styleTransferLevel = 5;
       }
     },
     // 以下字段变化时实时保存到 Vuex
@@ -762,6 +774,7 @@ export default {
     this.applyStoredParams();
   },
   methods: {
+    downloadPNG,
     // 将 Vuex mutation 映射为本地方法
     ...mapMutations("generation", { setParams: "setGenerationParams" }),
 
@@ -771,6 +784,7 @@ export default {
     },
     // 页面激活或首次进入时，把 Vuex 中存储的参数写回表单
     applyStoredParams() {
+      console.log("applyStoredParams");
       const p = this.generationParams || {};
       if (!Object.keys(p).length) return;
 
@@ -780,11 +794,21 @@ export default {
         // 更新风格选项后再赋值类别
         this.updateStyleOptions();
       }
-      if (p.styleCategory) this.styleCategory = p.styleCategory;
+      // if (p.styleCategory) this.styleCategory = p.styleCategory; 风格类固定显示通用
       if (p.resolution) this.resolution = p.resolution;
       if (p.aspectRatio) this.aspectRatio = p.aspectRatio;
-      if (p.styleTransferLevel) this.styleTransferLevel = p.styleTransferLevel;
+      // 风格迁移控制程度：不为0开启
+      if (p.semanticImgUrlId) {
+        this.styleTransferLevel = p.styleTransferLevel;
+        this.styleTransferEnabled = true;
+      }
+
       if (p.baseControlLevel) this.baseControlLevel = p.baseControlLevel;
+      // 清空画廊
+      this.thumbnails = Array.from({ length: 6 }, (_, i) => ({
+        url: null,
+        id: `thumb-${i + 1}`   // 用反引号包裹整个字符串
+      }));
       if (p.basemapUrl) {
         this.basemapUrl = p.basemapUrl;
         // 更新缩略图第一个位置（底图）
@@ -800,7 +824,7 @@ export default {
       if (p.basemapUrlId) {
         this.basemapUrlId = p.basemapUrlId;
       }
-
+      log
       if (p.semanticImgUrlId) {
         this.semanticImgUrlId = p.semanticImgUrlId;
       }
@@ -821,6 +845,7 @@ export default {
         return;
       }
       const rawFiles = this.$refs.uploadRef.getRawFiles();
+      console.log("rawFiles", rawFiles);
       // 调用后端接口获取 base64 图
       preprocessSegment(rawFiles[0]).then((res) => {
         console.log("automaticRecognition", res);
@@ -946,23 +971,13 @@ export default {
     //     this.tableData = res.data.list;
     //   });
     // },
-    // 元素类别映射
-    viewTypeFormat(row) {
-      const statusMap = {
-        1: "鸟瞰图",
-        2: "人视图",
-        3: "平面图",
-        4: "室内图",
-      };
-      return statusMap[row] || "";
-    },
     styleFormat(row) {
       const statusMap = {
         1: "通用",
       };
       return statusMap[row] || "";
     },
-    // 初始化风格类别
+    // // 初始化风格类别
     initializeStyleCategory() {
       const options = this.styleOptions;
       if (options.length > 0 && !this.styleCategory) {
@@ -1025,6 +1040,16 @@ export default {
       }
       // 风格图开关关闭时不传入
       if (this.styleTransferEnabled) {
+        if (!this.styleImageId) {
+          this.$message.warning("启用风格迁移时请上传风格图");
+          return;
+        }
+
+        if (this.styleTransferLevel === 0) {
+          this.$message.warning("风格迁移控制程度 > 0 时才能启用风格迁移");
+          return;
+        }
+
         payload.style_image_control_weight = this.styleTransferLevel;
         payload.style_image_id = this.styleImageId;
       }
@@ -1049,7 +1074,7 @@ export default {
         }
       } else {
         // 如果没有启用语义分割，则不传递 segment_image 字段
-        payload.segment_image = null;
+        // payload.segment_image = null;
       }
 
       // 3. 开始请求前：设置状态 + 显示遮罩
@@ -1095,7 +1120,7 @@ export default {
               const imageUrls = res.data.generated_images.map((item) => item);
               imageUrls.forEach((item, idx) => {
                 // 生成图倒序排列，索引为2
-                this.thumbnails.splice(2, 1, item);
+                this.thumbnails.splice(2, 1, {...item,semanticImgUrlId: res.data.segment_image_id});
               });
               this.cleanup()
               // 保存 语义分割图
@@ -1103,7 +1128,6 @@ export default {
               if (res.data && res.data.segment_image_id) {
                 this.semanticImgUrlId = res.data.segment_image_id;
               }
-
               this.$message.success("图片生成完成！");
             } else if (status === "failed") {
               clearInterval(this.pollingTimer);
@@ -1162,19 +1186,6 @@ export default {
           : null,
         lasso: this.fixedPoints,
       };
-    },
-
-    // 下载功能
-    downloadJPG() {
-      // 下载图像展示区展示的页面
-      this.$message.success("开始下载JPG格式");
-      const link = document.createElement('a');
-      link.href = this.previewImage;
-      link.download =  'image.png';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      this.$message.success("开始下载JPG格式");
     },
 
     downloadPSD() { },
@@ -3601,6 +3612,7 @@ export default {
   gap: 8px;
   flex-direction: column;
 }
+
 /* 公共样式：选择视角/模式的按钮 */
 .select-type {
   position: relative;
@@ -3614,8 +3626,10 @@ export default {
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #000; /* 默认字体颜色 */
-  background-color: #fff; /* 默认背景色 */
+  color: #000;
+  /* 默认字体颜色 */
+  background-color: #fff;
+  /* 默认背景色 */
 }
 
 /* 自动检测状态 */

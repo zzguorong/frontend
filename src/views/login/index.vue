@@ -115,16 +115,28 @@
           <div v-else class="tab-content password-login">
             <el-form ref="passwordLoginForm" :model="passwordLoginForm" :rules="passwordLoginFormRules">
               <p class="code-label">仅支持手机号登录</p>
+              <div class="phone-input-line">
+              <el-form-item prop="phonePrefix">
+                  <el-select
+                    v-model="phoneLoginForm.phonePrefix"
+                    class="phone-prefix"
+                    size="large"
+                    popper-class="phone-prefix-select"
+                  >
+                    <el-option label="+86" value="+86" />
+                    <!-- 可扩展其他区号 -->
+                  </el-select>
+                </el-form-item>
               <!-- 手机号 + 区号输入 -->
-              <el-form-item prop="phone">
+              <el-form-item prop="phone"       class="phone-input">
                 <el-input
                   v-model="passwordLoginForm.phone"
                   placeholder="请输入手机号"
                   size="large"
-                  class="phone-input"
+
                 />
               </el-form-item>
-
+            </div>
               <p class="code-label">输入密码</p>
               <el-form-item prop="password">
                 <el-input

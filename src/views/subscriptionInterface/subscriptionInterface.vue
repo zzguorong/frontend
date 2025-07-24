@@ -35,19 +35,19 @@
                     <svg-icon icon-class="check" class="check-icon" />当日3次语义分割工具包使用次数
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon" />当日3次JPG下载次数
+                    <svg-icon icon-class="check" class="check-icon" />当日3次PNG下载次数
                   </li>
                 </ul>
               </div>
             </div>
           </el-col>
-          <!-- GAIA_PLUS -->
+          <!-- GAIA Plus -->
           <el-col :span="8">
             <div class="subscription-interface-card">
               <div class="subscription-interface-card-title" style="background: #9a9a9a">
-                GAIA_PLUS
+                GAIA Plus
               </div>
-              <div class="subscription-text">GAIA_PLUS</div>
+              <div class="subscription-text">GAIA Plus</div>
               <div class="subscription-description">
                 为专业人士与小型团队打造
               </div>
@@ -90,7 +90,7 @@
                     <svg-icon icon-class="check" class="check-icon" />服务期内无限语义分割工具包使用次数
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon" />服务期内无限JPG下载次数
+                    <svg-icon icon-class="check" class="check-icon" />服务期内无限PNG下载次数
                   </li>
                   <li>
                     <svg-icon icon-class="check" class="check-icon" />服务期内无限PSD下载次数
@@ -102,14 +102,14 @@
               </div>
             </div>
           </el-col>
-          <!-- GAIA_Business -->
+          <!-- GAIA Business -->
           <el-col :span="8">
             <div class="subscription-interface-card">
               <div class="subscription-interface-card-title" style="background: #000">
-                GAIA_Business
+                GAIA Business
               </div>
               <div class="subscription-text" style="color: #000">
-                GAIA_Business
+                GAIA Business
               </div>
               <div class="subscription-description" style="color: #000">
                 为专业机构与中大型企业、事务所打造
@@ -145,7 +145,7 @@
                     <svg-icon icon-class="check" class="check-icon" />服务期内无限语义分割工具包使用次数
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon" />服务期内无限JPG下载次数
+                    <svg-icon icon-class="check" class="check-icon" />服务期内无限PNG下载次数
                   </li>
                   <li>
                     <svg-icon icon-class="check" class="check-icon" />服务期内无限PSD下载次数
@@ -226,7 +226,7 @@
             >无限</span>
           </div>
           <div class="item-word">
-            <span class="item-word-title">JPG下载</span>
+            <span class="item-word-title">PNG下载</span>
             <span class="item-word-item">3次</span><span class="item-word-item">当周无限</span><span
               class="item-word-item"
             >当月无限</span><span class="item-word-item">当年无限</span><span
