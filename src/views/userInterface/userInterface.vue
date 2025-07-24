@@ -23,14 +23,14 @@
             </div>
             <div class="account-form">
               微信绑定
-              <el-button class="btn-wx-check" type="primary" disabled="userInfo.wechat_openid" style="width: 15%">
-                <template v-if="!userInfo.wechat_openid">
+              <template v-if="!userInfo.wechat_openid">
+                <el-button class="btn-wx-check" type="primary" style="width: 15%" @click="wechatBindingDialogVisible = true">
                   <span>微信验证</span>
-                </template>
-                <template v-else>
-                  <span>已绑定</span>
-                </template>
-              </el-button>
+                </el-button>
+              </template>
+              <template v-else>
+                <span>已绑定</span>
+              </template>
             </div>
           </el-form>
         </div>
@@ -134,6 +134,24 @@
       <span class="agree-word footer-link" @click="handleTermOfservice">服务条款</span>
       <span class="agree-word footer-link" @click="handlePrivacyPolicy">隐私政策</span>
     </div>
+
+    <el-dialog
+      :visible.sync="wechatBindingDialogVisible"
+      title="微信验证"
+      width="400px"
+      :before-close="handleWechatBindingDialogClose"
+      :show-close="true"
+      :lock-scroll="false"
+      :destroy-on-close="true"
+      @opened="generateWechatLoginQRCode"
+    >
+      <div class="wechat-binding-dialog-content">
+        <div class="wechat-binding-dialog-body">
+          <div id="wechat-login-container" />
+          <span>请使用微信扫码</span>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -143,6 +161,7 @@ import {
 getUserInfo
 } from "@/api/generate";
 import { updatePassword } from '@/api/index';
+import { generateRandomString } from '@/utils/index';
 
 export default {
   name: "UserInterface",
@@ -177,7 +196,8 @@ export default {
           }, trigger: 'blur' }
         ]
       },
-      loading: false
+      loading: false,
+      wechatBindingDialogVisible: false,
     };
   },
   async created() {
@@ -224,6 +244,27 @@ export default {
     // 跳转隐私政策
     handlePrivacyPolicy() {
       this.$router.push('/privacyPolicy');
+    },
+    handleWechatBindingDialogClose() {
+      this.wechatBindingDialogVisible = false;
+    },
+    // 生成微信登录二维码
+    async generateWechatLoginQRCode() {
+      const state = generateRandomString();
+      // 保存state到会话存储，以便后续验证
+      sessionStorage.setItem('wechatLoginState', state);
+      // 初始化微信登录二维码
+      new WxLogin({
+        self_redirect: false, // 默认为false(保留当前二维码)  true(当前二维码所在的地方通过iframe 内跳转到 redirect_uri)
+        id: 'wechat-login-container', // 容器的id
+        appid: 'wxaebb39450f19b3fa', // 应用唯一标识，在微信开放平台提交应用审核通过后获得
+        scope: 'snsapi_login', // 应用授权作用域，拥有多个作用域用逗号（,）分隔，网页应用目前仅填写snsapi_login即可
+        redirect_uri: encodeURIComponent(
+          'https://www.gaiass.com/auth/wechat/callback?wechat_binding=true' // 授权成功后跳转的路径，必须是经过URL编码的
+        ), // 扫完码授权成功跳转到的路径
+        state: state, // 用于保持请求和回调的状态，授权请求后原样带回给第三方。该参数可用于防止 csrf 攻击（跨站请求伪造攻击），建议第三方带上该参数，可设置为简单的随机数加 session 进行校验
+        style: 'white' // 提供"black"、"white"可选，默认为黑色文字描述
+      });
     }
   }
 };
@@ -498,5 +539,30 @@ export default {
   font-weight: 600;
   border-bottom: 1px solid #000;
   cursor: pointer;
+}
+
+/* 微信验证二维码对话框样式 */
+.wechat-bind-dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  min-height: 200px;
+}
+
+.wechat-binding-dialog-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px 0;
+}
+
+.wechat-binding-dialog-body span {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
 }
 </style>

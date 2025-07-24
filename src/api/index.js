@@ -44,6 +44,15 @@ export function wechatLogin(data) {
   });
 }
 
+// 账户绑定微信
+export function bindWechat(data) {
+  return request({
+    url: '/bind_wechat',
+    method: 'post',
+    data
+  });
+}
+
 // 登出
 export function userLogout() {
   return request({
