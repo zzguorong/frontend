@@ -14,41 +14,47 @@
           <div class="main-card-title">
             <span>我的账户</span>
           </div>
-          <div class="account-form">
-            手机号码
-            <el-input v-model="userInfo.phone" disabled />
-          </div>
-          <div class="account-form">
-            微信绑定
-            <el-button class="btn-wx-check" type="primary" style="width: 35%">微信验证</el-button>
-          </div>
-
-
+          <el-form>
+            <div class="account-form">
+              手机号码
+              <el-form-item>
+                <el-input v-model="userInfo.phone" disabled />
+              </el-form-item>
+            </div>
+            <div class="account-form">
+              微信绑定
+              <el-button class="btn-wx-check" type="primary" style="width: 15%">微信验证</el-button>
+            </div>
+          </el-form>
         </div>
 
         <!-- 密码管理 -->
         <div class="main-card">
-
-
           <div class="password-section">
             <div class="main-card-title">密码管理
-              <el-button class="pwd-btn" type="primary" style="width: 15%">密码验证</el-button>
+              <el-button class="pwd-btn" type="primary" style="width: 15%" :loading="loading" @click="handlePasswordValidation">密码验证</el-button>
             </div>
 
-            <div class="account-form">
-              当前密码
-              <el-input v-model="passwordForm.current" show-password placeholder="请输入当前密码" />
-            </div>
-            <div class="account-form">
-              新密码
-              <el-input v-model="passwordForm.new" show-password placeholder="请输入新密码" />
-            </div>
-            <div class="account-form">
-              重复输入新密码
-              <el-input v-model="passwordForm.repeat" show-password placeholder="请再次输入密码" />
-            </div>
-
-
+            <el-form ref="resetPasswordForm" :model="resetPasswordForm" :rules="resetPasswordFormRules">
+              <div class="account-form">
+                当前密码
+                <el-form-item prop="password">
+                  <el-input type="password" v-model="resetPasswordForm.password" show-password placeholder="请输入当前密码" />
+                </el-form-item>
+              </div>
+              <div class="account-form">
+                新密码
+                <el-form-item prop="newPassword">
+                  <el-input type="password" v-model="resetPasswordForm.newPassword" show-password placeholder="请输入新密码" />
+                </el-form-item>
+              </div>
+              <div class="account-form">
+                重复输入新密码
+                <el-form-item prop="confirmNewPassword">
+                  <el-input type="password" v-model="resetPasswordForm.confirmNewPassword" show-password placeholder="请再次输入密码" />
+                </el-form-item>
+              </div>
+            </el-form>
 
             <div class="password-tips">
               <div>1. 密码长度不少于8个字符，最多不超过20个字符。</div>
@@ -118,8 +124,8 @@
     </div>
     <!-- 底部 -->
     <div class="footer-bar">
-      <span class="footer-link">隐私政策</span>
-      <span class="footer-link">服务条款</span>
+      <span class="agree-word footer-link" @click="handleTermOfservice">服务条款</span>
+      <span class="agree-word footer-link" @click="handlePrivacyPolicy">隐私政策</span>
     </div>
   </div>
 </template>
@@ -129,22 +135,42 @@
 import {
 getUserInfo
 } from "@/api/generate";
+import { updatePassword } from '@/api/index';
+
 export default {
   name: "UserInterface",
   data() {
     return {
       userInfo: {},
-      accountForm: {
-        username: "xxxxxxxx",
-        phone: "1885858585",
-        email: "",
+      resetPasswordForm: {
+        password: '',
+        newPassword: '',
+        confirmNewPassword: ''
       },
-      passwordForm: {
-        current: "",
-        new: "",
-        repeat: "",
+      resetPasswordFormRules: {
+        password: [
+          { required: true, message: '请输入当前密码', trigger: 'blur' }
+        ],
+        newPassword: [
+          { required: true, message: '请输入新密码', trigger: 'blur' },
+          // 密码长度不少于8个字符，最多不超过20个字符。
+          // 密码必须包含至少三类字符类型：大写字母、小写字母、数字、特殊符号。
+          { min: 8, max: 20, message: '密码长度必须在8-20位之间', trigger: 'blur' },
+          { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/, message: '密码必须包含至少三类字符类型：大写字母、小写字母、数字、特殊符号', trigger: 'blur' }
+        ],
+        confirmNewPassword: [
+          { required: true, message: '请确认新密码', trigger: 'blur' },
+          { min: 8, max: 20, message: '密码长度必须在8-20位之间', trigger: 'blur' },
+          { validator: (rule, value, callback) => {
+            if (value !== this.resetPasswordForm.newPassword) {
+              callback(new Error('两次输入的密码不一致'))
+            } else {
+              callback()
+            }
+          }, trigger: 'blur' }
+        ]
       },
-      // logoutVisible: false,
+      loading: false
     };
   },
   async created() {
@@ -154,10 +180,45 @@ export default {
     } catch (error) {
       console.log()
     }
-  }
-  ,
-  methods: {
   },
+  methods: {
+    // 处理密码验证
+    handlePasswordValidation() {
+      this.$refs.resetPasswordForm.validate(async(valid) => {
+        if (valid) {
+          try {
+            this.loading = true;
+            await updatePassword({
+              password: this.resetPasswordForm.password,
+              new_password: this.resetPasswordForm.newPassword,
+              new_password_comfirm: this.resetPasswordForm.confirmNewPassword,
+              new_password_confirm: this.resetPasswordForm.confirmNewPassword
+            });
+            this.$message.success('密码更新成功');
+            this.resetPasswordForm = {
+              password: '',
+              newPassword: '',
+              confirmNewPassword: ''
+            };
+          } catch (error) {
+            this.$message.error('密码更新失败，请稍后再试');
+          } finally {
+            this.loading = false;
+          }
+        } else {
+          this.$message.error('请检查输入的密码信息');
+        }
+      });
+    },
+    // 跳转服务条款
+    handleTermOfservice() {
+      this.$router.push('/termOfservice');
+    },
+    // 跳转隐私政策
+    handlePrivacyPolicy() {
+      this.$router.push('/privacyPolicy');
+    }
+  }
 };
 </script>
 
@@ -426,6 +487,9 @@ export default {
 
 }
 
-::v-deep .el-input {
-  width: 35% !important;
-}</style>
+.agree-word {
+  font-weight: 600;
+  border-bottom: 1px solid #000;
+  cursor: pointer;
+}
+</style>

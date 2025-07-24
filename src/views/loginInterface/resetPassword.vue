@@ -137,11 +137,14 @@ export default {
       resetPasswordFormRules: {
         newPassword: [
           { required: true, message: '请输入新密码', trigger: 'blur' },
-          { min: 6, max: 20, message: '密码长度必须在6-20位之间', trigger: 'blur' }
+          // 密码长度不少于8个字符，最多不超过20个字符。
+          // 密码必须包含至少三类字符类型：大写字母、小写字母、数字、特殊符号。
+          { min: 8, max: 20, message: '密码长度必须在8-20位之间', trigger: 'blur' },
+          { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/, message: '密码必须包含至少三类字符类型：大写字母、小写字母、数字、特殊符号', trigger: 'blur' }
         ],
         confirmNewPassword: [
           { required: true, message: '请确认新密码', trigger: 'blur' },
-          { min: 6, max: 20, message: '密码长度必须在6-20位之间', trigger: 'blur' },
+          { min: 8, max: 20, message: '密码长度必须在8-20位之间', trigger: 'blur' },
           { validator: (rule, value, callback) => {
             if (value !== this.resetPasswordForm.newPassword) {
               callback(new Error('两次输入的密码不一致'))
