@@ -70,6 +70,15 @@ export function resetPassword(data) {
   });
 }
 
+// 更新密码(登录后用户使用)
+export function updatePassword(data) {
+  return request({
+    url: '/update_password',
+    method: 'post',
+    data
+  });
+}
+
 // 获取用户详情
 export function getUserInfo(params) {
   return request({

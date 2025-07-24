@@ -66,7 +66,7 @@
             </el-form-item>
           </el-form>
           <div class="register-desc">
-            注册即代表已阅读并同意<span class="agree-word">服务条款</span>和<span class="agree-word">隐私政策</span>
+            注册即代表已阅读并同意<span class="agree-word" @click="handleTermOfservice">服务条款</span>和<span class="agree-word" @click="handlePrivacyPolicy">隐私政策</span>
           </div>
           <!-- 注册按钮 -->
           <el-button
@@ -107,10 +107,14 @@ export default {
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, max: 20, message: '密码长度为6-20位', trigger: 'blur' }
+          // 密码长度不少于8个字符，最多不超过20个字符。
+          // 密码必须包含至少三类字符类型：大写字母、小写字母、数字、特殊符号。
+          { min: 8, max: 20, message: '密码长度必须在8-20位之间', trigger: 'blur' },
+          { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/, message: '密码必须包含至少三类字符类型：大写字母、小写字母、数字、特殊符号', trigger: 'blur' }
         ],
         confirmPassword: [
           { required: true, message: '请再次输入密码', trigger: 'blur' },
+          { min: 8, max: 20, message: '密码长度必须在8-20位之间', trigger: 'blur' },
           { validator: (rule, value, callback) => {
             if (value !== this.form.password) {
               callback(new Error('两次输入的密码不一致'))
@@ -189,6 +193,14 @@ export default {
     },
     returnLogin() {
       this.$router.push('/login')
+    },
+    // 跳转服务条款
+    handleTermOfservice() {
+      this.$router.push('/termOfservice');
+    },
+    // 跳转隐私政策
+    handlePrivacyPolicy() {
+      this.$router.push('/privacyPolicy');
     }
   }
 }

@@ -151,7 +151,7 @@
 
             <!-- 协议勾选 -->
             <div class="agree-checkbox-wrapper" style="margin-top: 15px">
-              注册登录即代表已阅读并同意<span class="agree-word">服务条款</span>和<span class="agree-word">隐私政策</span>
+              注册登录即代表已阅读并同意<span class="agree-word" @click="handleTermOfservice">服务条款</span>和<span class="agree-word" @click="handlePrivacyPolicy">隐私政策</span>
             </div>
             <div class="forget-password">
               <span @click="handleForgetPassword">忘记密码</span>
@@ -216,8 +216,7 @@ export default {
           { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
         ],
         password: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, max: 20, message: '密码长度为6-20位', trigger: 'blur' }
+          { required: true, message: '请输入密码', trigger: 'blur' }
         ]
       },
       countDown: 0,
