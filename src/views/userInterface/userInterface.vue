@@ -23,7 +23,14 @@
             </div>
             <div class="account-form">
               微信绑定
-              <el-button class="btn-wx-check" type="primary" style="width: 15%">微信验证</el-button>
+              <el-button class="btn-wx-check" type="primary" disabled="userInfo.wechat_openid" style="width: 15%">
+                <template v-if="!userInfo.wechat_openid">
+                  <span>微信验证</span>
+                </template>
+                <template v-else>
+                  <span>已绑定</span>
+                </template>
+              </el-button>
             </div>
           </el-form>
         </div>
