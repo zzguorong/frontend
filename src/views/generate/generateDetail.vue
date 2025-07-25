@@ -36,24 +36,22 @@
                     fontSize: '12px',
                     textAlign: 'center',
                     marginLeft: '5px',
-                    cursor: previewImage ? 'pointer' : 'not-allowed',
-                    backgroundColor: previewImage ? '#fff' : '#ccc'
-                  }" @click="downloadPNG">
+                    cursor: currentPreviewImage ? 'pointer' : 'not-allowed',
+                    backgroundColor: currentPreviewImage ? '#fff' : '#ccc'
+                  }" @click="downloadPNG(currentPreviewImage)">
                   PNG下载
                 </div>
-                <div style="
-                    height: 35px;
-                    line-height: 35px;
-                    border: 1px solid #dcdfe6;
-                    border-radius: 5px;
-                    width: 120px;
-                    text-align: center;
-                    font-size: 12px;
-                    background-color: #ccc;
-                    cursor: pointer;
-                    position: relative;
-                    cursor: not-allowed;
-                  " @click="downloadPSD">
+                <div :style="{
+                     height: '35px',
+                    lineHeight: '35px',
+                    border: '1px solid #dcdfe6',
+                    borderRadius: '5px',
+                    width: '120px',
+                    fontSize: '12px',
+                    textAlign: 'center',
+                    marginLeft: '5px',
+                      cursor: currentPreviewImage ? 'pointer' : 'not-allowed',
+                    backgroundColor: currentPreviewImage ? '#fff' : '#ccc' }" @click="downloadPSD">
                   PSD下载
                   <el-tooltip content="PSD下载功能" placement="top">
                     <svg-icon icon-class="question" class="icon-style"

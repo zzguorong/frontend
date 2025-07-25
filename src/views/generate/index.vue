@@ -116,7 +116,7 @@
                     PNG下载
                   </div>
                   <div @click="downloadPSD" :style="{
-                     height: '35px',
+                    height: '35px',
                     lineHeight: '35px',
                     border: '1px solid #dcdfe6',
                     borderRadius: '5px',
@@ -124,9 +124,9 @@
                     fontSize: '12px',
                     textAlign: 'center',
                     marginLeft: '5px',
-                      cursor: canClickPsd ? 'pointer' : 'not-allowed',
-                    backgroundColor: canClickPsd ? '#fff' : '#ccc' }"
-                    >
+                    cursor: canClickPsd ? 'pointer' : 'not-allowed',
+                    backgroundColor: canClickPsd ? '#fff' : '#ccc'
+                  }">
                     PSD下载
                     <el-tooltip content="PSD下载功能" placement="top">
                       <svg-icon icon-class="question" class="icon-style"
@@ -660,9 +660,10 @@ export default {
     canClickPsd() {
       // 遍历thumbnails找到和图像展示区展示的是生成的图地址一样并且有语义分割图才可以点击
 
-            return this.thumbnails.some(item => {
-      return item.url === this.previewImage && item.segmentation
-    })
+      const canClickPsd = this.thumbnails.some(item => {
+        return item.url === this.previewImage && item.semanticImgUrlId !== undefined && item.styleImageId !== null
+      })
+      return canClickPsd
 
     }
   },
@@ -1120,7 +1121,7 @@ export default {
               const imageUrls = res.data.generated_images.map((item) => item);
               imageUrls.forEach((item, idx) => {
                 // 生成图倒序排列，索引为2
-                this.thumbnails.splice(2, 1, {...item,semanticImgUrlId: res.data.segment_image_id});
+                this.thumbnails.splice(2, 1, { ...item, semanticImgUrlId: res.data.segment_image_id });
               });
               this.cleanup()
               // 保存 语义分割图
