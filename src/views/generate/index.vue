@@ -159,78 +159,79 @@
               <el-tab-pane label="生图参数" name="left">
                 <div class="panel-style" ref="paramsScroll" data-simplebar simplebar-auto-hide="false">
                   <simplebar>
-                  <!-- 提示词 -->
-                  <div class="control-section" style="border-radius: 0 0 8px 8px; border-top: none">
-                    <div class="section-title">
-                      <span>提示词</span>
-                      <el-tooltip content="对希望生成的图纸结果进行描述，建议使用名词，并用逗号分隔" placement="top">
-                        <svg-icon icon-class="question" class="icon-style"></svg-icon>
-                        <!-- <i class="question-icon">?</i> -->
-                      </el-tooltip>
-                    </div>
-                    <el-input v-model="promptText" type="textarea" :rows="3" placeholder="所输入的提示词越精准，生成结果越精准" />
-                  </div>
-                  <div class="control-section">
-                    <!-- 视角类型 -->
-                    <div class="section-item" style="margin-bottom: 20px" :class="{ error: formErrors.viewType }">
+                    <!-- 提示词 -->
+                    <div class="control-section" style="border-radius: 0 0 8px 8px; border-top: none">
                       <div class="section-title">
-                        <span>视角类型<span class="required-mark">*</span></span>
-                        <el-tooltip content="决定生成图纸的角度与视野，包含人视、鸟瞰、工程与室内图四个模块" placement="top">
+                        <span>提示词</span>
+                        <el-tooltip content="对希望生成的图纸结果进行描述，建议使用名词，并用逗号分隔" placement="top">
                           <svg-icon icon-class="question" class="icon-style"></svg-icon>
                           <!-- <i class="question-icon">?</i> -->
                         </el-tooltip>
                       </div>
-                      <el-select v-model="viewType" placeholder="选择视角类型" style="width: 100%" @change="updateStyleOptions">
-                        <el-option v-for="item in perspectiveOptions" :key="item.id" :label="item.label"
-                          :value="item.value"></el-option>
-                      </el-select>
+                      <el-input v-model="promptText" type="textarea" :rows="3" placeholder="所输入的提示词越精准，生成结果越精准" />
                     </div>
-                    <!-- 风格类别 -->
-                    <div class="section-item" :class="{ error: formErrors.styleCategory }">
-                      <div class="section-title">
-                        <span>风格类别<span class="required-mark">*</span></span>
-                        <el-tooltip content="基于视角类型四个模块，选择多种预设风格" placement="top">
-                          <svg-icon icon-class="question" class="icon-style"></svg-icon>
-                          <!-- <i class="question-icon">?</i> -->
-                        </el-tooltip>
+                    <div class="control-section">
+                      <!-- 视角类型 -->
+                      <div class="section-item" style="margin-bottom: 20px" :class="{ error: formErrors.viewType }">
+                        <div class="section-title">
+                          <span>视角类型<span class="required-mark">*</span></span>
+                          <el-tooltip content="决定生成图纸的角度与视野，包含人视、鸟瞰、工程与室内图四个模块" placement="top">
+                            <svg-icon icon-class="question" class="icon-style"></svg-icon>
+                            <!-- <i class="question-icon">?</i> -->
+                          </el-tooltip>
+                        </div>
+                        <el-select v-model="viewType" placeholder="选择视角类型" style="width: 100%"
+                          @change="updateStyleOptions">
+                          <el-option v-for="item in perspectiveOptions" :key="item.id" :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
                       </div>
-                      <!--  @change="clearStyleCategoryError"数据写死，目前不需要方法 -->
-                      <el-select v-model="styleCategory" placeholder="选择风格" style="width: 100%">
-                        <el-option v-for="item in styleOptions" :key="item.value" :label="item.label"
-                          :value="item.value"></el-option>
-                      </el-select>
+                      <!-- 风格类别 -->
+                      <div class="section-item" :class="{ error: formErrors.styleCategory }">
+                        <div class="section-title">
+                          <span>风格类别<span class="required-mark">*</span></span>
+                          <el-tooltip content="基于视角类型四个模块，选择多种预设风格" placement="top">
+                            <svg-icon icon-class="question" class="icon-style"></svg-icon>
+                            <!-- <i class="question-icon">?</i> -->
+                          </el-tooltip>
+                        </div>
+                        <!--  @change="clearStyleCategoryError"数据写死，目前不需要方法 -->
+                        <el-select v-model="styleCategory" placeholder="选择风格" style="width: 100%">
+                          <el-option v-for="item in styleOptions" :key="item.value" :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </div>
                     </div>
-                  </div>
-                  <div class="control-section">
-                    <!-- 上传底图 -->
-                    <div class="section-item" style="
+                    <div class="control-section">
+                      <!-- 上传底图 -->
+                      <div class="section-item" style="
                         padding-bottom: 15px;
                         margin-bottom: 15px;
                         border-bottom: 1px solid #dcdfe6;
                       " :class="{ error: formErrors.basemapUrl }">
-                      <div class="section-title">
-                        <span>上传底图<span class="required-mark">*</span></span>
-                        <el-tooltip content="用于生成基础图像。建议上传底图像素<=2048px*2048px" placement="top">
-                          <svg-icon icon-class="question" class="icon-style"></svg-icon>
-                          <!-- <i class="question-icon">?</i> -->
-                        </el-tooltip>
-                      </div>
-                      <div class="section-content">
-                        <upload-file ref="uploadRef" finalApi="/base_image" :imgUrl.sync="basemapUrl" describeText="上传底图"
-                          @upload-success="onBasemapUpload($event, 1)" @update:imgUrl="onBasemapUrlUpdate"
-                          @delete="onImageDelete(1)"></upload-file>
-                        <div class="slider-control-content">
-                          <div class="slider-control">
-                            <div class="slider-title">
-                              <label>控制程度</label>
-                              <el-tooltip content="是生成图与底图颜色材质的相似程度" placement="top">
-                                <svg-icon icon-class="question" class="icon-style"></svg-icon>
-                                <!-- <i class="question-icon">?</i> -->
-                              </el-tooltip>
+                        <div class="section-title">
+                          <span>上传底图<span class="required-mark">*</span></span>
+                          <el-tooltip content="用于生成基础图像。建议上传底图像素<=2048px*2048px" placement="top">
+                            <svg-icon icon-class="question" class="icon-style"></svg-icon>
+                            <!-- <i class="question-icon">?</i> -->
+                          </el-tooltip>
+                        </div>
+                        <div class="section-content">
+                          <upload-file ref="uploadRef" finalApi="/base_image" :imgUrl.sync="basemapUrl"
+                            describeText="上传底图" @upload-success="onBasemapUpload($event, 1)"
+                            @update:imgUrl="onBasemapUrlUpdate" @delete="onImageDelete(1)"></upload-file>
+                          <div class="slider-control-content">
+                            <div class="slider-control">
+                              <div class="slider-title">
+                                <label>控制程度</label>
+                                <el-tooltip content="是生成图与底图颜色材质的相似程度" placement="top">
+                                  <svg-icon icon-class="question" class="icon-style"></svg-icon>
+                                  <!-- <i class="question-icon">?</i> -->
+                                </el-tooltip>
+                              </div>
+                              <draggable-progress :percentage.sync="baseControlLevel"></draggable-progress>
                             </div>
-                            <draggable-progress :percentage.sync="baseControlLevel"></draggable-progress>
-                          </div>
-                          <!-- <div class="slider-control">
+                            <!-- <div class="slider-control">
                             <div class="slider-title">
                               <label>材质固定</label>
                               <el-tooltip
@@ -247,64 +248,64 @@
                               :percentage.sync="materialPercentage"
                             ></draggable-progress>
                           </div> -->
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <!-- 风格迁移 -->
-                    <div class="section-item">
-                      <div class="section-title transfer-title">
-                        <div class="title-with-tooltip">
-                          <span>风格迁移</span>
-                          <el-tooltip content="提取参考图中配色、灯光、材质等信息来影响生成内容" placement="top">
-                            <svg-icon icon-class="question" class="icon-style"></svg-icon>
-                            <!-- <i class="question-icon">?</i> -->
-                          </el-tooltip>
+                      <!-- 风格迁移 -->
+                      <div class="section-item">
+                        <div class="section-title transfer-title">
+                          <div class="title-with-tooltip">
+                            <span>风格迁移</span>
+                            <el-tooltip content="提取参考图中配色、灯光、材质等信息来影响生成内容" placement="top">
+                              <svg-icon icon-class="question" class="icon-style"></svg-icon>
+                              <!-- <i class="question-icon">?</i> -->
+                            </el-tooltip>
+                          </div>
+                          <!-- 风格迁移开关 -->
+                          <el-switch v-model="styleTransferEnabled" />
                         </div>
-                        <!-- 风格迁移开关 -->
-                        <el-switch v-model="styleTransferEnabled" />
-                      </div>
-                      <div class="section-content" v-if="styleTransferEnabled">
-                        <upload-file finalApi="/style_image" :imgUrl="styleImgUrl" describeText="上传风格图"
-                          @upload-success="onBasemapUpload($event, 2)" @delete="onImageDelete(2)"></upload-file>
-                        <div class="slider-control-content">
-                          <div class="slider-control">
-                            <div class="slider-title">
-                              <label>控制程度</label>
-                              <el-tooltip content="是生成图与风格图颜色材质的相似程度" placement="top">
-                                <svg-icon icon-class="question" class="icon-style"></svg-icon>
-                                <!-- <i class="question-icon">?</i> -->
-                              </el-tooltip>
+                        <div class="section-content" v-if="styleTransferEnabled">
+                          <upload-file finalApi="/style_image" :imgUrl="styleImgUrl" describeText="上传风格图"
+                            @upload-success="onBasemapUpload($event, 2)" @delete="onImageDelete(2)"></upload-file>
+                          <div class="slider-control-content">
+                            <div class="slider-control">
+                              <div class="slider-title">
+                                <label>控制程度</label>
+                                <el-tooltip content="是生成图与风格图颜色材质的相似程度" placement="top">
+                                  <svg-icon icon-class="question" class="icon-style"></svg-icon>
+                                  <!-- <i class="question-icon">?</i> -->
+                                </el-tooltip>
+                              </div>
+                              <draggable-progress :percentage.sync="styleTransferLevel"></draggable-progress>
                             </div>
-                            <draggable-progress :percentage.sync="styleTransferLevel"></draggable-progress>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="control-section" style="margin-bottom: 83px">
-                    <!-- 分辨率 -->
-                    <div class="section-item" style="margin-bottom: 20px">
-                      <div class="section-title">分辨率</div>
-                      <el-select v-model="resolution" placeholder="选择分辨率" style="width: 100%">
-                        <el-option label="标准(1080P)" :value="1"></el-option>
-                        <el-option label="大(2k)" :value="2"></el-option>
-                        <el-option label="超大(4k)" :value="3"></el-option>
-                      </el-select>
+                    <div class="control-section" style="margin-bottom: 83px">
+                      <!-- 分辨率 -->
+                      <div class="section-item" style="margin-bottom: 20px">
+                        <div class="section-title">分辨率</div>
+                        <el-select v-model="resolution" placeholder="选择分辨率" style="width: 100%">
+                          <el-option label="标准(1080P)" :value="1"></el-option>
+                          <el-option label="大(2k)" :value="2"></el-option>
+                          <el-option label="超大(4k)" :value="3"></el-option>
+                        </el-select>
+                      </div>
+                      <!-- 图纸比例 -->
+                      <div class="section-item">
+                        <div class="section-title">图纸比例</div>
+                        <el-select v-model="aspectRatio" placeholder="选择比例" style="width: 100%">
+                          <!-- TODO:对接口字段 -->
+                          <el-option label="原始比例" value="detect"></el-option>
+                          <el-option label="1:1" value="1:1"></el-option>
+                          <el-option label="3:2" value="3:2"></el-option>
+                          <el-option label="4:3" value="4:3"></el-option>
+                          <el-option label="16:9" value="16:9"></el-option>
+                        </el-select>
+                      </div>
                     </div>
-                    <!-- 图纸比例 -->
-                    <div class="section-item">
-                      <div class="section-title">图纸比例</div>
-                      <el-select v-model="aspectRatio" placeholder="选择比例" style="width: 100%">
-                        <!-- TODO:对接口字段 -->
-                        <el-option label="原始比例" value="detect"></el-option>
-                        <el-option label="1:1" value="1:1"></el-option>
-                        <el-option label="3:2" value="3:2"></el-option>
-                        <el-option label="4:3" value="4:3"></el-option>
-                        <el-option label="16:9" value="16:9"></el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                </simplebar>
+                  </simplebar>
                 </div>
               </el-tab-pane>
               <el-tab-pane label="语义分割" name="right">
@@ -449,6 +450,15 @@
                           <span class="tool-buttons-item-text">撤销<svg-icon icon-class="undo" /></span>
                         </div>
                       </div>
+                      <!-- 暂存 -->
+                      <div class="tool-buttons" style="margin: 24px 0 12px 0;">
+                        <span class="tempo-store select-type" @click="temporaryStore">暂存
+                          <el-tooltip class="auto-identify" content="绘制内容将通过点击 [暂存] 同步到预览区。" placement="top"
+                            style="position: absolute; top: 11px; left: 206px">
+                            <svg-icon icon-class="question" class="icon-style"></svg-icon>
+                            <!-- <i class="question-icon">?</i> -->
+                          </el-tooltip></span>
+                      </div>
                     </div>
                   </div>
 
@@ -468,15 +478,7 @@
 
                     </div>
                   </div>
-                  <!-- 暂存 -->
-                  <div class="tool-buttons">
-                    <span class="tempo-store select-type" @click="temporaryStore">暂存
-                      <el-tooltip class="auto-identify" content="绘制内容将通过点击 [暂存] 同步到预览区。" placement="top"
-                        style="position: absolute; top: 11px; left: 237px">
-                        <svg-icon icon-class="question" class="icon-style"></svg-icon>
-                        <!-- <i class="question-icon">?</i> -->
-                      </el-tooltip></span>
-                  </div>
+
                 </div>
               </el-tab-pane>
             </el-tabs>
@@ -805,7 +807,7 @@ export default {
         this.styleTransferLevel = p.styleTransferLevel;
         this.styleTransferEnabled = true;
         this.styleImageId = p.styleImageId;
-      }else{
+      } else {
         this.styleTransferLevel = 0;
         this.styleTransferEnabled = false;
       }
@@ -1068,6 +1070,7 @@ export default {
           if (!this.thumbnails[1].url.startsWith('data:') || !this.thumbnails[1].url.includes(';base64,')) {
 
             const base64 = await blobUrlToBase64(this.thumbnails[1].url);
+            console.log('base64',base64);
             this.$set(this.thumbnails, 1, { url: base64 });
             this.semanticImgUrl = base64;
             payload.segment_image = base64;
@@ -1087,7 +1090,7 @@ export default {
       // 3. 开始请求前：设置状态 + 显示遮罩
       this.isGenerating = true;
       //索引 2 位置插入一个图片位置
-      this.thumbnails.splice(2, 0, { url: "", id: "globalMask-thumb-3" });
+      this.thumbnails.splice(2, 0, { url: "", id: "thumb-3" });
       this.$nextTick(() => {
         this.$refs["globalMask-thumb-3"][0].show("生成中...");
       });
@@ -1104,6 +1107,14 @@ export default {
         this.cleanup();
         // 删除第三个位置
         this.thumbnails.splice(2, 1);
+      }
+    }
+    ,
+    // 删除指定位置的缩略图
+    removeThumbnailById(targetId) {
+      const index = this.thumbnails.findIndex(item => item.id === targetId);
+      if (index !== -1) {
+        this.thumbnails.splice(index, 1);
       }
     },
 
@@ -1142,7 +1153,7 @@ export default {
               this.$message.error("图片生成失败！");
               this.cleanup()
               // 删除第三个位置
-              this.thumbnails.splice(2, 1);
+              this.removeThumbnailById("thumb-3");
             }
             // 如果是其他状态（比如 "pending"），继续轮询
           })
@@ -1154,7 +1165,8 @@ export default {
 
             this.cleanup()
             // 删除第三个位置
-            this.thumbnails.splice(2, 1);
+            this.removeThumbnailById("thumb-3");
+            this.$refs["globalMask-thumb-3"][0].hide();
           });
       }, 4000); // 每4秒轮询一次
     },
@@ -1794,7 +1806,6 @@ export default {
 
       // 画背景图
       ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
-      ctx.globalAlpha = 0.6; // 设置透明度
       // **关键：将 lassoCanvas 缩放到背景图大小**
       ctx.drawImage(
         lassoCanvas,
@@ -2863,6 +2874,7 @@ export default {
         this.thumbScrollLeft = ratio * trackWidth;
       });
     },
+
     // startThumbDrag(e) {
     //   const track = this.$refs.thumbTrack;
     //   if (!track) return;
@@ -2892,6 +2904,7 @@ export default {
     // },
   },
 };
+
 </script>
 
 <style  lang="scss" scoped>
