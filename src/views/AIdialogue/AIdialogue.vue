@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>AI对话</h1>
+    <h1>研发中...</h1>
   </div>
 </template>
 

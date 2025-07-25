@@ -68,6 +68,7 @@
               <el-tab-pane label="我的项目" name="left">
                 <!-- 画廊面板 -->
                 <div class="gallery-panel" data-simplebar data-simplebar-auto-hide="false">
+                  <simplebar>
                   <div class="gallery-section">
                     <div class="section-favorate">
                       <div class="gallery-actions">
@@ -189,6 +190,7 @@
                       </div>
                     </div>
                   </div>
+                </simplebar>
                 </div>
               </el-tab-pane>
               <el-tab-pane label="项目参数" name="right">
