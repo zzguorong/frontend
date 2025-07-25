@@ -344,7 +344,6 @@
 import {
   deleteGeneratedImage,
   favoriteGeneratedImage,
-  generateBaseImage,
   getGalleryImages,
   getProjectDetail,
   getUserFavoriteImages,
