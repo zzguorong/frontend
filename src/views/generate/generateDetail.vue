@@ -271,7 +271,7 @@
                         <label>风格迁移控制程度</label>
                         <div class="button-group">
                           <span>
-                            {{ semanticImgUrlId ? projectParameters.styleTransferLevel : 0 }}
+                            {{ styleImageId ? projectParameters.styleTransferLevel : 0 }}
                           </span>
                         </div>
                       </div>

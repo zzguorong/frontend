@@ -148,7 +148,6 @@
       <div class="wechat-binding-dialog-content">
         <div class="wechat-binding-dialog-body">
           <div id="wechat-login-container" />
-          <span>请使用微信扫码</span>
         </div>
       </div>
     </el-dialog>
@@ -263,7 +262,9 @@ export default {
           'https://www.gaiass.com/auth/wechat/callback?wechat_binding=true' // 授权成功后跳转的路径，必须是经过URL编码的
         ), // 扫完码授权成功跳转到的路径
         state: state, // 用于保持请求和回调的状态，授权请求后原样带回给第三方。该参数可用于防止 csrf 攻击（跨站请求伪造攻击），建议第三方带上该参数，可设置为简单的随机数加 session 进行校验
-        style: 'white' // 提供"black"、"white"可选，默认为黑色文字描述
+        style: 'black', // 提供"black"、"white"可选，默认为黑色文字描述，
+      // stylelite: 1,
+      href: "data:text/css;base64,LmltcG93ZXJCb3ggLnN0YXR1c190eHQge2ZvbnQtc2l6ZTogMjRweH0KLmltcG93ZXJCb3ggLnN0YXR1c190eHQgcCB7Zm9udC1zaXplOiAxOHB4fQouaW1wb3dlckJveCAuc3RhdHVzLnN0YXR1c19mYWlsIHAge2ZvbnQtc2l6ZTogMTZweCB9Ci5pbXBvd2VyQm94IC5zdGF0dXMuc3RhdHVzX2Jyb3dzZXIgcCB7Zm9udC1zaXplOiAxOHB4IH0KLmltcG93ZXJCb3ggLnN0YXR1cyB7cGFkZGluZzogN3B4IDB9Cmg0IHtmb250LXNpemU6IDE4cHh9Ci5pbXBvd2VyQm94IHtwYWRkaW5nLXRvcDogNXB4fQo="
       });
     }
   }
@@ -328,11 +329,12 @@ export default {
 }
 
 .account-form {
-  padding: 12px 24px 12px 24px;
+  padding: 0 24px 0 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 18px;
+  margin-bottom: 22px;
 
   .btn-wx-check {
     background: #6C6C6C;
@@ -343,9 +345,15 @@ export default {
     height: 38px;
   }
 }
+::v-deep .el-form {
+  padding: 12px 0;
+}
+
+::v-deep .el-form-item {
+  margin-bottom: 0;
+}
 
 .account-form .el-form-item {
-  margin-bottom: 24px;
   font-size: 18px;
   font-weight: 500;
 }
@@ -564,5 +572,10 @@ export default {
   font-size: 14px;
   color: #666;
   text-align: center;
+}
+
+::v-deep .el-dialog__body {
+  padding: 0 20px 30px 20px !important;
+
 }
 </style>
