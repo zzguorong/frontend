@@ -1,7 +1,7 @@
 export function downloadPNG(imgsrc) {
   // 把this.previewImage中的字符串https://api.gaiass.com字段去掉
-  this.previewImage = this.previewImage.replace("https://api.gaiass.com", "");
-
+  imgsrc = imgsrc.replace("https://api.gaiass.com", "");
+  this.$message.success("开始下载JPG格式...");
   var image = new Image();
   image.setAttribute("crossOrigin", "anonymous");
   image.onload = function () {
