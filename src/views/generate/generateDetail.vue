@@ -469,6 +469,8 @@ export default {
       activeName: 'left',
       pollingTimer: null,
       generatedImageId: null,
+      baseImgUrlId: null,
+      baseImgUrl: null,
       semanticImgUrlId: null,
       semanticImgUrl: null,
       styleImageId: null,
@@ -726,6 +728,8 @@ export default {
             isCollect: false
           }],
           projectParameters: this.extractProjectParameters(item),
+          baseImgUrl: item.base_images?.url || null,
+          baseImgUrlId: item.base_images?.id || null,
           semanticImgUrl: item.segment_images?.url || null,
           semanticImgUrlId: item.segment_images?.id || null,
           styleImgUrl: item.style_images?.url || null,
@@ -1337,7 +1341,8 @@ export default {
         this.currentPreviewImage = selectedItem.images[0].src;
         this.projectParameters = { ...selectedItem.projectParameters };
         console.log('selectedItem', selectedItem);
-        // this.baseImageId = selectedItem.baseImageId;
+        this.baseImgUrl = selectedItem.baseImgUrl;
+        this.baseImgUrlId = selectedItem.baseImgUrlId;
         this.generatedImageId = selectedItem.images[0].generatedImageId;
         this.semanticImgUrlId = selectedItem.semanticImgUrlId;
         this.semanticImgUrl = selectedItem.semanticImgUrl;
@@ -1372,29 +1377,23 @@ export default {
     },
     // 保留底图生图
     keepBaseGenerate() {
-      // 这里可以添加实际的生成逻辑
-      generateBaseImage({
-        generated_image_id: this.generatedImageId
-      }).then((res) => {
-        console.log(this.projectParameters.viewType, 'this.projectParameters.viewType,')
-        const params = {
-          promptText: this.projectParameters.promptText,
-          viewType: this.projectParameters.viewType,
-          styleCategory: this.projectParameters.styleCategory,
-          styleTransferLevel: this.projectParameters.styleTransferLevel,
-          resolution: this.projectParameters.resolution,
-          aspectRatio: this.projectParameters.aspectRatio,
-          baseControlLevel: this.projectParameters.baseControlLevel,
-          basemapUrl: res.data.url,
-          basemapUrlId: res.data.id,
-          semanticImgUrl: this.semanticImgUrl,
-          semanticImgUrlId: this.semanticImgUrlId,
-          styleImgUrl: this.styleImgUrl,
-          styleImageId: this.styleImageId
-        };
-        this.$store.commit('generation/setGenerationParams', params);
-        this.$router.push('/generate');
-      });
+      const params = {
+        promptText: this.projectParameters.promptText,
+        viewType: this.projectParameters.viewType,
+        styleCategory: this.projectParameters.styleCategory,
+        styleTransferLevel: this.projectParameters.styleTransferLevel,
+        resolution: this.projectParameters.resolution,
+        aspectRatio: this.projectParameters.aspectRatio,
+        baseControlLevel: this.projectParameters.baseControlLevel,
+        basemapUrl: this.baseImgUrl,
+        basemapUrlId: this.baseImgUrlId,
+        semanticImgUrl: this.semanticImgUrl,
+        semanticImgUrlId: this.semanticImgUrlId,
+        styleImgUrl: this.styleImgUrl,
+        styleImageId: this.styleImageId
+      };
+      this.$store.commit('generation/setGenerationParams', params);
+      this.$router.push('/generate');
     }
   }
 };
