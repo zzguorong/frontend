@@ -148,7 +148,7 @@
                 </div>
                 <div class="download-controls">
                   <div
-                    @click="downloadJPG"
+                    @click="downloadPNG"
                     style="
                       height: 35px;
                       line-height: 35px;
@@ -162,7 +162,7 @@
                       cursor: pointer;
                     "
                   >
-                    JPG下载
+                    PNG下载
                   </div>
                   <div
                     @click="downloadPSD"
@@ -678,13 +678,13 @@
 import draggableProgress from "@/components/draggableProgress.vue";
 import uploadFile from "@/components/uploadFile";
 import "simplebar/dist/simplebar.min.css";
-import { mapState, mapMutations } from "vuex";
+import { mapMutations, mapState } from "vuex";
 // import laravelEcho from "@/utils/laravel-echo";
 import {
-  generateImages,
-  getImageDetail,
-  getPerspectiveStyle,
-  preprocessSegment,
+generateImages,
+getImageDetail,
+getPerspectiveStyle,
+preprocessSegment,
 } from "@/api/generate";
 import { blobUrlToBase64 } from "@/utils/index";
 
@@ -1293,11 +1293,22 @@ export default {
     },
 
     // 下载功能
-    downloadJPG() {
-      this.$message.success("开始下载JPG格式");
+    downloadPNG() {
+      // 下载图像展示区展示的页面
+      this.$message.success("开始下载PNG格式");
+      const link = document.createElement('a');
+      link.href = this.previewImage;
+      link.download = 'image.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      this.$message.success("开始下载PNG格式");
     },
 
-    downloadPSD() {},
+    downloadPSD() {
+      // 判断是否有选中的缩略图
+
+    },
 
     // 工具选择
     setTool(tool) {

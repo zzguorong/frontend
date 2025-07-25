@@ -19,14 +19,27 @@
           <div class="reset-title">重置登录密码</div>
           <div class="reset-desc">请输入注册时使用的手机号来接收验证码</div>
           <el-form ref="phoneCodeForm" :model="phoneCodeForm" class="phone-input-line" :rules="phoneCodeFormRules">
+            <div class="phone-input">
+              <el-form-item prop="phonePrefix" class="phone-prefix">
+                  <el-select
+                    v-model="phoneCodeForm.phonePrefix"
+                    class="phone-prefix"
+                    size="large"
+                    popper-class="phone-prefix-select"
+                  >
+                    <el-option label="+86" value="+86" />
+                    <!-- 可扩展其他区号 -->
+                  </el-select>
+                </el-form-item>
             <!-- 手机号-->
-            <el-form-item prop="phone">
+            <el-form-item prop="phone" class="phone">
               <el-input
                 v-model="phoneCodeForm.phone"
                 placeholder="请输入手机号"
                 size="large"
               />
             </el-form-item>
+          </div>
             <!-- 验证码输入 -->
             <el-form-item prop="code">
               <el-input
@@ -109,7 +122,7 @@
 </template>
 
 <script>
-import { sendSmsCode, resetPassword } from '@/api/index'
+import { resetPassword, sendSmsCode } from '@/api/index'
 
 export default {
   name: 'ResetPassword',
@@ -117,6 +130,7 @@ export default {
     return {
       isPhoneLogin: true,
       phoneCodeForm: {
+        phonePrefix: '+86',
         phone: '',
         code: ''
       },
@@ -287,7 +301,18 @@ export default {
 }
 .phone-input-line {
   width:320px;
+  .phone-input{
+    display: flex;
+
+    .phone-prefix{
+      flex: 1;
+    }
+    .phone{
+  flex: 3;
 }
+  }
+}
+
 .tab-content {
   width: 100%;
 }

@@ -104,7 +104,7 @@
                 <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A"></i>
                   <span>服务期内无限语义分割工具包使用次数</span></div>
                 <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A"></i>
-                  <span>服务期内无限JPG下载次数</span></div>
+                  <span>服务期内无限PNG下载次数</span></div>
                 <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A"></i>
                   <span>服务期内无限PSD下载次数</span></div>
                 <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A"></i>

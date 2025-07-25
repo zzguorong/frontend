@@ -11,62 +11,37 @@
                 <!-- <i class="el-icon-picture"></i>
                 <p>暂无预览图片</p> -->
               </div>
-              <img
-                v-else
-                :src="currentPreviewImage"
-                alt="预览图"
-                class="preview-image"
-              >
+              <img v-else :src="currentPreviewImage" alt="预览图" class="preview-image">
               <!-- 预览图操作按钮 -->
               <div class="preview-actions">
-                <svg-icon
-                  :class="['preview-action-icon', 'return-icon']"
-                  icon-class="return"
-                  @click="handlePreviewReturn"
-                  @mouseenter="onPreviewReturnHover(true)"
-                  @mouseleave="onPreviewReturnHover(false)"
-                />
+                <svg-icon :class="['preview-action-icon', 'return-icon']" icon-class="return" @click="handlePreviewReturn"
+                  @mouseenter="onPreviewReturnHover(true)" @mouseleave="onPreviewReturnHover(false)" />
               </div>
             </div>
             <!-- 传输到底图按钮 -->
             <div class="transfer-action">
-              <div
-                type="default"
-                class="transfer-btn"
-                @click="keepBaseGenerate"
-              >
+              <div type="default" class="transfer-btn" @click="keepBaseGenerate">
                 保留底图生图
-                <el-tooltip
-                  content="保留底图保留参数,调整图纸的细节"
-                  placement="top"
-                >
-                  <svg-icon
-                    icon-class="question"
-                    class="icon-style"
-                    style="position: absolute; right: 18px; top: 15px"
-                  />
+                <el-tooltip content="保留底图保留参数,调整图纸的细节" placement="top">
+                  <svg-icon icon-class="question" class="icon-style" style="position: absolute; right: 18px; top: 15px" />
                 </el-tooltip>
               </div>
               <div class="download-controls">
-                <div
-                  style="
-                    height: 35px;
-                    line-height: 35px;
-                    border: 1px solid #dcdfe6;
-                    border-radius: 5px;
-                    width: 120px;
-                    font-size: 12px;
-                    text-align: center;
-                    margin-left: 5px;
-                    background-color: #fff;
-                    cursor: pointer;
-                  "
-                  @click="downloadJPG"
-                >
-                  JPG下载
+                <div :style="{
+                    height: '35px',
+                    lineHeight: '35px',
+                    border: '1px solid #dcdfe6',
+                    borderRadius: '5px',
+                    width: '120px',
+                    fontSize: '12px',
+                    textAlign: 'center',
+                    marginLeft: '5px',
+                    cursor: previewImage ? 'pointer' : 'not-allowed',
+                    backgroundColor: previewImage ? '#fff' : '#ccc'
+                  }" @click="downloadPNG">
+                  PNG下载
                 </div>
-                <div
-                  style="
+                <div style="
                     height: 35px;
                     line-height: 35px;
                     border: 1px solid #dcdfe6;
@@ -78,16 +53,11 @@
                     cursor: pointer;
                     position: relative;
                     cursor: not-allowed;
-                  "
-                  @click="downloadPSD"
-                >
+                  " @click="downloadPSD">
                   PSD下载
                   <el-tooltip content="PSD下载功能" placement="top">
-                    <svg-icon
-                      icon-class="question"
-                      class="icon-style"
-                      style="position: absolute; right: 15px; top: 10px"
-                    />
+                    <svg-icon icon-class="question" class="icon-style"
+                      style="position: absolute; right: 15px; top: 10px" />
                   </el-tooltip>
                 </div>
               </div>
@@ -99,92 +69,65 @@
             <el-tabs v-model="activeName" type="card">
               <el-tab-pane label="我的项目" name="left">
                 <!-- 画廊面板 -->
-                <div
-                  class="gallery-panel"
-                  data-simplebar
-                  data-simplebar-auto-hide="false"
-                >
+                <div class="gallery-panel" data-simplebar data-simplebar-auto-hide="false">
                   <div class="gallery-section">
                     <div class="section-favorate">
                       <div class="gallery-actions">
                         <div class="gallery-icon-box">
-                          <svg-icon
-                            :class="[
-                              'gallery-action-icon',
-                              'favorite-gallery-icon',
-                              { active: galleryFavoriteActive },
-                            ]"
-                            icon-class="collection"
-                            :style="{
-                              color:
-                                galleryFavoriteActive || galleryFavoriteHover
-                                  ? '#f56565'
-                                  : '#000',
-                            }"
-                            @click="toggleGalleryFavorite"
-                            @mouseenter="onGalleryFavoriteHover(true)"
-                            @mouseleave="onGalleryFavoriteHover(false)"
-                          />
+                          <svg-icon :class="[
+                            'gallery-action-icon',
+                            'favorite-gallery-icon',
+                            { active: galleryFavoriteActive },
+                          ]" icon-class="collection" :style="{
+  color:
+    galleryFavoriteActive || galleryFavoriteHover
+      ? '#f56565'
+      : '#000',
+}" @click="toggleGalleryFavorite" @mouseenter="onGalleryFavoriteHover(true)"
+                            @mouseleave="onGalleryFavoriteHover(false)" />
                         </div>
                       </div>
                     </div>
 
                     <div class="gallery-list">
                       <!-- 空状态提示 -->
-                      <div
-                        v-if="
-                          showOnlyFavorites && filteredGalleryItems.length === 0
-                        "
-                        class="empty-gallery"
-                      >
+                      <div v-if="showOnlyFavorites && filteredGalleryItems.length === 0
+                        " class="empty-gallery">
                         <i class="el-icon-heart" />
                         <p>暂无收藏的图册</p>
                         <p class="hint">收藏图册后将在此处显示</p>
                       </div>
 
                       <!-- 画廊列表 -->
-                      <div
-                        v-for="(
+                      <div v-for="(
                           dateGroup, displayDateIndex
-                        ) in filteredGalleryItems"
-                        :key="displayDateIndex"
-                        class="date-group"
-                      >
+                        ) in filteredGalleryItems" :key="displayDateIndex" class="date-group">
                         <!-- 日期标题 -->
                         <div class="date-header">
                           {{ dateGroup.date }}
                         </div>
 
                         <!-- 该日期下的所有图片项目 -->
-                        <div
-                          v-for="(
+                        <div v-for="(
                             item, displayItemIndex
-                          ) in dateGroup.galleryItem"
-                          :key="`${displayDateIndex}-${displayItemIndex}`"
-                          class="gallery-item"
-                          :class="{
+                          ) in dateGroup.galleryItem" :key="`${displayDateIndex}-${displayItemIndex}`"
+                          class="gallery-item" :class="{
                             active:
                               currentImageIndex ===
                               getGlobalIndexForDisplay(
                                 displayDateIndex,
                                 displayItemIndex
                               ),
-                          }"
-                          @click="
-                            handleGalleryItemClick(
-                              displayDateIndex,
-                              displayItemIndex,
-                              item
-                            )
-                          "
-                        >
+                          }" @click="
+  handleGalleryItemClick(
+    displayDateIndex,
+    displayItemIndex,
+    item
+  )
+  ">
                           <!-- 图片预览 -->
                           <div class="item-preview">
-                            <img
-                              v-if="item.image"
-                              :src="item.image"
-                              alt="画廊图片"
-                            >
+                            <img v-if="item.image" :src="item.image" alt="画廊图片">
                             <div v-else class="empty-item" />
 
                             <!-- 图片数量标识 -->
@@ -196,64 +139,52 @@
                           <!-- 操作按钮 -->
                           <div class="thumbnail-actions">
                             <div class="gallery-icon-wrapper">
-                              <svg-icon
-                                class="action-icon favorite-icon"
-                                icon-class="collection"
-                                :style="{
-                                  color: getFavoriteStateForDisplay(
-                                    displayDateIndex,
-                                    displayItemIndex,
-                                    item
-                                  )
-                                    ? '#f56565'
-                                    : '#000',
-                                }"
-                                @click.stop="
-                                  toggleFavoriteForDisplay(
-                                    displayDateIndex,
-                                    displayItemIndex,
-                                    item
-                                  )
-                                "
-                              />
+                              <svg-icon class="action-icon favorite-icon" icon-class="collection" :style="{
+                                color: getFavoriteStateForDisplay(
+                                  displayDateIndex,
+                                  displayItemIndex,
+                                  item
+                                )
+                                  ? '#f56565'
+                                  : '#000',
+                              }" @click.stop="
+  toggleFavoriteForDisplay(
+    displayDateIndex,
+    displayItemIndex,
+    item
+  )
+  " />
                             </div>
                             <div class="gallery-icon-wrapper">
-                              <svg-icon
-                                class="action-icon delete-icon"
-                                icon-class="delete"
-                                :style="{
-                                  color: getDeleteHoverStateForDisplay(
-                                    displayDateIndex,
-                                    displayItemIndex,
-                                    item
-                                  )
-                                    ? '#f56565'
-                                    : '#000',
-                                }"
-                                @click.stop="
-                                  deleteThumbnailForDisplay(
-                                    displayDateIndex,
-                                    displayItemIndex,
-                                    item
-                                  )
-                                "
-                                @mouseenter="
-                                  onDeleteHoverForDisplay(
-                                    displayDateIndex,
-                                    displayItemIndex,
-                                    item,
-                                    true
-                                  )
-                                "
-                                @mouseleave="
-                                  onDeleteHoverForDisplay(
-                                    displayDateIndex,
-                                    displayItemIndex,
-                                    item,
-                                    false
-                                  )
-                                "
-                              />
+                              <svg-icon class="action-icon delete-icon" icon-class="delete" :style="{
+                                color: getDeleteHoverStateForDisplay(
+                                  displayDateIndex,
+                                  displayItemIndex,
+                                  item
+                                )
+                                  ? '#f56565'
+                                  : '#000',
+                              }" @click.stop="
+  deleteThumbnailForDisplay(
+    displayDateIndex,
+    displayItemIndex,
+    item
+  )
+  " @mouseenter="
+    onDeleteHoverForDisplay(
+      displayDateIndex,
+      displayItemIndex,
+      item,
+      true
+    )
+    " @mouseleave="
+    onDeleteHoverForDisplay(
+      displayDateIndex,
+      displayItemIndex,
+      item,
+      false
+    )
+    " />
                             </div>
                           </div>
                         </div>
@@ -270,12 +201,7 @@
                     <div class="param-item horizontal-item">
                       <div class="base-style">
                         <label>提示词</label>
-                        <el-input
-                          v-model="projectParameters.promptText"
-                          type="textarea"
-                          :rows="4"
-                          placeholder="请输入提示词"
-                        />
+                        <el-input v-model="projectParameters.promptText" type="textarea" :rows="4" placeholder="请输入提示词" />
                       </div>
                     </div>
                     <!-- 视角类型 -->
@@ -313,10 +239,7 @@
                         </div> -->
                         <div class="button-group">
                           <span>
-                            {{ viewTypeFormat(projectParameters.viewType)
-                            }}{{
-                              styleTypeFormat(projectParameters.styleCategory)
-                            }}
+                            通用类别
                           </span>
                         </div>
                       </div>
@@ -348,7 +271,7 @@
                         <label>风格迁移控制程度</label>
                         <div class="button-group">
                           <span>
-                            {{ projectParameters.styleTransferLevel }}
+                            {{ semanticImgUrlId ? projectParameters.styleTransferLevel : 0 }}
                           </span>
                         </div>
                       </div>
@@ -370,7 +293,7 @@
                         <label>图纸比例</label>
                         <div class="button-group">
                           <span>
-                            {{ projectParameters.aspectRatio }}
+                            {{ projectParameters.aspectRatio == 'detect' ? '原始比例' : projectParameters.aspectRatio }}
                           </span>
                         </div>
                       </div>
@@ -378,15 +301,9 @@
                     <!-- 保留参数按钮 -->
                     <div class="save-params-btn" @click="saveParams">
                       保留参数生图
-                      <el-tooltip
-                        content="更换底图保留参数，生成类似风格的图框"
-                        placement="top"
-                      >
-                        <svg-icon
-                          icon-class="question"
-                          class="icon-style"
-                          style="position: absolute; right: 13px; top: 11px"
-                        />
+                      <el-tooltip content="更换底图保留参数，生成类似风格的图框" placement="top">
+                        <svg-icon icon-class="question" class="icon-style"
+                          style="position: absolute; right: 13px; top: 11px" />
                       </el-tooltip>
                     </div>
                   </div>
@@ -416,23 +333,26 @@
                 </div>
               </el-tab-pane>
             </el-tabs>
-          </div></el-col>
+          </div>
+        </el-col>
       </el-row>
     </div>
   </div>
 </template>
 
 <script>
-import 'simplebar/dist/simplebar.min.css';
 import {
-  getProjectDetail,
-  getGalleryImages,
-  generateBaseImage,
   deleteGeneratedImage,
+  favoriteGeneratedImage,
+  generateBaseImage,
+  getGalleryImages,
+  getProjectDetail,
   getUserFavoriteImages,
-  unfavoriteGeneratedImage,
-  favoriteGeneratedImage
+  unfavoriteGeneratedImage
 } from '@/api/generate';
+import 'simplebar/dist/simplebar.min.css';
+import { downloadPNG } from "@/utils/downLoad";
+
 export default {
   name: 'GenerateDetail',
   data() {
@@ -717,6 +637,7 @@ export default {
   // },
 
   methods: {
+    downloadPNG,
     /**
      * 加载画廊图片数据
      */
@@ -885,10 +806,11 @@ export default {
 
     viewTypeFormat(row) {
       const statusMap = {
-        1: '鸟瞰图',
-        2: '人视图',
-        3: '平面图',
-        4: '室内图'
+        1: '鸟瞰图小尺寸',
+        2: '鸟瞰图大尺寸',
+        3: '人视图',
+        4: '平面图',
+        5: '室内图'
       };
       return statusMap[row] || '';
     },
@@ -1429,11 +1351,6 @@ export default {
       }
     },
 
-    // 下载功能
-    downloadJPG() {
-      this.$message.success('开始下载JPG格式');
-    },
-
     downloadPSD() {
       this.$message.success('开始下载PSD格式');
     },
@@ -1459,6 +1376,7 @@ export default {
       generateBaseImage({
         generated_image_id: this.generatedImageId
       }).then((res) => {
+        console.log(this.projectParameters.viewType, 'this.projectParameters.viewType,')
         const params = {
           promptText: this.projectParameters.promptText,
           viewType: this.projectParameters.viewType,
@@ -1484,10 +1402,11 @@ export default {
 
 <style scoped>
 .generate-detail-container {
-  height: calc(100vh - 20px);
-  margin: 10px;
+  height: calc(100vh - 70px);
+  margin: 0 10px;
   padding: 0;
 }
+
 /* 顶部导航 */
 .header {
   width: 100%;
@@ -1498,6 +1417,7 @@ export default {
   background: white;
   border: 1px solid #dcdfe6;
 }
+
 .logo {
   display: flex;
   align-items: center;
@@ -1543,18 +1463,19 @@ export default {
 .user-avatar {
   margin-left: 10px;
 }
+
 /* 主要内容区域 */
 .content-wrapper {
-  height: calc(
-    100vh - 20px
-  ); /* 使内容区域填满视口（与 .app-container 高度保持一致） */
+  height: calc(100vh - 70px);
+  /* 使内容区域填满视口（与 .app-container 高度保持一致） */
 }
 
 /* 让内部的 el-row 与 el-col 同样撑满高度，确保 center-panel 能继承到 100% 高度 */
-.content-wrapper > .el-row,
-.content-wrapper > .el-row > .el-col {
+.content-wrapper>.el-row,
+.content-wrapper>.el-row>.el-col {
   height: 100%;
 }
+
 /* 左侧参数面板 */
 .params-panel {
   display: flex;
@@ -1562,15 +1483,20 @@ export default {
   align-items: center;
   justify-content: flex-start;
   transition: all 0.28s;
-  padding: 0; /* 移除内边距 */
+  padding: 0;
+  /* 移除内边距 */
   height: 100%;
-  overflow-x: hidden; /* 防止横向滚动条 */
+  overflow-x: hidden;
+  /* 防止横向滚动条 */
   overflow-y: hidden;
-  scrollbar-width: thin; /* FireFox */
+  scrollbar-width: thin;
+  /* FireFox */
   scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
   border-radius: 8px;
-  position: relative; /* 为绝对定位的子元素提供定位上下文 */
+  position: relative;
+  /* 为绝对定位的子元素提供定位上下文 */
 }
+
 /* .params-panel-top {
   width: 100%;
   border: 1px solid #dcdfe6;
@@ -1607,11 +1533,17 @@ export default {
 
 .params-section {
   width: 100%;
-  padding: 15px 15px 80px 15px; /* 底部添加额外间距 */
+  padding: 15px 15px 80px 15px;
+  /* 底部添加额外间距 */
   border-radius: 8px;
   background: #fff;
 }
+
 .section-favorate {
+  position: sticky;
+  top: 0;
+  right: 0;
+  z-index: 99;
   font-size: 16px;
   display: flex;
   justify-content: flex-end;
@@ -1633,6 +1565,7 @@ export default {
   gap: 6px;
   align-items: center;
 }
+
 .gallery-icon-box {
   width: 30px;
   height: 30px;
@@ -1643,6 +1576,7 @@ export default {
   justify-content: center;
   font-size: 14px;
 }
+
 .gallery-icon-wrapper {
   width: 15px;
   height: 15px;
@@ -1653,6 +1587,7 @@ export default {
   background: rgba(255, 255, 255, 0.8);
   font-size: 14px;
 }
+
 .gallery-action-icon {
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1719,6 +1654,7 @@ export default {
   width: 14px;
   height: 14px;
 }
+
 /* 水平布局的参数项 */
 .horizontal-item {
   width: 100%;
@@ -1735,17 +1671,20 @@ export default {
   background: #eee;
   height: 120px;
 }
+
 .segmentation-image {
   width: 110px;
   height: 80px;
   border: 1px solid #ccc;
 }
+
 .base-style {
   min-height: 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .base-style label {
   display: block;
   font-size: 14px;
@@ -1755,6 +1694,7 @@ export default {
   text-align: left;
   font-weight: 500;
 }
+
 .button-group {
   display: flex;
   gap: 8px;
@@ -1763,6 +1703,7 @@ export default {
   margin: 0;
   font-size: 12px;
 }
+
 .button-group span {
   border: 1px solid #ccc;
   color: #000;
@@ -1775,6 +1716,7 @@ export default {
   text-align: center;
   background: #eee;
 }
+
 .save-params-btn {
   font-size: 18px;
   width: 180px;
@@ -1792,12 +1734,14 @@ export default {
   z-index: 100;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
+
 /* 中间预览区域 */
 .center-preview-area {
   display: flex;
   justify-content: space-between;
   flex-direction: column;
-  flex: 1; /* 让内部 .preview-actions 绝对定位时以此容器为参考 */
+  flex: 1;
+  /* 让内部 .preview-actions 绝对定位时以此容器为参考 */
   /* 高度由 JS 动态计算，不再使用 aspect-ratio */
   height: 100%;
 }
@@ -1814,6 +1758,7 @@ export default {
   /* max-height: 500px; */
   position: relative;
 }
+
 .empty-preview {
   /* 同样使用 flex 以便文本居中 */
   position: relative;
@@ -1863,25 +1808,32 @@ export default {
   background: #777;
   color: #fff;
 }
+
 .preview-action-icon svg:hover {
   fill: #fff !important;
 }
+
 .preview-action-icon svg {
   fill: #ccc !important;
   width: 16px;
   height: 16px;
   transition: all 0.3s ease;
 }
+
 .nav-arrows {
   width: 90px;
   position: absolute;
-  bottom: 20px; /* 距底部 15px */
-  left: 50%; /* 水平居中 */
+  bottom: 20px;
+  /* 距底部 15px */
+  left: 50%;
+  /* 水平居中 */
   display: flex;
   justify-content: space-between;
-  transform: translateX(-50%); /* 以自身宽度居中 */
+  transform: translateX(-50%);
+  /* 以自身宽度居中 */
   pointer-events: none;
 }
+
 /* 图片翻页 */
 .nav-btn {
   width: 35px;
@@ -1953,6 +1905,7 @@ export default {
   cursor: pointer;
   position: relative;
 }
+
 .download-controls {
   position: absolute;
   display: flex;
@@ -1979,24 +1932,32 @@ export default {
   flex-direction: column;
   align-items: center;
   transition: all 0.28s;
-  padding: 0; /* 移除内边距 */
-  height: calc(100vh - 60px); /* 减去tabs标题高度48px + 边距 */
-  overflow-x: hidden; /* 防止横向滚动条 */
+  padding: 0;
+  /* 移除内边距 */
+  height: calc(100vh - 180px);
+  /* 减去tabs 标题高度48px + 边距12px + 收藏栏30px + 顶栏70px + 生图按钮区域 60px*/
+  overflow-x: hidden;
+  /* 防止横向滚动条 */
   /* 移除 overflow-y，让 simplebar 处理滚动 */
   border: 1px solid #dcdfe6;
   background: #fff;
   border-radius: 0 0 8px 8px;
 }
+
 .project-panel {
-  height: calc(100vh - 28px); /* 与gallery-panel保持一致 */
+  /* height: calc(100vh - 28px); 与gallery-panel保持一致 */
   justify-content: space-between;
-  padding-bottom: 80px; /* 为底部固定按钮留出空间 */
+  padding-bottom: 80px;
+  /* 为底部固定按钮留出空间 */
 }
+
 .gallery-section {
   width: 100%;
   padding: 15px;
-  flex: 1; /* 让内容区域占据剩余空间 */
-  min-height: 0; /* 确保flex子元素能正确收缩 */
+  flex: 1;
+  /* 让内容区域占据剩余空间 */
+  min-height: 0;
+  /* 确保flex子元素能正确收缩 */
   height: 100%;
 }
 
@@ -2054,6 +2015,7 @@ export default {
   transition: all 0.3s;
   position: relative;
 }
+
 .gallery-item:hover {
   border-color: #ccc;
   box-shadow: 0 2px 8px rgba(64, 158, 255, 0.2);
@@ -2063,6 +2025,7 @@ export default {
   border-color: #000;
   background: #f0f9ff;
 }
+
 /* 画册操作按钮 */
 .thumbnail-actions {
   position: absolute;
@@ -2072,16 +2035,19 @@ export default {
   gap: 3px;
   opacity: 1;
 }
+
 .icon-style {
   font-size: 13px;
   position: absolute;
   right: -18px;
   color: #000;
 }
+
 /* SVG图标样式 */
 .thumbnail-actions .action-icon svg {
   transition: all 0.2s ease;
 }
+
 .thumbnail-actions .action-icon:hover {
   transform: scale(1.1);
 }
@@ -2144,6 +2110,7 @@ export default {
   fill: #ff6b6b !important;
   stroke: #ff6b6b !important;
 }
+
 .thumbnail-actions .delete-icon:hover,
 .thumbnail-actions .delete-icon:active {
   color: #f56565 !important;
@@ -2154,6 +2121,7 @@ export default {
   fill: #f56565 !important;
   color: #f56565 !important;
 }
+
 .item-date {
   font-size: 12px;
   color: #666;
@@ -2241,58 +2209,76 @@ export default {
 }
 
 /* 去除 el-tabs card 类型自带的边框 */
-::v-deep .el-tabs--card > .el-tabs__header .el-tabs__nav {
+::v-deep .el-tabs--card>.el-tabs__header .el-tabs__nav {
   background: #efefef;
   border: none;
 }
-::v-deep .el-tabs--card > .el-tabs__header {
+
+::v-deep .el-tabs--card>.el-tabs__header {
   background: #fff;
   margin: 0;
   border-bottom: none;
 }
-::v-deep .params-panel .el-tabs--card > .el-tabs__header .el-tabs__item {
+
+::v-deep .params-panel .el-tabs--card>.el-tabs__header .el-tabs__item {
   color: #ccc;
-  flex: 1 1 0; /* 等宽 */
+  flex: 1 1 0;
+  /* 等宽 */
   text-align: center;
   border: 1px solid #dcdfe6;
-  border-bottom: none; /* 保持上方边框整合 */
-  height: 48px; /* 固定高度 */
-  line-height: 48px; /* 文本垂直居中 */
-  padding: 0; /* 统一内边距，避免撑高 */
+  border-bottom: none;
+  /* 保持上方边框整合 */
+  height: 48px;
+  /* 固定高度 */
+  line-height: 48px;
+  /* 文本垂直居中 */
+  padding: 0;
+  /* 统一内边距，避免撑高 */
   border-radius: 8px 8px 0 0;
 }
-::v-deep .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
+
+::v-deep .el-tabs--card>.el-tabs__header .el-tabs__item.is-active {
   color: #000 !important;
   background: #fff;
   font-weight: bold;
 }
-::v-deep .el-tabs--card > .el-tabs__header .el-tabs__item:hover {
+
+::v-deep .el-tabs--card>.el-tabs__header .el-tabs__item:hover {
   color: #000;
   font-weight: bold;
 }
+
 /* ===== Tabs 占满宽度 ===== */
-::v-deep .params-panel .el-tabs--card > .el-tabs__header .el-tabs__nav-wrap,
-::v-deep .params-panel .el-tabs--card > .el-tabs__header .el-tabs__nav-scroll,
-::v-deep .params-panel .el-tabs--card > .el-tabs__header .el-tabs__nav {
+::v-deep .params-panel .el-tabs--card>.el-tabs__header .el-tabs__nav-wrap,
+::v-deep .params-panel .el-tabs--card>.el-tabs__header .el-tabs__nav-scroll,
+::v-deep .params-panel .el-tabs--card>.el-tabs__header .el-tabs__nav {
   flex: 1 1 0 !important;
   width: 100% !important;
 }
+
 /* 调整 nav 为 flex 布局并添加标签间距 */
-::v-deep .params-panel .el-tabs--card > .el-tabs__header .el-tabs__nav {
+::v-deep .params-panel .el-tabs--card>.el-tabs__header .el-tabs__nav {
   display: flex !important;
   gap: 5px;
 }
+
 /* 标签等宽，占满可用空间 */
-::v-deep .params-panel .el-tabs--card > .el-tabs__header .el-tabs__item {
+::v-deep .params-panel .el-tabs--card>.el-tabs__header .el-tabs__item {
   flex: 1 1 0;
-  margin: 0 !important; /* 由 gap 控制间距 */
+  margin: 0 !important;
+  /* 由 gap 控制间距 */
 }
+
 /* 选中状态 – 文字下划线 */
 ::v-deep .el-tabs__item.is-active {
-  text-decoration: underline; /* 开启下划线 */
-  text-decoration-color: #000; /* 线条颜色 */
-  text-decoration-thickness: 2px; /* 线条粗细（浏览器支持程度较好） */
-  text-underline-offset: 6px; /* 线条与文字的垂直距离，可按需微调 */
+  text-decoration: underline;
+  /* 开启下划线 */
+  text-decoration-color: #000;
+  /* 线条颜色 */
+  text-decoration-thickness: 2px;
+  /* 线条粗细（浏览器支持程度较好） */
+  text-underline-offset: 6px;
+  /* 线条与文字的垂直距离，可按需微调 */
 }
 
 /* 如果想在 hover 时也有同样效果 */
@@ -2304,7 +2290,7 @@ export default {
 }
 
 /* 让 Card 类型 Tabs 宽度占满 params-panel */
-::v-deep .params-panel > .el-tabs.el-tabs--card.el-tabs--top {
+::v-deep .params-panel>.el-tabs.el-tabs--card.el-tabs--top {
   width: 100%;
 }
 
