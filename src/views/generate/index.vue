@@ -464,13 +464,16 @@
 
                   <!-- 元素类别 -->
                   <div class="element-category">
+                   <div class="category-title">
                     <span class="category-label">元素类别</span>
+                   <span class="category-label select"> 当前选择：{{ selectLabel }}</span>
+                   </div>
                     <!-- 颜色选择 -->
                     <div class="color-palette" v-for="(items, categoryName) in aerialviewGroups">
                       <!-- <div>{{ categoryName }}</div> -->
                       <div class="color-palette-group">
                         <div class="color-palette-item" v-for="item in items" :key="item.label"
-                          @click="selectWaterColor(item.color)">
+                          @click="selectWaterColor(item)">
                           <div class="swatches-color" :style="{ background: item.color }"></div>
                           <div class="swatches-name">{{ item.zh }}</div>
                         </div>
@@ -576,6 +579,7 @@ export default {
 
       selectedGroundColor: "#FFE4B5",
       selectedWaterColor: "#87CEEB",
+      selectLabel: "",
       // 鸟瞰图颜色类别
       aerialviewGroups: {
         "鸟瞰图&人视图&平面": [
@@ -848,16 +852,13 @@ export default {
     // 自动识别
     automaticRecognition() {
       // 若尚未上传底图图则阻止调用
-      if (!this.basemapUrl) {
+      if (!this.basemapUrlId) {
         this.$message.warning("请先上传底图后再使用自动识别");
         return;
       }
-      const rawFiles = this.$refs.uploadRef.getRawFiles();
 
-      console.log("rawFiles", rawFiles);
       // 调用后端接口获取 base64 图
-      preprocessSegment(rawFiles[0]).then((res) => {
-        console.log("automaticRecognition", res);
+      preprocessSegment(this.basemapUrlId).then((res) => {
 
         // 1. 兼容不同字段结构，优先取 res.data
         let base64Str = res.data;
@@ -895,11 +896,12 @@ export default {
       };
     },
 
-    // 获取统一颜色，可自定义透明度（默认 0.6 用于填充/描边）
-    getUnifiedColor(opacity = 0.6) {
-      const { r, g, b } = this.baseColor;
-      return `rgba(${r},${g},${b},${opacity})`;
-    },
+ // 获取统一颜色（不带透明度，用于不透明填充/描边）
+getUnifiedColor() {
+  const { r, g, b } = this.baseColor;
+  return `rgb(${r},${g},${b})`;
+}
+,
 
     // 重新给所有已绘制区域整体着色
     recolorCanvas(rgbaColor) {
@@ -918,7 +920,7 @@ export default {
     // 设置统一的绘制样式 - 确保套索边框为圆角
     setUnifiedDrawStyle(ctx, opacity = 0.6) {
       // 强制使用完全相同的硬编码设置
-      const exactColor = "rgba(87, 81, 220, 0.6)"; // 固定颜色，不使用参数
+      const exactColor = "rgb(87, 81, 220)"; // 固定颜色，不使用参数
 
       ctx.globalCompositeOperation = "source-over";
       ctx.globalAlpha = 1.0;
@@ -940,7 +942,7 @@ export default {
       if (!points || points.length < 3) return;
 
       // 使用完全相同的硬编码设置
-      const exactColor = "rgba(87, 81, 220, 0.6)";
+      const exactColor = "rgb(87, 81, 220)";
       ctx.globalCompositeOperation = "source-over";
       ctx.globalAlpha = 1.0;
       ctx.fillStyle = exactColor;
@@ -1481,24 +1483,28 @@ export default {
       this.selectedGroundColor = color;
     },
 
-    selectWaterColor(color) {
+    selectWaterColor(item) {
       if (!this.isActionAllowed()) {
         return;
       }
 
 
       // 若重复点击相同颜色，直接返回，避免再次着色导致视觉加深
-      if (color === this.selectedWaterColor) return;
+      if (item.color === this.selectedWaterColor) {
+        this.selectedWaterColor="#87CEEB",
+        this.selectLabel = "";
+        return;
+      }
 
-      this.selectedWaterColor = color;
+      this.selectedWaterColor = item.color;
+      this.selectLabel = item.zh;
 
       // 更新基准颜色 (保持 alpha 不变)
-      const { r, g, b } = this.hexToRgb(color);
+      const { r, g, b } = this.hexToRgb(item.color);
       this.baseColor = { ...this.baseColor, r, g, b };
       this.paintColor = `rgba(${r},${g},${b},1)`;
 
-      // 重新给已绘制区域整体着色 (填充透明度 0.6)
-      this.recolorCanvas(this.getUnifiedColor(0.6));
+      this.recolorCanvas(this.getUnifiedColor());
     },
 
     // 校验是都可以使用语义分割功能
@@ -1900,7 +1906,7 @@ export default {
         // 获取绘图上下文，确保与涂抹颜色完全一致
         const ctx = canvas.getContext("2d");
         // 使用完全相同的硬编码设置
-        const exactColor = "rgba(87, 81, 220, 0.6)";
+        const exactColor = "rgb(87, 81, 220)";
         ctx.globalCompositeOperation = "source-over";
         ctx.globalAlpha = 1.0;
         ctx.strokeStyle = exactColor;
@@ -2147,7 +2153,7 @@ export default {
       if (this.currentTool === "eraser") {
         ctx.globalCompositeOperation = "destination-out";
         ctx.globalAlpha = 1.0;
-        ctx.strokeStyle = "rgba(0,0,0,1)";
+        ctx.strokeStyle = "rgb(0, 0, 0)"; // 黑色，不透明
         ctx.lineWidth = this.brushSize;
         ctx.lineCap = "round"; // 擦除使用圆角端点保持平滑
         ctx.lineJoin = "round"; // 擦除使用圆角连接保持平滑
@@ -2157,7 +2163,7 @@ export default {
         ctx.moveTo(pos.x, pos.y);
       } else {
         // 自由涂抹：使用丝滑的线条绘制
-        const exactColor = "rgba(87, 81, 220, 0.6)";
+        const exactColor = "rgb(87, 81, 220)";
         ctx.globalCompositeOperation = "source-over";
         ctx.globalAlpha = 1.0;
         ctx.strokeStyle = exactColor;
@@ -2191,7 +2197,7 @@ export default {
         // 橡皮擦：使用丝滑的线条擦除
         ctx.globalCompositeOperation = "destination-out";
         ctx.globalAlpha = 1.0;
-        ctx.strokeStyle = "rgba(0,0,0,1)";
+        ctx.strokeStyle = "rgb(0,0,0)";
         ctx.lineWidth = this.brushSize;
         ctx.lineCap = "round"; // 擦除使用圆角端点保持平滑
         ctx.lineJoin = "round"; // 擦除使用圆角连接保持平滑
@@ -2205,7 +2211,7 @@ export default {
         }
       } else {
         // 自由涂抹：使用丝滑的线条绘制
-        const exactColor = "rgba(87, 81, 220, 0.6)";
+        const exactColor = "rgb(87, 81, 220)";
         ctx.globalCompositeOperation = "source-over";
         ctx.globalAlpha = 1.0;
         ctx.strokeStyle = exactColor;
@@ -2471,7 +2477,7 @@ export default {
 
       // 设置预览样式（边框线条）
       ctx.globalCompositeOperation = "source-over";
-      ctx.globalAlpha = 0.8; // 稍微透明一些，区别于已完成的填充
+      ctx.globalAlpha = 1; // 稍微透明一些，区别于已完成的填充
       ctx.strokeStyle = "#5751dc"; // 使用更明显的颜色作为预览
       ctx.fillStyle = "#5751dc";
       ctx.lineCap = "butt"; // 改为直线端点
@@ -2512,7 +2518,7 @@ export default {
 
       // 绘制临时点（如果存在）
       if (this.tempPoint) {
-        ctx.globalAlpha = 0.6;
+        ctx.globalAlpha =1;
         ctx.beginPath();
         ctx.arc(this.tempPoint.x, this.tempPoint.y, 3, 0, Math.PI * 2);
         ctx.fill();
@@ -2527,7 +2533,7 @@ export default {
       if (!this.fixedPoints.length) return;
 
       // 设置统一的颜色和透明度
-      const exactColor = "rgba(87, 81, 220, 0.6)";
+      const exactColor = "rgb(87, 81, 220)";
       ctx.globalCompositeOperation = "source-over";
       ctx.globalAlpha = 1.0;
 
@@ -2613,7 +2619,7 @@ export default {
       ctx.putImageData(this.savedCanvasData, 0, 0);
 
       // 设置绘制样式
-      const exactColor = "rgba(87, 81, 220, 0.6)";
+      const exactColor = "rgb(87, 81, 220)";
       ctx.globalCompositeOperation = "source-over";
       ctx.globalAlpha = 1.0;
       ctx.fillStyle = exactColor;
@@ -2680,7 +2686,7 @@ export default {
       if (!this.fixedPoints || this.fixedPoints.length < 3) return;
 
       // 设置统一的颜色和样式
-      const exactColor = "rgba(87, 81, 220, 0.6)";
+      const exactColor = "rgb(87, 81, 220)";
       ctx.globalCompositeOperation = "source-over";
       ctx.globalAlpha = 1.0;
       ctx.fillStyle = exactColor;
@@ -2814,7 +2820,7 @@ export default {
       const ctx = canvas.getContext("2d");
 
       // 使用完全相同的硬编码设置
-      const exactColor = "rgba(87, 81, 220, 0.6)";
+      const exactColor = "rgb(87, 81, 220)";
       ctx.globalCompositeOperation = "source-over";
       ctx.globalAlpha = 1.0;
       ctx.strokeStyle = exactColor;
@@ -3711,6 +3717,11 @@ export default {
   color: #000;
   margin-bottom: 12px;
   position: relative;
+
+}
+
+.select{
+  margin-left: auto;
 }
 
 .tool-buttons {
@@ -3809,6 +3820,11 @@ export default {
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   padding: 15px 30px;
+
+  .category-title{
+    display: flex;
+    align-items: center;
+  }
 }
 
 /* 颜色选择 */
