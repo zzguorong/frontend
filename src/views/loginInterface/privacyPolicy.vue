@@ -280,6 +280,7 @@ export default {
     position: fixed;
     top: 50px;
     left: 1250px;
+    cursor: pointer;
   }
 
   .service-title {

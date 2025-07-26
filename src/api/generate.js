@@ -33,14 +33,13 @@ export function getPerspectiveStyle(data) {
   });
 }
 // 自动识别
-export function preprocessSegment(file) {
-  const formData = new FormData();
-  formData.append("segment_image", file);
+export function preprocessSegment(baseImageId) {
   return request({
     url: "/preprocess/segment",
     method: "post",
-    data: formData,
-    headers: { "Content-Type": "multipart/form-data" },
+    data: {
+      base_image_id: baseImageId,
+    },
   });
 }
 
