@@ -1,8 +1,18 @@
 <template>
-  <el-upload ref="upload" class="avatar-uploader" :action="actionUrl" :show-file-list="false"
-    :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" :data="uploadData" :headers="uploadHeaders">
+  <el-upload
+    ref="upload"
+    v-loading="loading"
+    class="avatar-uploader"
+    :action="actionUrl"
+    :show-file-list="false"
+    :on-success="handleAvatarSuccess"
+    :on-error="handleAvatarError"
+    :before-upload="beforeAvatarUpload"
+    :data="uploadData"
+    :headers="uploadHeaders"
+  >
     <div v-if="imgUrl" style="position: relative; display: inline-block;">
-      <img :src="imgUrl" class="avatar" />
+      <img :src="imgUrl" class="avatar">
       <!-- 删除按钮 -->
       <i class="el-icon-close delete-btn" @click.stop.prevent="handleDelete" />
     </div>
@@ -14,28 +24,29 @@
 </template>
 
 <script>
-import { getToken } from "@/utils/auth";
+import { getToken } from '@/utils/auth';
 
 export default {
-  name: "uploadFile",
+  name: 'UploadFile',
+  props: {
+    imgUrl: { type: String, default: '' },
+    describeText: { type: String, default: '' },
+    finalApi: { type: String, default: '' }
+  },
   data() {
     return {
       actionUrl: process.env.VUE_APP_BASE_API + this.finalApi,
       uploadData: {
-        base_image: "",
-        segment_image: "",
-        style_image: "",
+        base_image: '',
+        segment_image: '',
+        style_image: ''
       },
       uploadHeaders: {
-        Accept: "application/json",
-        Authorization: "Bearer " + getToken(),
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + getToken()
       },
+      loading: false
     };
-  },
-  props: {
-    imgUrl: { type: String, default: "" },
-    describeText: { type: String, default: "" },
-    finalApi: { type: String, default: "" },
   },
   methods: {
     // 自定义上传方法，不发送网络请求
@@ -64,11 +75,18 @@ export default {
     //   }
     // },
 
+    // 头像上传失败处理
+    handleAvatarError(err, file) {
+      console.error('上传失败:', err, file);
+      this.loading = false; // 上传失败后隐藏加载状态
+      this.$emit('upload-error', { err, file });
+      this.$message.error('图片上传失败！');
+    },
     // 头像上传成功处理（保留原方法以防需要）
     handleAvatarSuccess(res, file) {
-      console.log("上传成功:", res, file);
+      console.log('上传成功:', res, file);
       // Element-UI 成功回调中 file.url 为本地地址 / res.data.url 为服务器地址
-      let imageUrl = "";
+      let imageUrl = '';
       if (file && file.url) {
         imageUrl = file.url;
       } else if (res && res.url) {
@@ -78,39 +96,42 @@ export default {
       if (!imageUrl && file && file.raw) {
         imageUrl = URL.createObjectURL(file.raw);
       }
-      this.$emit("update:imgUrl", imageUrl);
-      this.$emit("upload-success", { res, file, imageUrl });
+      this.loading = false; // 上传完成后隐藏加载状态
+      // 更新父组件的 imgUrl
+      this.$emit('update:imgUrl', imageUrl);
+      this.$emit('upload-success', { res, file, imageUrl });
       // this.$message.success("图片上传成功！");
     },
     beforeAvatarUpload(file) {
       // 将当前文件同步到请求体额外字段
-      if (this.finalApi === "/segment_image") {
+      if (this.finalApi === '/segment_image') {
         this.uploadData.segment_image = file;
-      } else if (this.finalApi === "/style_image") {
+      } else if (this.finalApi === '/style_image') {
         this.uploadData.style_image = file;
       } else {
         this.uploadData.base_image = file;
       }
-      const isImage = file && file.type && file.type.startsWith("image/");
+      const isImage = file && file.type && file.type.startsWith('image/');
       const isLt500M = file.size / 1024 / 1024 < 500;
       if (!isImage) {
-        this.$message.error("只能上传图片文件!");
+        this.$message.error('只能上传图片文件!');
         return false;
       }
       if (!isLt500M) {
-        this.$message.error("上传图片大小不能超过 500MB!");
+        this.$message.error('上传图片大小不能超过 500MB!');
         return false;
       }
+      this.loading = true; // 开始上传时显示加载状态
       return true;
     },
     // 新增：删除按钮事件
     handleDelete() {
-      this.$emit("delete");
+      this.$emit('delete');
     },
     getRawFiles() {
       return this.$refs.upload.uploadFiles.map(f => f.raw);
-    },
-  },
+    }
+  }
 };
 </script>
 

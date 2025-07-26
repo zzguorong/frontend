@@ -6,12 +6,12 @@
           <!-- 中间预览区域 -->
           <div ref="previewArea" class="center-preview-area">
             <!-- 预览主区域 -->
-            <div class="main-preview">
+            <div v-loading="currentPreviewImage && previewImageLoading" class="main-preview">
               <div v-if="!currentPreviewImage" class="empty-preview">
                 <!-- <i class="el-icon-picture"></i>
                 <p>暂无预览图片</p> -->
               </div>
-              <img v-else :src="currentPreviewImage" alt="预览图" class="preview-image">
+              <img v-else :src="currentPreviewImage" alt="预览图" class="preview-image" on-error="previewImageLoading = false" @load="previewImageLoading = false">
               <!-- 预览图操作按钮 -->
               <div class="preview-actions">
                 <svg-icon
@@ -414,81 +414,6 @@ export default {
       // 选项数据
       viewTypeOptions: [{ label: '室内图', value: '4' }],
       styleCategoryOptions: [{ label: '通用', value: '通用' }],
-
-      // 画廊数据
-      // galleryItems: [
-      //   {
-      //     date: "2025-06-12-01",
-      //     galleryItem: [
-      //       {
-      //         image: require("@/assets/images/a.jpg"), // 使用require正确引入图片
-      //         images: [
-      //           {
-      //             src: require("@/assets/images/a.jpg"),
-      //             isCollect: false,
-      //           },
-      //           { src: require("@/assets/images/b.jpg"), isCollect: false },
-      //           {
-      //             src: require("@/assets/images/c.jpg"),
-      //             isCollect: false,
-      //           },
-      //         ],
-      //         isFavorite: false,
-      //       },
-      //       {
-      //         image: require("@/assets/images/d.jpg"), // 使用require正确引入图片
-      //         images: [
-      //           {
-      //             src: require("@/assets/images/d.jpg"),
-      //             isCollect: false,
-      //           },
-      //           {
-      //             src: require("@/assets/images/e.jpg"),
-      //             isCollect: false,
-      //           },
-      //         ],
-      //         isFavorite: false,
-      //       },
-      //     ],
-      //   },
-      //   {
-      //     date: "2025.06-07-01",
-      //     galleryItem: [
-      //       {
-      //         image: require("@/assets/images/f.jpg"), // 使用require正确引入图片
-      //         images: [
-      //           {
-      //             src: require("@/assets/images/f.jpg"),
-      //             isCollect: false,
-      //           },
-      //           {
-      //             src: require("@/assets/images/g.jpg"),
-      //             isCollect: false,
-      //           },
-      //           {
-      //             src: require("@/assets/images/h.jpg"),
-      //             isCollect: false,
-      //           },
-      //         ],
-      //         isFavorite: false,
-      //       },
-      //       {
-      //         image: require("@/assets/images/i.jpg"), // 使用require正确引入图片
-      //         images: [
-      //           {
-      //             src: require("@/assets/images/i.jpg"),
-      //             isCollect: false,
-      //           },
-      //           {
-      //             src: require("@/assets/images/j.jpg"),
-      //             isCollect: false,
-      //           },
-      //         ],
-      //         isFavorite: false,
-      //       },
-      //     ],
-      //   },
-      // ],
       galleryItems: [],
       // 收藏状态 - 使用二维数组匹配新的数据结构
       favoriteStates: [
@@ -522,7 +447,8 @@ export default {
       semanticImgUrl: null,
       styleImageId: null,
       styleImgUrl: null,
-      projectParameters: {}
+      projectParameters: {},
+      previewImageLoading: false
     };
   },
   computed: {
@@ -642,6 +568,9 @@ export default {
         );
         this.projectParameters.styleCategory =
           generationRequest.generation_categories.id;
+        if (res.url !== this.currentPreviewImage) {
+          this.previewImageLoading = true; // 开始加载预览图
+        }
         this.currentPreviewImage = res.url;
         (this.semanticImgUrlId = generationRequest.segment_image_id);
         (this.styleImageId = generationRequest.style_image_id);
@@ -694,10 +623,10 @@ export default {
       try {
         const res = await Promise.all([
           getGalleryImages(),
-          this.getUserFavoriteImages()
+          this.loadUserFavoriteImages()
         ]);
         const generationImages = res[0].data;
-        const userFavoriteImages = res[1]?.favorites || [];
+        const userFavoriteImages = res[1] || [];
         console.log('Loading gallery images:', generationImages);
         console.log('Loading userFavorite images:', userFavoriteImages);
 
@@ -711,7 +640,7 @@ export default {
             dateGroup.galleryItem.forEach((item, itemIndex) => {
               // 检查当前项目是否在用户收藏列表中
               const isFavorite = userFavoriteImages.some(
-                (fav) => fav === item.images[0].generatedImageId
+                (fav) => fav.generated_image_id === item.images[0].generatedImageId
               );
               // 更新收藏状态
               item.isFavorite = isFavorite;
@@ -734,10 +663,10 @@ export default {
     /**
      * 获取用户收藏的生成图片列表
      */
-    async getUserFavoriteImages() {
+    async loadUserFavoriteImages() {
       try {
         const res = await getUserFavoriteImages();
-        const favoriteImages = res.data;
+        const favoriteImages = res.favorites;
         console.log('获取用户收藏的生成图片列表:', favoriteImages);
 
         return favoriteImages;
@@ -1385,6 +1314,9 @@ export default {
         selectedItem.images.length > 0
       ) {
         // 优先显示images数组中的图片
+        if (selectedItem.images[0].src !== this.currentPreviewImage) {
+          this.previewImageLoading = true; // 开始加载预览图
+        }
         this.currentPreviewImage = selectedItem.images[0].src;
         this.projectParameters = { ...selectedItem.projectParameters };
         console.log('selectedItem', selectedItem);
