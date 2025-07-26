@@ -40,7 +40,7 @@
               />
             </el-form-item>
           </div>
-            <el-form-item prop="password">
+            <el-form-item prop="password" class="password">
               <el-input
                 v-model="form.password"
                 type="password"
@@ -290,6 +290,9 @@ export default {
       flex: 3;
     }
   }
+  .password{
+      margin-bottom:33px;
+    }
 }
 .tab-content {
   width: 100%;

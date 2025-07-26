@@ -317,7 +317,7 @@ export default {
       }
 
       .main-card-title {
-        font-size: 21px;
+        font-size: 20px;
         padding: 26px 24px 12px 24px;
         border-bottom: 1px solid #f0f0f0;
         display: flex;
