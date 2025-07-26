@@ -35,9 +35,9 @@
                       <!-- 当无图时显示占位图标 -->
                       <svg-icon v-else icon-class="generateImage" class="placeholder-icon" />
                       <div class="thumbnail-actions" v-if="thumb && thumb.url && index > 1">
-                        <svg-icon class="action-icon favorite-icon" icon-class="collection" :style="(favoriteStates[index] || favoriteHoverStates[index])
+                        <svg-icon class="action-icon favorite-icon" icon-class="collection" :style="(thumb.favoriteStates)
                           ? { color: '#f56565' }
-                          : { color: '#000' }" @click.stop="toggleFavorite(index)"
+                          : { color: '#000' }" @click.stop="toggleFavorite(thumb)"
                           @mouseenter="onFavoriteHover(index, true)" @mouseleave="onFavoriteHover(index, false)" />
 
                         <svg-icon class="action-icon delete-icon" icon-class="delete" :style="deleteHoverStates[index]
@@ -501,13 +501,14 @@ import GlobalMask from '../../layout/components/GlobalMask.vue';
 
 // import laravelEcho from "@/utils/laravel-echo";
 import {
-  collectImage,
+  favoriteGeneratedImage,
   deleteGeneratedImage,
   deleteImage,
   generateImages,
   getImageDetail,
   getPerspectiveStyle,
-  preprocessSegment
+  preprocessSegment,
+  unfavoriteGeneratedImage
 } from "@/api/generate";
 import { blobUrlToBase64 } from "@/utils/index";
 import { downloadPNG } from "@/utils/downLoad";
@@ -558,9 +559,6 @@ export default {
         id: `thumb-${i + 1}`   // 用反引号包裹整个字符串
       })),
       selectedThumbnail: -1,
-
-      // 收藏状态
-      favoriteStates: [false, false, false, false, false, false],
 
       // 悬停状态
       favoriteHoverStates: [false, false, false, false, false, false],
@@ -797,7 +795,7 @@ export default {
       const p = this.generationParams || {};
       if (!Object.keys(p).length) return;
 
-      this.promptText = p.promptText || this.promptText;
+      this.promptText = p.promptText || "";
       if (p.viewType) {
         this.viewType = p.viewType;
         // 更新风格选项后再赋值类别
@@ -806,42 +804,51 @@ export default {
       // if (p.styleCategory) this.styleCategory = p.styleCategory; 风格类固定显示通用
       if (p.resolution) this.resolution = p.resolution;
       if (p.aspectRatio) this.aspectRatio = p.aspectRatio;
-      // 风格迁移控制程度
-      if (p.styleImageId) {
+
+      // 风格迁移图&&控制程度
+      if (p.styleImageId && p.styleImgUrl) {
         this.styleTransferLevel = p.styleTransferLevel;
         this.styleTransferEnabled = true;
         this.styleImageId = p.styleImageId;
+        this.styleImgUrl = p.styleImgUrl;
       } else {
         this.styleTransferLevel = 0;
         this.styleTransferEnabled = false;
+        this.styleImageId = null;
+        this.styleImgUrl = "";
       }
 
       if (p.baseControlLevel) this.baseControlLevel = p.baseControlLevel;
+
       // 清空画廊
       this.thumbnails = Array.from({ length: 6 }, (_, i) => ({
         url: null,
         id: `thumb-${i + 1}`   // 用反引号包裹整个字符串
       }));
-      if (p.basemapUrl) {
+
+      // 底图
+      if (p.basemapUrl && p.basemapUrlId) {
         this.basemapUrl = p.basemapUrl;
+        this.basemapUrlId = p.basemapUrlId;
         // 更新缩略图第一个位置（底图）
         this.$set(this.thumbnails, 0, { url: p.basemapUrl });
         this.previewImage = p.basemapUrl;
+      }else{
+        this.basemapUrl = "";
+        this.basemapUrlId = null;
+        this.previewImage = null;
       }
-      if (p.semanticImgUrl) {
+
+      // 语义分割图
+      if (p.semanticImgUrl && p.semanticImgUrlId) {
+        this.semanticImgUrlId = p.semanticImgUrlId;
         this.semanticImgUrl = p.semanticImgUrl;
         // 更新缩略图第二个位置（语义分割图）
         this.$set(this.thumbnails, 1, { url: p.semanticImgUrl });
-        this.previewImage = p.semanticImgUrl;
+      }else{
+        this.semanticImgUrl = "";
+        this.semanticImgUrlId = null;
       }
-      if (p.styleImgUrl) this.styleImgUrl = p.styleImgUrl;
-      if (p.basemapUrlId) {
-        this.basemapUrlId = p.basemapUrlId;
-      }
-      if (p.semanticImgUrlId) {
-        this.semanticImgUrlId = p.semanticImgUrlId;
-      }
-
 
       console.log("页面激活或首次进入时this.thumbnails", this.thumbnails);
     },
@@ -1148,6 +1155,8 @@ getUnifiedColor() {
               if (res.data && res.data.segment_image_id) {
                 this.semanticImgUrlId = res.data.segment_image_id;
               }
+              // 更新主预览图
+              this.previewImage = imageUrls[0].url;
               this.$message.success("图片生成完成！");
             } else if (status === "failed") {
               clearInterval(this.pollingTimer);
@@ -1521,18 +1530,22 @@ getUnifiedColor() {
     },
 
     // 切换收藏状态
-    async toggleFavorite(id) {
+    async toggleFavorite(thumb) {
 
       try {
-        await collectImage({ generated_image_id })
-        this.$set(this.favoriteStates, index, !this.favoriteStates[index]);
-        const message = this.favoriteStates[index] ? "已收藏" : "取消收藏";
+       if (thumb.favoriteStates) {
+        await unfavoriteGeneratedImage(thumb.id)
+       }else{
+        await favoriteGeneratedImage(thumb.id)
+       }
+       // 查找thumbnails的id与给出项目匹配的
+        const index = this.thumbnails.findIndex(item => item.id === thumb.id);
+        this.$set(this.thumbnails, index, { ...thumb, favoriteStates: !thumb.favoriteStates });
+        const message = !thumb.favoriteStates ? "已收藏" : "取消收藏";
         this.$message.success(`图片 ${index + 1} ${message}`);
         console.log("切换收藏:", index, this.favoriteStates[index]);
       } catch (error) {
-
       }
-
     },
 
     // 收藏悬停处理
