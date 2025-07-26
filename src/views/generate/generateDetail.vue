@@ -28,30 +28,31 @@
               </div>
               <div class="download-controls">
                 <div :style="{
-                    height: '35px',
-                    lineHeight: '35px',
-                    border: '1px solid #dcdfe6',
-                    borderRadius: '5px',
-                    width: '120px',
-                    fontSize: '12px',
-                    textAlign: 'center',
-                    marginLeft: '5px',
-                    cursor: currentPreviewImage ? 'pointer' : 'not-allowed',
-                    backgroundColor: currentPreviewImage ? '#fff' : '#ccc'
-                  }" @click="downloadPNG(currentPreviewImage)">
+                  height: '35px',
+                  lineHeight: '35px',
+                  border: '1px solid #dcdfe6',
+                  borderRadius: '5px',
+                  width: '120px',
+                  fontSize: '12px',
+                  textAlign: 'center',
+                  marginLeft: '5px',
+                  cursor: currentPreviewImage ? 'pointer' : 'not-allowed',
+                  backgroundColor: currentPreviewImage ? '#fff' : '#ccc'
+                }" @click="downloadPNG(currentPreviewImage)">
                   PNG下载
                 </div>
                 <div :style="{
-                     height: '35px',
-                    lineHeight: '35px',
-                    border: '1px solid #dcdfe6',
-                    borderRadius: '5px',
-                    width: '120px',
-                    fontSize: '12px',
-                    textAlign: 'center',
-                    marginLeft: '5px',
-                      cursor: currentPreviewImage ? 'pointer' : 'not-allowed',
-                    backgroundColor: currentPreviewImage ? '#fff' : '#ccc' }" @click="downloadPSD">
+                  height: '35px',
+                  lineHeight: '35px',
+                  border: '1px solid #dcdfe6',
+                  borderRadius: '5px',
+                  width: '120px',
+                  fontSize: '12px',
+                  textAlign: 'center',
+                  marginLeft: '5px',
+                  cursor: currentPreviewImage ? 'pointer' : 'not-allowed',
+                  backgroundColor: currentPreviewImage ? '#fff' : '#ccc'
+                }" @click="downloadPSD">
                   PSD下载
                   <el-tooltip content="PSD下载功能" placement="top">
                     <svg-icon icon-class="question" class="icon-style"
@@ -69,101 +70,101 @@
                 <!-- 画廊面板 -->
                 <div class="gallery-panel" data-simplebar data-simplebar-auto-hide="false">
                   <simplebar>
-                  <div class="gallery-section">
-                    <div class="section-favorate">
-                      <div class="gallery-actions">
-                        <div class="gallery-icon-box">
-                          <svg-icon :class="[
-                            'gallery-action-icon',
-                            'favorite-gallery-icon',
-                            { active: galleryFavoriteActive },
-                          ]" icon-class="collection" :style="{
+                    <div class="gallery-section">
+                      <div class="section-favorate">
+                        <div class="gallery-actions">
+                            <div class="gallery-icon-box">
+                              <svg-icon :class="[
+                                'gallery-action-icon',
+                                'favorite-gallery-icon',
+                                { active: galleryFavoriteActive },
+                              ]" icon-class="collection" :style="{
   color:
     galleryFavoriteActive || galleryFavoriteHover
       ? '#f56565'
       : '#000',
 }" @click="toggleGalleryFavorite" @mouseenter="onGalleryFavoriteHover(true)"
-                            @mouseleave="onGalleryFavoriteHover(false)" />
+                                @mouseleave="onGalleryFavoriteHover(false)" />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
 
-                    <div class="gallery-list">
-                      <!-- 空状态提示 -->
-                      <div v-if="showOnlyFavorites && filteredGalleryItems.length === 0
-                        " class="empty-gallery">
-                        <i class="el-icon-heart" />
-                        <p>暂无收藏的图册</p>
-                        <p class="hint">收藏图册后将在此处显示</p>
-                      </div>
+                      <div class="gallery-list">
+                        <!-- 空状态提示 -->
+                        <div v-if="showOnlyFavorites && filteredGalleryItems.length === 0
+                          " class="empty-gallery">
+                          <i class="el-icon-heart" />
+                          <p>暂无收藏的图册</p>
+                          <p class="hint">收藏图册后将在此处显示</p>
+                        </div>
 
-                      <!-- 画廊列表 -->
-                      <div v-for="(
+                        <!-- 画廊列表 -->
+                        <div v-for="(
                           dateGroup, displayDateIndex
                         ) in filteredGalleryItems" :key="displayDateIndex" class="date-group">
-                        <!-- 日期标题 -->
-                        <div class="date-header">
-                          {{ dateGroup.date }}
-                        </div>
+                          <!-- 日期标题 -->
+                          <div class="date-header">
+                            {{ dateGroup.date }}
+                          </div>
 
-                        <!-- 该日期下的所有图片项目 -->
-                        <div v-for="(
+                          <!-- 该日期下的所有图片项目 -->
+                          <div v-for="(
                             item, displayItemIndex
                           ) in dateGroup.galleryItem" :key="`${displayDateIndex}-${displayItemIndex}`"
-                          class="gallery-item" :class="{
-                            active:
-                              currentImageIndex ===
-                              getGlobalIndexForDisplay(
-                                displayDateIndex,
-                                displayItemIndex
-                              ),
-                          }" @click="
+                            class="gallery-item" :class="{
+                              active:
+                                currentImageIndex ===
+                                getGlobalIndexForDisplay(
+                                  displayDateIndex,
+                                  displayItemIndex
+                                ),
+                            }" @click="
   handleGalleryItemClick(
     displayDateIndex,
     displayItemIndex,
     item
   )
   ">
-                          <!-- 图片预览 -->
-                          <div class="item-preview">
-                            <img v-if="item.image" :src="item.image" alt="画廊图片">
-                            <div v-else class="empty-item" />
+                            <!-- 图片预览 -->
+                            <div class="item-preview">
+                              <img v-if="item.image" :src="item.image" alt="画廊图片" loading="lazy">
+                              <div v-else class="empty-item" />
 
-                            <!-- 图片数量标识 -->
-                            <!-- <div class="image-count-badge">
+                              <!-- 图片数量标识 -->
+                              <!-- <div class="image-count-badge">
                               {{ item.images ? item.images.length : 1 }}
                             </div> -->
-                          </div>
+                            </div>
 
-                          <!-- 操作按钮 -->
-                          <div class="thumbnail-actions">
-                            <div class="gallery-icon-wrapper">
-                              <svg-icon class="action-icon favorite-icon" icon-class="collection" :style="{
-                                color: getFavoriteStateForDisplay(
-                                  displayDateIndex,
-                                  displayItemIndex,
-                                  item
-                                )
-                                  ? '#f56565'
-                                  : '#000',
-                              }" @click.stop="
+                            <!-- 操作按钮 -->
+                            <div class="thumbnail-actions">
+                              <div class="gallery-icon-wrapper">
+                                <svg-icon class="action-icon favorite-icon" icon-class="collection" :style="{
+                                  color: getFavoriteStateForDisplay(
+                                    displayDateIndex,
+                                    displayItemIndex,
+                                    item
+                                  )
+                                    ? '#f56565'
+                                    : '#000',
+                                }" @click.stop="
   toggleFavoriteForDisplay(
     displayDateIndex,
     displayItemIndex,
     item
   )
   " />
-                            </div>
-                            <div class="gallery-icon-wrapper">
-                              <svg-icon class="action-icon delete-icon" icon-class="delete" :style="{
-                                color: getDeleteHoverStateForDisplay(
-                                  displayDateIndex,
-                                  displayItemIndex,
-                                  item
-                                )
-                                  ? '#f56565'
-                                  : '#000',
-                              }" @click.stop="
+                              </div>
+                              <div class="gallery-icon-wrapper">
+                                <svg-icon class="action-icon delete-icon" icon-class="delete" :style="{
+                                  color: getDeleteHoverStateForDisplay(
+                                    displayDateIndex,
+                                    displayItemIndex,
+                                    item
+                                  )
+                                    ? '#f56565'
+                                    : '#000',
+                                }" @click.stop="
   deleteThumbnailForDisplay(
     displayDateIndex,
     displayItemIndex,
@@ -184,13 +185,13 @@
       false
     )
     " />
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </simplebar>
+                  </simplebar>
                 </div>
               </el-tab-pane>
               <el-tab-pane label="项目参数" name="right">
