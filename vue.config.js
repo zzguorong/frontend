@@ -65,6 +65,10 @@ module.exports = {
     // ],
     proxy: {
       // 配置跨域
+      '/storage': {
+        target: 'http://47.112.1.202',
+        changeOrigin: true
+      },
       '/api': {
         target: 'http://47.112.1.202',
         // target: 'https://192.168.10.5:9528',
