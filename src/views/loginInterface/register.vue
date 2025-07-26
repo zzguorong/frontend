@@ -22,24 +22,24 @@
           </div>
           <el-form ref="registerForm" :model="form" class="phone-input-line" :rules="rules">
             <div class="phone-input">
-            <el-form-item prop="phonePrefix" class="phone-prefix">
-                  <el-select
-                    v-model="form.phonePrefix"
-                    class="phone-prefix"
-                    size="large"
-                    popper-class="phone-prefix-select"
-                  >
-                    <el-option label="+86" value="+86" />
-                    <!-- 可扩展其他区号 -->
-                  </el-select>
-                </el-form-item>
-            <el-form-item prop="phone" class="phone">
-              <el-input
-                v-model="form.phone"
-                placeholder="请输入手机号"
-              />
-            </el-form-item>
-          </div>
+              <el-form-item prop="phonePrefix" class="phone-prefix">
+                <el-select
+                  v-model="form.phonePrefix"
+                  class="phone-prefix"
+                  size="large"
+                  popper-class="phone-prefix-select"
+                >
+                  <el-option label="+86" value="+86" />
+                  <!-- 可扩展其他区号 -->
+                </el-select>
+              </el-form-item>
+              <el-form-item prop="phone" class="phone">
+                <el-input
+                  v-model="form.phone"
+                  placeholder="请输入手机号"
+                />
+              </el-form-item>
+            </div>
             <el-form-item prop="password">
               <el-input
                 v-model="form.password"
@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import { sendSmsCode, userRegister } from '@/api/index'
+import { sendSmsCode, userRegister } from '@/api/index';
 
 export default {
   name: 'Register',
@@ -115,6 +115,9 @@ export default {
       },
       countDown: 0,
       rules: {
+        phonePrefix: [
+          { required: true, message: '请选择区号', trigger: 'blur' }
+        ],
         phone: [
           { required: true, message: '请输入手机号', trigger: 'blur' },
           { pattern: /^1[3-9]\d{9}$/, message: '请输入有效的手机号', trigger: 'blur' }
@@ -131,9 +134,9 @@ export default {
           { min: 8, max: 20, message: '密码长度必须在8-20位之间', trigger: 'blur' },
           { validator: (rule, value, callback) => {
             if (value !== this.form.password) {
-              callback(new Error('两次输入的密码不一致'))
+              callback(new Error('两次输入的密码不一致'));
             } else {
-              callback()
+              callback();
             }
           }, trigger: 'blur' }
         ],
@@ -143,70 +146,70 @@ export default {
         ]
       },
       timer: null
-    }
+    };
   },
   beforeDestroy() {
-    this.timer && clearInterval(this.timer)
+    this.timer && clearInterval(this.timer);
   },
   methods: {
     handleSend() {
-      if (this.countDown > 0) return
+      if (this.countDown > 0) return;
       // 发送验证码逻辑
       this.$refs.registerForm.validateField('phone', (errorMessage) => {
         if (!errorMessage) {
-          this.countDown = 60
+          this.countDown = 60;
           this.timer = setInterval(() => {
             if (this.countDown > 0) {
-              this.countDown--
+              this.countDown--;
             } else {
-              clearInterval(this.timer)
+              clearInterval(this.timer);
             }
-          }, 1000)
+          }, 1000);
           // reset code
-          this.form.code = ''
+          this.form.code = '';
           // 调用发送验证码 API
           sendSmsCode({
-            phone: this.form.phone
+            phone: this.form.phonePrefix + this.form.phone
           })
             .then((res) => {
-              this.$message.success(res.message || '验证码已发送，请注意查收')
-              this.$refs.codeInput.focus()
+              this.$message.success(res.message || '验证码已发送，请注意查收');
+              this.$refs.codeInput.focus();
             })
             .catch(() => {
-              console.error('发送验证码失败')
-            })
+              console.error('发送验证码失败');
+            });
         } else {
-          return false
+          return false;
         }
-      })
+      });
     },
     handleRegister() {
       this.$refs.registerForm.validate((valid) => {
         if (valid) {
-          this.loading = true
+          this.loading = true;
           userRegister({
-            phone: this.form.phone,
+            phone: this.form.phonePrefix + this.form.phone,
             password: this.form.password,
             password_confirm: this.form.confirmPassword,
             code: this.form.code
           })
             .then((response) => {
-              this.$message.success('注册成功，请登录')
-              this.$router.push('/login')
+              this.$message.success('注册成功，请登录');
+              this.$router.push('/login');
             })
             .catch((error) => {
-              console.error(error.message || '注册失败，请稍后再试')
+              console.error(error.message || '注册失败，请稍后再试');
             })
             .finally(() => {
-              this.loading = false
-            })
+              this.loading = false;
+            });
         } else {
-          this.$message.error('请填写完整信息')
+          this.$message.error('请填写完整信息');
         }
-      })
+      });
     },
     returnLogin() {
-      this.$router.push('/login')
+      this.$router.push('/login');
     },
     // 跳转服务条款
     handleTermOfservice() {
@@ -217,7 +220,7 @@ export default {
       this.$router.push('/privacyPolicy');
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
