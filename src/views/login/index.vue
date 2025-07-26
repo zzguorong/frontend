@@ -251,13 +251,13 @@ export default {
       id: 'wechat-login-container', // 容器的id
       appid: 'wxaebb39450f19b3fa', // 应用唯一标识，在微信开放平台提交应用审核通过后获得
       scope: 'snsapi_login', // 应用授权作用域，拥有多个作用域用逗号（,）分隔，网页应用目前仅填写snsapi_login即可
+      fast_login:0,
       redirect_uri: encodeURIComponent(
         'https://www.gaiass.com/auth/wechat/callback'
       ), // 扫完码授权成功跳转到的路径
       state: state, // 用于保持请求和回调的状态，授权请求后原样带回给第三方。该参数可用于防止 csrf 攻击（跨站请求伪造攻击），建议第三方带上该参数，可设置为简单的随机数加 session 进行校验
       style: 'black', // 提供"black"、"white"可选，默认为黑色文字描述，
       // stylelite: 1,
-      fast_login:0,
       href: "data:text/css;base64,LmltcG93ZXJCb3ggLnN0YXR1c190eHQge2ZvbnQtc2l6ZTogMjRweH0KLmltcG93ZXJCb3ggLnN0YXR1c190eHQgcCB7Zm9udC1zaXplOiAxOHB4fQouaW1wb3dlckJveCAuc3RhdHVzLnN0YXR1c19mYWlsIHAge2ZvbnQtc2l6ZTogMTZweCB9Ci5pbXBvd2VyQm94IC5zdGF0dXMuc3RhdHVzX2Jyb3dzZXIgcCB7Zm9udC1zaXplOiAyNHB4IH0KLmltcG93ZXJCb3ggLnN0YXR1cyB7cGFkZGluZzogN3B4IDB9Cmg0IHtmb250LXNpemU6IDIycHh9Ci5pbXBvd2VyQm94IHtwYWRkaW5nLXRvcDogNXB4fQo=",
     });
     // 渲染完二维码后缩放到 100×100
