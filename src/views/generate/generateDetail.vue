@@ -6,16 +6,21 @@
           <!-- 中间预览区域 -->
           <div ref="previewArea" class="center-preview-area">
             <!-- 预览主区域 -->
-            <div class="main-preview">
+            <div v-loading="currentPreviewImage && previewImageLoading" class="main-preview">
               <div v-if="!currentPreviewImage" class="empty-preview">
                 <!-- <i class="el-icon-picture"></i>
                 <p>暂无预览图片</p> -->
               </div>
-              <img v-else :src="currentPreviewImage" alt="预览图" class="preview-image">
+              <img v-else :src="currentPreviewImage" alt="预览图" class="preview-image" on-error="previewImageLoading = false" @load="previewImageLoading = false">
               <!-- 预览图操作按钮 -->
               <div class="preview-actions">
-                <svg-icon :class="['preview-action-icon', 'return-icon']" icon-class="return" @click="handlePreviewReturn"
-                  @mouseenter="onPreviewReturnHover(true)" @mouseleave="onPreviewReturnHover(false)" />
+                <svg-icon
+                  :class="['preview-action-icon', 'return-icon']"
+                  icon-class="return"
+                  @click="handlePreviewReturn"
+                  @mouseenter="onPreviewReturnHover(true)"
+                  @mouseleave="onPreviewReturnHover(false)"
+                />
               </div>
             </div>
             <!-- 传输到底图按钮 -->
@@ -27,36 +32,45 @@
                 </el-tooltip>
               </div>
               <div class="download-controls">
-                <div :style="{
-                  height: '35px',
-                  lineHeight: '35px',
-                  border: '1px solid #dcdfe6',
-                  borderRadius: '5px',
-                  width: '120px',
-                  fontSize: '12px',
-                  textAlign: 'center',
-                  marginLeft: '5px',
-                  cursor: currentPreviewImage ? 'pointer' : 'not-allowed',
-                  backgroundColor: currentPreviewImage ? '#fff' : '#ccc'
-                }" @click="downloadPNG(currentPreviewImage)">
+                <div
+                  :style="{
+                    height: '35px',
+                    lineHeight: '35px',
+                    border: '1px solid #dcdfe6',
+                    borderRadius: '5px',
+                    width: '120px',
+                    fontSize: '12px',
+                    textAlign: 'center',
+                    marginLeft: '5px',
+                    cursor: currentPreviewImage ? 'pointer' : 'not-allowed',
+                    backgroundColor: currentPreviewImage ? '#fff' : '#ccc'
+                  }"
+                  @click="downloadPNG(currentPreviewImage)"
+                >
                   PNG下载
                 </div>
-                <div :style="{
-                  height: '35px',
-                  lineHeight: '35px',
-                  border: '1px solid #dcdfe6',
-                  borderRadius: '5px',
-                  width: '120px',
-                  fontSize: '12px',
-                  textAlign: 'center',
-                  marginLeft: '5px',
-                  cursor: currentPreviewImage ? 'pointer' : 'not-allowed',
-                  backgroundColor: currentPreviewImage ? '#fff' : '#ccc'
-                }" @click="downloadPSD">
+                <div
+                  :style="{
+                    height: '35px',
+                    lineHeight: '35px',
+                    border: '1px solid #dcdfe6',
+                    borderRadius: '5px',
+                    width: '120px',
+                    fontSize: '12px',
+                    textAlign: 'center',
+                    marginLeft: '5px',
+                    cursor: currentPreviewImage ? 'pointer' : 'not-allowed',
+                    backgroundColor: currentPreviewImage ? '#fff' : '#ccc'
+                  }"
+                  @click="downloadPSD"
+                >
                   PSD下载
                   <el-tooltip content="PSD下载功能" placement="top">
-                    <svg-icon icon-class="question" class="icon-style"
-                      style="position: absolute; right: 15px; top: 10px" />
+                    <svg-icon
+                      icon-class="question"
+                      class="icon-style"
+                      style="position: absolute; right: 15px; top: 10px"
+                    />
                   </el-tooltip>
                 </div>
               </div>
@@ -73,58 +87,76 @@
                     <div class="gallery-section">
                       <div class="section-favorate">
                         <div class="gallery-actions">
-                            <div class="gallery-icon-box">
-                              <svg-icon :class="[
+                          <div class="gallery-icon-box">
+                            <svg-icon
+                              :class="[
                                 'gallery-action-icon',
                                 'favorite-gallery-icon',
                                 { active: galleryFavoriteActive },
-                              ]" icon-class="collection" :style="{
-  color:
-    galleryFavoriteActive || galleryFavoriteHover
-      ? '#f56565'
-      : '#000',
-}" @click="toggleGalleryFavorite" @mouseenter="onGalleryFavoriteHover(true)"
-                                @mouseleave="onGalleryFavoriteHover(false)" />
-                            </div>
+                              ]"
+                              icon-class="collection"
+                              :style="{
+                                color:
+                                  galleryFavoriteActive || galleryFavoriteHover
+                                    ? '#f56565'
+                                    : '#000',
+                              }"
+                              @click="toggleGalleryFavorite"
+                              @mouseenter="onGalleryFavoriteHover(true)"
+                              @mouseleave="onGalleryFavoriteHover(false)"
+                            />
                           </div>
                         </div>
+                      </div>
 
                       <div class="gallery-list">
                         <!-- 空状态提示 -->
-                        <div v-if="showOnlyFavorites && filteredGalleryItems.length === 0
-                          " class="empty-gallery">
+                        <div
+                          v-if="showOnlyFavorites && filteredGalleryItems.length === 0
+                          "
+                          class="empty-gallery"
+                        >
                           <i class="el-icon-heart" />
                           <p>暂无收藏的图册</p>
                           <p class="hint">收藏图册后将在此处显示</p>
                         </div>
 
                         <!-- 画廊列表 -->
-                        <div v-for="(
-                          dateGroup, displayDateIndex
-                        ) in filteredGalleryItems" :key="displayDateIndex" class="date-group">
+                        <div
+                          v-for="(
+                            dateGroup, displayDateIndex
+                          ) in filteredGalleryItems"
+                          :key="displayDateIndex"
+                          class="date-group"
+                        >
                           <!-- 日期标题 -->
                           <div class="date-header">
                             {{ dateGroup.date }}
                           </div>
 
                           <!-- 该日期下的所有图片项目 -->
-                          <div v-for="(
-                            item, displayItemIndex
-                          ) in dateGroup.galleryItem" :key="`${displayDateIndex}-${displayItemIndex}`"
-                            class="gallery-item" :class="{
+                          <div
+                            v-for="(
+                              item, displayItemIndex
+                            ) in dateGroup.galleryItem"
+                            :key="`${displayDateIndex}-${displayItemIndex}`"
+                            class="gallery-item"
+                            :class="{
                               active:
                                 currentImageIndex ===
                                 getGlobalIndexForDisplay(
                                   displayDateIndex,
                                   displayItemIndex
                                 ),
-                            }" @click="
-  handleGalleryItemClick(
-    displayDateIndex,
-    displayItemIndex,
-    item
-  )
-  ">
+                            }"
+                            @click="
+                              handleGalleryItemClick(
+                                displayDateIndex,
+                                displayItemIndex,
+                                item
+                              )
+                            "
+                          >
                             <!-- 图片预览 -->
                             <div class="item-preview">
                               <img v-if="item.image" :src="item.image" alt="画廊图片" loading="lazy">
@@ -139,52 +171,64 @@
                             <!-- 操作按钮 -->
                             <div class="thumbnail-actions">
                               <div class="gallery-icon-wrapper">
-                                <svg-icon class="action-icon favorite-icon" icon-class="collection" :style="{
-                                  color: getFavoriteStateForDisplay(
-                                    displayDateIndex,
-                                    displayItemIndex,
-                                    item
-                                  )
-                                    ? '#f56565'
-                                    : '#000',
-                                }" @click.stop="
-  toggleFavoriteForDisplay(
-    displayDateIndex,
-    displayItemIndex,
-    item
-  )
-  " />
+                                <svg-icon
+                                  class="action-icon favorite-icon"
+                                  icon-class="collection"
+                                  :style="{
+                                    color: getFavoriteStateForDisplay(
+                                      displayDateIndex,
+                                      displayItemIndex,
+                                      item
+                                    )
+                                      ? '#f56565'
+                                      : '#000',
+                                  }"
+                                  @click.stop="
+                                    toggleFavoriteForDisplay(
+                                      displayDateIndex,
+                                      displayItemIndex,
+                                      item
+                                    )
+                                  "
+                                />
                               </div>
                               <div class="gallery-icon-wrapper">
-                                <svg-icon class="action-icon delete-icon" icon-class="delete" :style="{
-                                  color: getDeleteHoverStateForDisplay(
-                                    displayDateIndex,
-                                    displayItemIndex,
-                                    item
-                                  )
-                                    ? '#f56565'
-                                    : '#000',
-                                }" @click.stop="
-  deleteThumbnailForDisplay(
-    displayDateIndex,
-    displayItemIndex,
-    item
-  )
-  " @mouseenter="
-    onDeleteHoverForDisplay(
-      displayDateIndex,
-      displayItemIndex,
-      item,
-      true
-    )
-    " @mouseleave="
-    onDeleteHoverForDisplay(
-      displayDateIndex,
-      displayItemIndex,
-      item,
-      false
-    )
-    " />
+                                <svg-icon
+                                  class="action-icon delete-icon"
+                                  icon-class="delete"
+                                  :style="{
+                                    color: getDeleteHoverStateForDisplay(
+                                      displayDateIndex,
+                                      displayItemIndex,
+                                      item
+                                    )
+                                      ? '#f56565'
+                                      : '#000',
+                                  }"
+                                  @click.stop="
+                                    deleteThumbnailForDisplay(
+                                      displayDateIndex,
+                                      displayItemIndex,
+                                      item
+                                    )
+                                  "
+                                  @mouseenter="
+                                    onDeleteHoverForDisplay(
+                                      displayDateIndex,
+                                      displayItemIndex,
+                                      item,
+                                      true
+                                    )
+                                  "
+                                  @mouseleave="
+                                    onDeleteHoverForDisplay(
+                                      displayDateIndex,
+                                      displayItemIndex,
+                                      item,
+                                      false
+                                    )
+                                  "
+                                />
                               </div>
                             </div>
                           </div>
@@ -303,8 +347,11 @@
                     <div class="save-params-btn" @click="saveParams">
                       保留参数生图
                       <el-tooltip content="更换底图保留参数，生成类似风格的图框" placement="top">
-                        <svg-icon icon-class="question" class="icon-style"
-                          style="position: absolute; right: 13px; top: 11px" />
+                        <svg-icon
+                          icon-class="question"
+                          class="icon-style"
+                          style="position: absolute; right: 13px; top: 11px"
+                        />
                       </el-tooltip>
                     </div>
                   </div>
@@ -351,7 +398,7 @@ import {
   unfavoriteGeneratedImage
 } from '@/api/generate';
 import 'simplebar/dist/simplebar.min.css';
-import { downloadPNG } from "@/utils/downLoad";
+import { downloadPNG } from '@/utils/downLoad';
 
 export default {
   name: 'GenerateDetail',
@@ -367,81 +414,6 @@ export default {
       // 选项数据
       viewTypeOptions: [{ label: '室内图', value: '4' }],
       styleCategoryOptions: [{ label: '通用', value: '通用' }],
-
-      // 画廊数据
-      // galleryItems: [
-      //   {
-      //     date: "2025-06-12-01",
-      //     galleryItem: [
-      //       {
-      //         image: require("@/assets/images/a.jpg"), // 使用require正确引入图片
-      //         images: [
-      //           {
-      //             src: require("@/assets/images/a.jpg"),
-      //             isCollect: false,
-      //           },
-      //           { src: require("@/assets/images/b.jpg"), isCollect: false },
-      //           {
-      //             src: require("@/assets/images/c.jpg"),
-      //             isCollect: false,
-      //           },
-      //         ],
-      //         isFavorite: false,
-      //       },
-      //       {
-      //         image: require("@/assets/images/d.jpg"), // 使用require正确引入图片
-      //         images: [
-      //           {
-      //             src: require("@/assets/images/d.jpg"),
-      //             isCollect: false,
-      //           },
-      //           {
-      //             src: require("@/assets/images/e.jpg"),
-      //             isCollect: false,
-      //           },
-      //         ],
-      //         isFavorite: false,
-      //       },
-      //     ],
-      //   },
-      //   {
-      //     date: "2025.06-07-01",
-      //     galleryItem: [
-      //       {
-      //         image: require("@/assets/images/f.jpg"), // 使用require正确引入图片
-      //         images: [
-      //           {
-      //             src: require("@/assets/images/f.jpg"),
-      //             isCollect: false,
-      //           },
-      //           {
-      //             src: require("@/assets/images/g.jpg"),
-      //             isCollect: false,
-      //           },
-      //           {
-      //             src: require("@/assets/images/h.jpg"),
-      //             isCollect: false,
-      //           },
-      //         ],
-      //         isFavorite: false,
-      //       },
-      //       {
-      //         image: require("@/assets/images/i.jpg"), // 使用require正确引入图片
-      //         images: [
-      //           {
-      //             src: require("@/assets/images/i.jpg"),
-      //             isCollect: false,
-      //           },
-      //           {
-      //             src: require("@/assets/images/j.jpg"),
-      //             isCollect: false,
-      //           },
-      //         ],
-      //         isFavorite: false,
-      //       },
-      //     ],
-      //   },
-      // ],
       galleryItems: [],
       // 收藏状态 - 使用二维数组匹配新的数据结构
       favoriteStates: [
@@ -475,7 +447,8 @@ export default {
       semanticImgUrl: null,
       styleImageId: null,
       styleImgUrl: null,
-      projectParameters: {}
+      projectParameters: {},
+      previewImageLoading: false
     };
   },
   computed: {
@@ -595,6 +568,9 @@ export default {
         );
         this.projectParameters.styleCategory =
           generationRequest.generation_categories.id;
+        if (res.url !== this.currentPreviewImage) {
+          this.previewImageLoading = true; // 开始加载预览图
+        }
         this.currentPreviewImage = res.url;
         (this.semanticImgUrlId = generationRequest.segment_image_id);
         (this.styleImageId = generationRequest.style_image_id);
@@ -647,10 +623,10 @@ export default {
       try {
         const res = await Promise.all([
           getGalleryImages(),
-          this.getUserFavoriteImages()
+          this.loadUserFavoriteImages()
         ]);
         const generationImages = res[0].data;
-        const userFavoriteImages = res[1]?.favorites || [];
+        const userFavoriteImages = res[1] || [];
         console.log('Loading gallery images:', generationImages);
         console.log('Loading userFavorite images:', userFavoriteImages);
 
@@ -664,7 +640,7 @@ export default {
             dateGroup.galleryItem.forEach((item, itemIndex) => {
               // 检查当前项目是否在用户收藏列表中
               const isFavorite = userFavoriteImages.some(
-                (fav) => fav === item.images[0].generatedImageId
+                (fav) => fav.generated_image_id === item.images[0].generatedImageId
               );
               // 更新收藏状态
               item.isFavorite = isFavorite;
@@ -687,10 +663,10 @@ export default {
     /**
      * 获取用户收藏的生成图片列表
      */
-    async getUserFavoriteImages() {
+    async loadUserFavoriteImages() {
       try {
         const res = await getUserFavoriteImages();
-        const favoriteImages = res.data;
+        const favoriteImages = res.favorites;
         console.log('获取用户收藏的生成图片列表:', favoriteImages);
 
         return favoriteImages;
@@ -1338,6 +1314,9 @@ export default {
         selectedItem.images.length > 0
       ) {
         // 优先显示images数组中的图片
+        if (selectedItem.images[0].src !== this.currentPreviewImage) {
+          this.previewImageLoading = true; // 开始加载预览图
+        }
         this.currentPreviewImage = selectedItem.images[0].src;
         this.projectParameters = { ...selectedItem.projectParameters };
         console.log('selectedItem', selectedItem);

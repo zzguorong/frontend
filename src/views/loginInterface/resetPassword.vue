@@ -21,25 +21,25 @@
           <el-form ref="phoneCodeForm" :model="phoneCodeForm" class="phone-input-line" :rules="phoneCodeFormRules">
             <div class="phone-input">
               <el-form-item prop="phonePrefix" class="phone-prefix">
-                  <el-select
-                    v-model="phoneCodeForm.phonePrefix"
-                    class="phone-prefix"
-                    size="large"
-                    popper-class="phone-prefix-select"
-                  >
-                    <el-option label="+86" value="+86" />
-                    <!-- 可扩展其他区号 -->
-                  </el-select>
-                </el-form-item>
-            <!-- 手机号-->
-            <el-form-item prop="phone" class="phone">
-              <el-input
-                v-model="phoneCodeForm.phone"
-                placeholder="请输入手机号"
-                size="large"
-              />
-            </el-form-item>
-          </div>
+                <el-select
+                  v-model="phoneCodeForm.phonePrefix"
+                  class="phone-prefix"
+                  size="large"
+                  popper-class="phone-prefix-select"
+                >
+                  <el-option label="+86" value="+86" />
+                  <!-- 可扩展其他区号 -->
+                </el-select>
+              </el-form-item>
+              <!-- 手机号-->
+              <el-form-item prop="phone" class="phone">
+                <el-input
+                  v-model="phoneCodeForm.phone"
+                  placeholder="请输入手机号"
+                  size="large"
+                />
+              </el-form-item>
+            </div>
             <!-- 验证码输入 -->
             <el-form-item prop="code">
               <el-input
@@ -122,7 +122,7 @@
 </template>
 
 <script>
-import { resetPassword, sendSmsCode } from '@/api/index'
+import { resetPassword, sendSmsCode } from '@/api/index';
 
 export default {
   name: 'ResetPassword',
@@ -152,18 +152,18 @@ export default {
         newPassword: [
           { required: true, message: '请输入新密码', trigger: 'blur' },
           // 密码长度不少于8个字符，最多不超过20个字符。
-          // 密码必须包含至少三类字符类型：大写字母、小写字母、数字、特殊符号。
+          // 密码必须包含至少三类字符类型：大写字母、小写字母、数字、特殊符号: !@#$%^&*+-_=/?。
           { min: 8, max: 20, message: '密码长度必须在8-20位之间', trigger: 'blur' },
-          { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/, message: '密码必须包含至少三类字符类型：大写字母、小写字母、数字、特殊符号', trigger: 'blur' }
+          { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*+-_=/?])[A-Za-z\d!@#$%^&*+-_=/?]{8,20}$/, message: '密码必须包含至少三类字符类型：大写字母、小写字母、数字、特殊符号: !@#$%^&*+-_=/?', trigger: 'blur' }
         ],
         confirmNewPassword: [
           { required: true, message: '请确认新密码', trigger: 'blur' },
           { min: 8, max: 20, message: '密码长度必须在8-20位之间', trigger: 'blur' },
           { validator: (rule, value, callback) => {
             if (value !== this.resetPasswordForm.newPassword) {
-              callback(new Error('两次输入的密码不一致'))
+              callback(new Error('两次输入的密码不一致'));
             } else {
-              callback()
+              callback();
             }
           }, trigger: 'blur' }
         ]
@@ -171,51 +171,51 @@ export default {
       loading: false,
       countDown: 0,
       timer: null
-    }
+    };
   },
   beforeDestroy() {
-    this.timer && clearInterval(this.timer)
+    this.timer && clearInterval(this.timer);
   },
   methods: {
     handleNextStep() {
       // 验证手机号和验证码
       this.$refs.phoneCodeForm.validate((valid) => {
         if (valid) {
-          this.isPhoneLogin = false
-          this.$refs.resetPasswordForm.resetFields() // 重置密码表单
+          this.isPhoneLogin = false;
+          this.$refs.resetPasswordForm.resetFields(); // 重置密码表单
         } else {
-          return false
+          return false;
         }
-      })
+      });
     },
     handleSend() {
-      if (this.countDown > 0) return
+      if (this.countDown > 0) return;
       // 发送验证码逻辑
       this.$refs.phoneCodeForm.validateField('phone', (errorMessage) => {
         if (!errorMessage) {
-          this.countDown = 60
+          this.countDown = 60;
           this.timer = setInterval(() => {
             if (this.countDown > 0) {
-              this.countDown--
+              this.countDown--;
             } else {
-              clearInterval(this.timer)
+              clearInterval(this.timer);
             }
-          }, 1000)
+          }, 1000);
           sendSmsCode({
             phone: this.phoneCodeForm.phone
           }).then(() => {
-            this.$message.success('验证码已发送')
-            this.$refs.codeInput.focus()
+            this.$message.success('验证码已发送');
+            this.$refs.codeInput.focus();
           }).catch(() => {
-            console.error('发送验证码失败')
-          })
+            console.error('发送验证码失败');
+          });
         }
-      })
+      });
     },
     handleResetPassword() {
       this.$refs.resetPasswordForm.validate((valid) => {
         if (valid) {
-          this.loading = true
+          this.loading = true;
           // 调用重置密码 API
           // 假设有一个 resetPassword API
           resetPassword({
@@ -224,24 +224,24 @@ export default {
             new_password_confirm: this.resetPasswordForm.confirmNewPassword,
             code: this.phoneCodeForm.code
           }).then(() => {
-            this.$message.success('密码重置成功')
-            this.loading = false
-            this.$router.push('/login') // 跳转到登录页面
+            this.$message.success('密码重置成功');
+            this.loading = false;
+            this.$router.push('/login'); // 跳转到登录页面
           }).catch(() => {
-            this.loading = false
-            console.error('重置密码失败')
-          })
+            this.loading = false;
+            console.error('重置密码失败');
+          });
         } else {
-          return false
+          return false;
         }
-      })
+      });
     },
     // 返回登录页面
     returnLogin() {
-      this.$router.push('/login')
+      this.$router.push('/login');
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

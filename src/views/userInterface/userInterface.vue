@@ -46,19 +46,19 @@
               <div class="account-form">
                 当前密码
                 <el-form-item prop="password">
-                  <el-input type="password" v-model="resetPasswordForm.password" show-password placeholder="请输入当前密码" />
+                  <el-input v-model="resetPasswordForm.password" type="password" show-password placeholder="请输入当前密码" />
                 </el-form-item>
               </div>
               <div class="account-form">
                 新密码
                 <el-form-item prop="newPassword">
-                  <el-input type="password" v-model="resetPasswordForm.newPassword" show-password placeholder="请输入新密码" />
+                  <el-input v-model="resetPasswordForm.newPassword" type="password" show-password placeholder="请输入新密码" />
                 </el-form-item>
               </div>
               <div class="account-form">
                 重复输入新密码
                 <el-form-item prop="confirmNewPassword">
-                  <el-input type="password" v-model="resetPasswordForm.confirmNewPassword" show-password placeholder="请再次输入密码" />
+                  <el-input v-model="resetPasswordForm.confirmNewPassword" type="password" show-password placeholder="请再次输入密码" />
                 </el-form-item>
               </div>
             </el-form>
@@ -91,23 +91,23 @@
             <div class="plan-rights">
 
               <div class="plan-rights-list">
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A"></i> <span>专人提供技术支持</span>
+                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" /> <span>专人提供技术支持</span>
                 </div>
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A"></i> <span>本地化部署专用服务器</span>
+                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" /> <span>本地化部署专用服务器</span>
                 </div>
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A"></i> <span>GAIA模型支持</span>
+                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" /> <span>GAIA模型支持</span>
                 </div>
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A"></i>
+                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
                   <span>服务期内无限图像生成次数</span></div>
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A"></i>
+                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
                   <span>服务期内无限语义分割功能使用次数</span></div>
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A"></i>
+                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
                   <span>服务期内无限语义分割工具包使用次数</span></div>
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A"></i>
+                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
                   <span>服务期内无限PNG下载次数</span></div>
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A"></i>
+                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
                   <span>服务期内无限PSD下载次数</span></div>
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A"></i>
+                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
                   <span>服务器内生图排队优先权</span></div>
               </div>
             </div>
@@ -157,13 +157,13 @@
 <script>
 
 import {
-getUserInfo
-} from "@/api/generate";
+  getUserInfo
+} from '@/api/generate';
 import { updatePassword } from '@/api/index';
 import { generateRandomString } from '@/utils/index';
 
 export default {
-  name: "UserInterface",
+  name: 'UserInterface',
   data() {
     return {
       userInfo: {},
@@ -179,24 +179,24 @@ export default {
         newPassword: [
           { required: true, message: '请输入新密码', trigger: 'blur' },
           // 密码长度不少于8个字符，最多不超过20个字符。
-          // 密码必须包含至少三类字符类型：大写字母、小写字母、数字、特殊符号。
+          // 密码必须包含至少三类字符类型：大写字母、小写字母、数字、特殊符号: !@#$%^&*+-_=/?。
           { min: 8, max: 20, message: '密码长度必须在8-20位之间', trigger: 'blur' },
-          { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/, message: '密码必须包含至少三类字符类型：大写字母、小写字母、数字、特殊符号', trigger: 'blur' }
+          { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*+-_=/?])[A-Za-z\d!@#$%^&*+-_=/?]{8,20}$/, message: '密码必须包含至少三类字符类型：大写字母、小写字母、数字、特殊符号: !@#$%^&*+-_=/?', trigger: 'blur' }
         ],
         confirmNewPassword: [
           { required: true, message: '请确认新密码', trigger: 'blur' },
           { min: 8, max: 20, message: '密码长度必须在8-20位之间', trigger: 'blur' },
           { validator: (rule, value, callback) => {
             if (value !== this.resetPasswordForm.newPassword) {
-              callback(new Error('两次输入的密码不一致'))
+              callback(new Error('两次输入的密码不一致'));
             } else {
-              callback()
+              callback();
             }
           }, trigger: 'blur' }
         ]
       },
       loading: false,
-      wechatBindingDialogVisible: false,
+      wechatBindingDialogVisible: false
     };
   },
   async created() {
@@ -204,7 +204,7 @@ export default {
       const data = await getUserInfo();
       this.userInfo = data;
     } catch (error) {
-      console.log()
+      console.log();
     }
   },
   methods: {
@@ -263,15 +263,15 @@ export default {
         ), // 扫完码授权成功跳转到的路径
         state: state, // 用于保持请求和回调的状态，授权请求后原样带回给第三方。该参数可用于防止 csrf 攻击（跨站请求伪造攻击），建议第三方带上该参数，可设置为简单的随机数加 session 进行校验
         style: 'black', // 提供"black"、"white"可选，默认为黑色文字描述，
-      // stylelite: 1,
-      href: "data:text/css;base64,LmltcG93ZXJCb3ggLnN0YXR1c190eHQge2ZvbnQtc2l6ZTogMjRweH0KLmltcG93ZXJCb3ggLnN0YXR1c190eHQgcCB7Zm9udC1zaXplOiAxOHB4fQouaW1wb3dlckJveCAuc3RhdHVzLnN0YXR1c19mYWlsIHAge2ZvbnQtc2l6ZTogMTZweCB9Ci5pbXBvd2VyQm94IC5zdGF0dXMuc3RhdHVzX2Jyb3dzZXIgcCB7Zm9udC1zaXplOiAxOHB4IH0KLmltcG93ZXJCb3ggLnN0YXR1cyB7cGFkZGluZzogN3B4IDB9Cmg0IHtmb250LXNpemU6IDE4cHh9Ci5pbXBvd2VyQm94IHtwYWRkaW5nLXRvcDogNXB4fQo="
+        // stylelite: 1,
+        href: 'data:text/css;base64,LmltcG93ZXJCb3ggLnN0YXR1c190eHQge2ZvbnQtc2l6ZTogMjRweH0KLmltcG93ZXJCb3ggLnN0YXR1c190eHQgcCB7Zm9udC1zaXplOiAxOHB4fQouaW1wb3dlckJveCAuc3RhdHVzLnN0YXR1c19mYWlsIHAge2ZvbnQtc2l6ZTogMTZweCB9Ci5pbXBvd2VyQm94IC5zdGF0dXMuc3RhdHVzX2Jyb3dzZXIgcCB7Zm9udC1zaXplOiAxOHB4IH0KLmltcG93ZXJCb3ggLnN0YXR1cyB7cGFkZGluZzogN3B4IDB9Cmg0IHtmb250LXNpemU6IDE4cHh9Ci5pbXBvd2VyQm94IHtwYWRkaW5nLXRvcDogNXB4fQo='
       });
     }
   }
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .user-interface-page {
   min-height: calc(100vh - 180px);
   display: flex;
@@ -296,8 +296,6 @@ export default {
       display: flex;
       flex-direction: column;
     }
-
-
 
     .main-card {
       background: #fff;
@@ -381,8 +379,6 @@ export default {
     align-items: center;
     border-bottom: 1px solid #f0f0f0;
     padding-bottom: 8px;
-
-
   }
 }
 
@@ -455,7 +451,6 @@ export default {
   }
 }
 
-
 .plan-rights {
   background: #f6f6f6;
   border-radius: 4px;
@@ -463,10 +458,7 @@ export default {
   margin-top: 10px;
   font-size: 15px;
   border: 1px #ccc solid;
-
-
 }
-
 
 .plan-rights-list {
   display: flex;

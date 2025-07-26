@@ -513,7 +513,6 @@ import {
 import { blobUrlToBase64 } from "@/utils/index";
 import { downloadPNG } from "@/utils/downLoad";
 
-
 export default {
   name: "GenerateFile",
   components: { draggableProgress, uploadFile, GlobalMask },
@@ -1646,9 +1645,9 @@ getUnifiedColor() {
         this.initLassoCanvas();
         this.initPaintCanvas();
       });
-      console.log("previewImage", this.previewImage);
-      const base64 = await blobUrlToBase64(this.thumbnails[1].url);
-      this.basemapUrlBase64 = base64;
+      // console.log("previewImage", this.previewImage);
+      // const base64 = await blobUrlToBase64(this.thumbnails[1].url);
+      // this.basemapUrlBase64 = base64;
     },
 
     // 底图URL更新处理（备用方法）
