@@ -468,7 +468,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .subscription-interface-page {
-  width: 80%;
+  width: 90%;
   margin: 0 auto;
 }
 
@@ -484,7 +484,7 @@ export default {
   width: 100%;
   border: 2px solid #ccc;
   border-radius: 10px;
-  padding: 30px;
+  padding: 30px 20px 20px 20px;
   position: relative;
   height: 550px;
 }
@@ -584,11 +584,11 @@ export default {
   margin: 0px auto;
   display: flex;
   justify-content: space-between;
-  padding-right: 26px;
+  /* padding-right: 26px; */
 }
 
 .subscription-compare-content-item{
-  padding-right: 26px;
+  /* padding-right: 26px; */
 }
 
 .subscription-compare-title {
@@ -931,4 +931,9 @@ table tbody tr:nth-child(odd) {
   font-size: 18px;
   font-weight: 600;
 }
+
+/* ::v-deep .el-col-8 {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+} */
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="generate-detail-container">
     <div class="content-wrapper">
-      <el-row :gutter="20"  class="fixed-row">
+      <el-row :gutter="20" class="fixed-row">
         <el-col :span="18">
           <!-- 中间预览区域 -->
           <div ref="previewArea" class="center-preview-area">
@@ -11,16 +11,12 @@
                 <!-- <i class="el-icon-picture"></i>
                 <p>暂无预览图片</p> -->
               </div>
-              <img v-else :src="currentPreviewImage" alt="预览图" class="preview-image" on-error="previewImageLoading = false" @load="previewImageLoading = false">
+              <img v-else :src="currentPreviewImage" alt="预览图" class="preview-image"
+                on-error="previewImageLoading = false" @load="previewImageLoading = false">
               <!-- 预览图操作按钮 -->
               <div class="preview-actions">
-                <svg-icon
-                  :class="['preview-action-icon', 'return-icon']"
-                  icon-class="return"
-                  @click="handlePreviewReturn"
-                  @mouseenter="onPreviewReturnHover(true)"
-                  @mouseleave="onPreviewReturnHover(false)"
-                />
+                <svg-icon :class="['preview-action-icon', 'return-icon']" icon-class="return" @click="handlePreviewReturn"
+                  @mouseenter="onPreviewReturnHover(true)" @mouseleave="onPreviewReturnHover(false)" />
               </div>
             </div>
             <!-- 传输到底图按钮 -->
@@ -32,49 +28,49 @@
                 </el-tooltip>
               </div>
               <div class="download-controls">
-                <el-button
-                  v-loading="pngDownloading"
-                  :style="{
-                    height: '35px',
-                    lineHeight: '35px',
-                    border: '1px solid #dcdfe6',
-                    borderRadius: '5px',
-                    width: '120px',
-                    fontSize: '12px',
-                    textAlign: 'center',
-                    marginLeft: '5px',
-                    cursor: pngDownloadEnabled ? 'pointer' : 'not-allowed',
-                    backgroundColor: pngDownloadEnabled ? '#fff' : '#ccc'
-                  }"
-                  @click="downloadPNG"
-                >
+                <el-button v-loading="pngDownloading" :style="{
+                  height: '35px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '1px solid #dcdfe6',
+                  borderRadius: '5px',
+                  width: '120px',
+                  fontSize: '12px',
+                  marginLeft: '5px',
+                  cursor: pngDownloadEnabled ? 'pointer' : 'not-allowed',
+                  backgroundColor: pngDownloadEnabled ? '#fff' : '#ccc',
+                  color: '#000',
+                }" @click="downloadPNG">
                   PNG下载
                 </el-button>
-                <el-button
-                  v-loading="psdDownloading"
-                  :style="{
-                    height: '35px',
-                    lineHeight: '35px',
-                    border: '1px solid #dcdfe6',
-                    borderRadius: '5px',
-                    width: '120px',
-                    fontSize: '12px',
-                    textAlign: 'center',
-                    marginLeft: '5px',
-                    cursor: psdDownloadEnabled ? 'pointer' : 'not-allowed',
-                    backgroundColor: psdDownloadEnabled ? '#fff' : '#ccc'
-                  }"
-                  @click="downloadPSD"
-                >
+
+                <el-button v-loading="psdDownloading" :disabled="!psdDownloadEnabled" :style="{
+                  display: 'flex', // ✅ 关键：用 flex 让内容垂直居中
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '35px',
+                  border: '1px solid #dcdfe6',
+                  borderRadius: '5px',
+                  width: '120px',
+                  fontSize: '12px',
+                  textAlign: 'center',
+                  marginLeft: '5px',
+                  cursor: psdDownloadEnabled ? 'pointer' : 'not-allowed',
+                  backgroundColor: psdDownloadEnabled ? '#fff' : '#ccc',
+                  color: '#000',
+                  position: 'relative',
+                  paddingRight: '25px'
+                }" @click="downloadPSD">
                   PSD下载
+
                   <el-tooltip content="PSD下载功能" placement="top">
-                    <svg-icon
-                      icon-class="question"
-                      class="icon-style"
-                      style="position: absolute; right: 15px; top: 10px"
-                    />
+                    <svg-icon icon-class="question" class="icon-style"
+                      style="position: absolute; right: 15px; top: 10px; pointer-events: auto; cursor: help;" />
                   </el-tooltip>
                 </el-button>
+
+
               </div>
             </div>
           </div>
@@ -84,81 +80,62 @@
             <el-tabs v-model="activeName" type="card">
               <el-tab-pane label="我的项目" name="left">
                 <!-- 画廊面板 -->
-                <div class="gallery-panel" data-simplebar data-simplebar-auto-hide="false">
-                  <simplebar>
+                <div class="gallery-panel">
                     <div class="gallery-section">
                       <div class="section-favorate">
                         <div class="gallery-actions">
                           <div class="gallery-icon-box">
-                            <svg-icon
-                              :class="[
-                                'gallery-action-icon',
-                                'favorite-gallery-icon',
-                                { active: galleryFavoriteActive },
-                              ]"
-                              icon-class="collection"
-                              :style="{
-                                color:
-                                  galleryFavoriteActive || galleryFavoriteHover
-                                    ? '#f56565'
-                                    : '#000',
-                              }"
-                              @click="toggleGalleryFavorite"
-                              @mouseenter="onGalleryFavoriteHover(true)"
-                              @mouseleave="onGalleryFavoriteHover(false)"
-                            />
+                            <svg-icon :class="[
+                              'gallery-action-icon',
+                              'favorite-gallery-icon',
+                              { active: galleryFavoriteActive },
+                            ]" icon-class="collection" :style="{
+  color:
+    galleryFavoriteActive || galleryFavoriteHover
+      ? '#f56565'
+      : '#000',
+}" @click="toggleGalleryFavorite" @mouseenter="onGalleryFavoriteHover(true)"
+                              @mouseleave="onGalleryFavoriteHover(false)" />
                           </div>
                         </div>
                       </div>
 
                       <div class="gallery-list">
                         <!-- 空状态提示 -->
-                        <div
-                          v-if="showOnlyFavorites && filteredGalleryItems.length === 0
-                          "
-                          class="empty-gallery"
-                        >
+                        <div v-if="showOnlyFavorites && filteredGalleryItems.length === 0
+                          " class="empty-gallery">
                           <i class="el-icon-heart" />
                           <p>暂无收藏的图册</p>
                           <p class="hint">收藏图册后将在此处显示</p>
                         </div>
 
                         <!-- 画廊列表 -->
-                        <div
-                          v-for="(
+                        <div v-for="(
                             dateGroup, displayDateIndex
-                          ) in filteredGalleryItems"
-                          :key="displayDateIndex"
-                          class="date-group"
-                        >
+                          ) in filteredGalleryItems" :key="displayDateIndex" class="date-group">
                           <!-- 日期标题 -->
                           <div class="date-header">
                             {{ dateGroup.date }}
                           </div>
 
                           <!-- 该日期下的所有图片项目 -->
-                          <div
-                            v-for="(
+                          <div v-for="(
                               item, displayItemIndex
-                            ) in dateGroup.galleryItem"
-                            :key="`${displayDateIndex}-${displayItemIndex}`"
-                            class="gallery-item"
-                            :class="{
+                            ) in dateGroup.galleryItem" :key="`${displayDateIndex}-${displayItemIndex}`"
+                            class="gallery-item" :class="{
                               active:
                                 currentImageIndex ===
                                 getGlobalIndexForDisplay(
                                   displayDateIndex,
                                   displayItemIndex
                                 ),
-                            }"
-                            @click="
-                              handleGalleryItemClick(
-                                displayDateIndex,
-                                displayItemIndex,
-                                item
-                              )
-                            "
-                          >
+                            }" @click="
+  handleGalleryItemClick(
+    displayDateIndex,
+    displayItemIndex,
+    item
+  )
+  ">
                             <!-- 图片预览 -->
                             <div class="item-preview">
                               <img v-if="item.image" :src="item.image" alt="画廊图片" loading="lazy">
@@ -173,90 +150,77 @@
                             <!-- 操作按钮 -->
                             <div class="thumbnail-actions">
                               <div class="gallery-icon-wrapper">
-                                <svg-icon
-                                  class="action-icon favorite-icon"
-                                  icon-class="collection"
-                                  :style="{
-                                    color: getFavoriteStateForDisplay(
-                                      displayDateIndex,
-                                      displayItemIndex,
-                                      item
-                                    )
-                                      ? '#f56565'
-                                      : '#000',
-                                  }"
-                                  @click.stop="
-                                    toggleFavoriteForDisplay(
-                                      displayDateIndex,
-                                      displayItemIndex,
-                                      item
-                                    )
-                                  "
-                                />
+                                <svg-icon class="action-icon favorite-icon" icon-class="collection" :style="{
+                                  color: getFavoriteStateForDisplay(
+                                    displayDateIndex,
+                                    displayItemIndex,
+                                    item
+                                  )
+                                    ? '#f56565'
+                                    : '#000',
+                                }" @click.stop="
+  toggleFavoriteForDisplay(
+    displayDateIndex,
+    displayItemIndex,
+    item
+  )
+  " />
                               </div>
                               <div class="gallery-icon-wrapper">
-                                <svg-icon
-                                  class="action-icon delete-icon"
-                                  icon-class="delete"
-                                  :style="{
-                                    color: getDeleteHoverStateForDisplay(
-                                      displayDateIndex,
-                                      displayItemIndex,
-                                      item
-                                    )
-                                      ? '#f56565'
-                                      : '#000',
-                                  }"
-                                  @click.stop="
-                                    deleteThumbnailForDisplay(
-                                      displayDateIndex,
-                                      displayItemIndex,
-                                      item
-                                    )
-                                  "
-                                  @mouseenter="
-                                    onDeleteHoverForDisplay(
-                                      displayDateIndex,
-                                      displayItemIndex,
-                                      item,
-                                      true
-                                    )
-                                  "
-                                  @mouseleave="
-                                    onDeleteHoverForDisplay(
-                                      displayDateIndex,
-                                      displayItemIndex,
-                                      item,
-                                      false
-                                    )
-                                  "
-                                />
+                                <svg-icon class="action-icon delete-icon" icon-class="delete" :style="{
+                                  color: getDeleteHoverStateForDisplay(
+                                    displayDateIndex,
+                                    displayItemIndex,
+                                    item
+                                  )
+                                    ? '#f56565'
+                                    : '#000',
+                                }" @click.stop="
+  deleteThumbnailForDisplay(
+    displayDateIndex,
+    displayItemIndex,
+    item
+  )
+  " @mouseenter="
+    onDeleteHoverForDisplay(
+      displayDateIndex,
+      displayItemIndex,
+      item,
+      true
+    )
+    " @mouseleave="
+    onDeleteHoverForDisplay(
+      displayDateIndex,
+      displayItemIndex,
+      item,
+      false
+    )
+    " />
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </simplebar>
                 </div>
               </el-tab-pane>
               <el-tab-pane label="项目参数" name="right">
-                <div  ref="paramsScroll" class="project-panel" data-simplebar data-simplebar-auto-hide="false">
-                  <simplebar>
-                  <!-- 项目参数 -->
-                  <div class="params-section">
-                    <!-- 提示词 -->
-                    <div class="param-item horizontal-item">
-                      <div class="base-style">
-                        <label>提示词</label>
-                        <el-input v-model="projectParameters.promptText" type="textarea" :rows="4" placeholder="请输入提示词" />
+                <div ref="paramsScroll" class="project-panel" >
+                    <!-- 项目参数 -->
+                    <div class="params-section">
+                      <!-- 提示词 -->
+                      <div class="param-item horizontal-item">
+                        <div class="base-style">
+                          <label>提示词</label>
+                          <el-input v-model="projectParameters.promptText" type="textarea" :rows="4"
+                            placeholder="请输入提示词" />
+                        </div>
                       </div>
-                    </div>
-                    <!-- 视角类型 -->
-                    <div class="param-item horizontal-item">
-                      <div class="base-style">
-                        <label>视角类型</label>
-                        <!-- <div class="button-group">
+                      <!-- 视角类型 -->
+                      <div class="param-item horizontal-item">
+                        <div class="base-style">
+                          <label>视角类型</label>
+                          <!-- <div class="button-group">
                           <span
                             v-for="option in viewTypeOptions"
                             :key="option.value"
@@ -265,18 +229,18 @@
                             {{ option.label }}
                           </span>
                         </div> -->
-                        <div class="button-group">
-                          <span>
-                            {{ viewTypeFormat(projectParameters.viewType) }}
-                          </span>
+                          <div class="button-group">
+                            <span>
+                              {{ viewTypeFormat(projectParameters.viewType) }}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <!-- 风格类别 -->
-                    <div class="param-item horizontal-item">
-                      <div class="base-style">
-                        <label>风格类别</label>
-                        <!-- <div class="button-group">
+                      <!-- 风格类别 -->
+                      <div class="param-item horizontal-item">
+                        <div class="base-style">
+                          <label>风格类别</label>
+                          <!-- <div class="button-group">
                           <span
                             v-for="option in styleCategoryOptions"
                             :key="option.value"
@@ -285,25 +249,25 @@
                             {{ option.label }}
                           </span>
                         </div> -->
-                        <div class="button-group">
-                          <span>
-                            通用类别
-                          </span>
+                          <div class="button-group">
+                            <span>
+                              通用类别
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <!-- 底图控制程度 -->
-                    <!-- 底图材质固定 -->
-                    <div class="param-item horizontal-item">
-                      <div class="base-style">
-                        <label>底图控制程度</label>
-                        <div class="button-group">
-                          <span>
-                            {{ projectParameters.baseControlLevel }}
-                          </span>
+                      <!-- 底图控制程度 -->
+                      <!-- 底图材质固定 -->
+                      <div class="param-item horizontal-item">
+                        <div class="base-style">
+                          <label>底图控制程度</label>
+                          <div class="button-group">
+                            <span>
+                              {{ projectParameters.baseControlLevel }}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                      <!-- <div class="base-style">
+                        <!-- <div class="base-style">
                         <label>底图材质固定</label>
                         <div class="button-group">
                           <span>
@@ -311,59 +275,56 @@
                           </span>
                         </div>
                       </div> -->
+                      </div>
+
+                      <!-- 风格迁移控制程度 -->
+                      <div class="param-item horizontal-item">
+                        <div class="base-style">
+                          <label>风格迁移控制程度</label>
+                          <div class="button-group">
+                            <span>
+                              {{ styleImageId ? projectParameters.styleTransferLevel : 0 }}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- 分辨率 -->
+                      <!-- 图纸比例 -->
+                      <div class="param-item horizontal-item">
+                        <div class="base-style">
+                          <label>分辨率</label>
+                          <div class="button-group">
+                            <span>
+                              {{ scaleFormat(projectParameters.resolution) }}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="param-item horizontal-item">
+                        <div class="base-style">
+                          <label>图纸比例</label>
+                          <div class="button-group">
+                            <span>
+                              {{ projectParameters.aspectRatio == 'detect' ? '原始比例' : projectParameters.aspectRatio }}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- 保留参数按钮 -->
+                      <div class="save-params-btn" @click="saveParams">
+                        保留参数生图
+                        <el-tooltip content="更换底图保留参数，生成类似风格的图框" placement="top">
+                          <svg-icon icon-class="question" class="icon-style"
+                            style="position: absolute; right: 13px; top: 11px" />
+                        </el-tooltip>
+                      </div>
                     </div>
 
-                    <!-- 风格迁移控制程度 -->
-                    <div class="param-item horizontal-item">
-                      <div class="base-style">
-                        <label>风格迁移控制程度</label>
-                        <div class="button-group">
-                          <span>
-                            {{ styleImageId ? projectParameters.styleTransferLevel : 0 }}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- 分辨率 -->
-                    <!-- 图纸比例 -->
-                    <div class="param-item horizontal-item">
-                      <div class="base-style">
-                        <label>分辨率</label>
-                        <div class="button-group">
-                          <span>
-                            {{ scaleFormat(projectParameters.resolution) }}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="param-item horizontal-item">
-                      <div class="base-style">
-                        <label>图纸比例</label>
-                        <div class="button-group">
-                          <span>
-                            {{ projectParameters.aspectRatio == 'detect' ? '原始比例' : projectParameters.aspectRatio }}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- 保留参数按钮 -->
-                    <div class="save-params-btn" @click="saveParams">
-                      保留参数生图
-                      <el-tooltip content="更换底图保留参数，生成类似风格的图框" placement="top">
-                        <svg-icon
-                          icon-class="question"
-                          class="icon-style"
-                          style="position: absolute; right: 13px; top: 11px"
-                        />
-                      </el-tooltip>
-                    </div>
-                  </div>
-
-                  <!-- 语义分割元素 -->
-                  <!-- <div class="params-section"> -->
-                  <!-- <div class="section-title">语义分割元素</div> -->
-                  <!-- 线稿图 -->
-                  <!-- <div class="param-item">
+                    <!-- 语义分割元素 -->
+                    <!-- <div class="params-section"> -->
+                    <!-- <div class="section-title">语义分割元素</div> -->
+                    <!-- 线稿图 -->
+                    <!-- <div class="param-item">
                       <div class="base-style">
                         <label>线稿图</label>
                         <div class="segmentation-image">
@@ -371,8 +332,8 @@
                         </div>
                       </div>
                     </div> -->
-                  <!-- 语义分割图 -->
-                  <!-- <div class="param-item" style="margin-top: 15px">
+                    <!-- 语义分割图 -->
+                    <!-- <div class="param-item" style="margin-top: 15px">
                       <div class="base-style">
                         <label>语义分割图</label>
                         <div class="segmentation-image">
@@ -380,8 +341,7 @@
                         </div>
                       </div>
                     </div> -->
-                  <!-- </div> -->
-                  </simplebar>
+                    <!-- </div> -->
                 </div>
               </el-tab-pane>
             </el-tabs>
@@ -402,7 +362,7 @@ import {
   unfavoriteGeneratedImage,
   generatePSD
 } from '@/api/generate';
-import 'simplebar/dist/simplebar.min.css';
+// import 'simplebar/dist/simplebar.min.css';
 import { downloadFile } from '@/utils/downLoad';
 
 export default {
@@ -1764,7 +1724,7 @@ export default {
   border: 1px solid #ccc;
   cursor: pointer;
   position: absolute;
-  bottom: 80px;
+  bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
@@ -1970,7 +1930,7 @@ export default {
   transition: all 0.28s;
   padding: 0;
   /* 移除内边距 */
-  height: calc(100vh - 180px);
+  height: calc(100vh - 154px);
   /* 减去tabs 标题高度48px + 边距12px + 收藏栏30px + 顶栏70px + 生图按钮区域 60px*/
   overflow-x: hidden;
   /* 防止横向滚动条 */
@@ -1985,6 +1945,7 @@ export default {
   justify-content: space-between;
   padding-bottom: 80px;
   /* 为底部固定按钮留出空间 */
+  position: relative;
 }
 
 .gallery-section {
@@ -2336,23 +2297,23 @@ export default {
 }
 
 
-.fixed-row{
+.fixed-row {
   display: flex;
 }
 
-  /*>=0,<1440的设备屏幕*/
-  @media screen and (max-width: 1439px) {
-::v-deep .el-col-18 {
-  min-width: 1009px;
+/*>=0,<1440的设备屏幕*/
+@media screen and (max-width: 1439px) {
+  ::v-deep .el-col-18 {
+    min-width: 1009px;
   }
 
   .fixed-row {
     min-width: 1426px;
   }
 
-  .content-wrapper{
+  .content-wrapper {
     overflow-x: auto;
   }
 
- }
+}
 </style>

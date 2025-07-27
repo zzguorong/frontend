@@ -101,39 +101,47 @@
                     size="medium"></el-checkbox>
                 </div>
                 <div class="download-controls">
-                  <div @click="downloadPNG" v-loading="pngDownloading" :style="{
-                    height: '35px',
-                    lineHeight: '35px',
-                    border: '1px solid #dcdfe6',
-                    borderRadius: '5px',
-                    width: '120px',
-                    fontSize: '12px',
-                    textAlign: 'center',
-                    marginLeft: '5px',
-                    cursor: previewImage ? 'pointer' : 'not-allowed',
-                    backgroundColor: previewImage ? '#fff' : '#ccc'
-                  }">
-                    PNG下载
-                  </div>
-                  <div @click="downloadPSD" v-loading="psdDownloading" :style="{
-                    height: '35px',
-                    lineHeight: '35px',
-                    border: '1px solid #dcdfe6',
-                    borderRadius: '5px',
-                    width: '120px',
-                    fontSize: '12px',
-                    textAlign: 'center',
-                    marginLeft: '5px',
-                    cursor: psdDownloadEnabled ? 'pointer' : 'not-allowed',
-                    backgroundColor: psdDownloadEnabled ? '#fff' : '#ccc'
-                  }">
-                    PSD下载
-                    <el-tooltip content="PSD下载功能" placement="top">
-                      <svg-icon icon-class="question" class="icon-style"
-                        style="position: absolute; right: 15px; top: 10px"></svg-icon>
-                      <!-- <i class="question-icon">?</i> -->
-                    </el-tooltip>
-                  </div>
+                  <el-button v-loading="pngDownloading" :style="{
+                  height: '35px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '1px solid #dcdfe6',
+                  borderRadius: '5px',
+                  width: '120px',
+                  fontSize: '12px',
+                  marginLeft: '5px',
+                  cursor: previewImage ? 'pointer' : 'not-allowed',
+                  backgroundColor: previewImage ? '#fff' : '#ccc',
+                  color: '#000',
+                }" @click="downloadPNG">
+                  PNG下载
+                </el-button>
+
+                <el-button v-loading="psdDownloading" :disabled="!psdDownloadEnabled" :style="{
+                  display: 'flex', // ✅ 关键：用 flex 让内容垂直居中
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '35px',
+                  border: '1px solid #dcdfe6',
+                  borderRadius: '5px',
+                  width: '120px',
+                  fontSize: '12px',
+                  textAlign: 'center',
+                  marginLeft: '5px',
+                  cursor: psdDownloadEnabled ? 'pointer' : 'not-allowed',
+                  backgroundColor: psdDownloadEnabled ? '#fff' : '#ccc',
+                  color: '#000',
+                  position: 'relative',
+                  paddingRight: '25px'
+                }" @click="downloadPSD">
+                  PSD下载
+
+                  <el-tooltip content="PSD下载功能" placement="top">
+                    <svg-icon icon-class="question" class="icon-style"
+                      style="position: absolute; right: 15px; top: 10px; pointer-events: auto; cursor: help;" />
+                  </el-tooltip>
+                </el-button>
                 </div>
               </div>
               <div style="
@@ -157,8 +165,7 @@
           <div class="left-panel right-panel">
             <el-tabs v-model="activeName" type="card">
               <el-tab-pane label="生图参数" name="left">
-                <div class="panel-style" ref="paramsScroll" data-simplebar data-simplebar-auto-hide="false">
-                  <simplebar>
+                <div class="panel-style" ref="paramsScroll" >
                     <!-- 提示词 -->
                     <div class="control-section" style="border-radius: 0 0 8px 8px; border-top: none">
                       <div class="section-title">
@@ -305,13 +312,12 @@
                         </el-select>
                       </div>
                     </div>
-                  </simplebar>
                 </div>
               </el-tab-pane>
               <el-tab-pane label="语义分割" name="right">
                 <!-- 语义分割 -->
-                <div class="panel-style" ref="paramsScroll" data-simplebar data-simplebar-auto-hide="false">
-                       <simplebar>
+                <div class="panel-style" ref="paramsScroll" >
+
                   <!-- <div
                     class="section-title"
                     style="justify-content: space-between"
@@ -482,7 +488,7 @@
 
                     </div>
                   </div>
-                </simplebar>
+
                 </div>
               </el-tab-pane>
             </el-tabs>
