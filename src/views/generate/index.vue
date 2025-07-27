@@ -101,39 +101,47 @@
                     size="medium"></el-checkbox>
                 </div>
                 <div class="download-controls">
-                  <div @click="downloadPNG" v-loading="pngDownloading" :style="{
-                    height: '35px',
-                    lineHeight: '35px',
-                    border: '1px solid #dcdfe6',
-                    borderRadius: '5px',
-                    width: '120px',
-                    fontSize: '12px',
-                    textAlign: 'center',
-                    marginLeft: '5px',
-                    cursor: previewImage ? 'pointer' : 'not-allowed',
-                    backgroundColor: previewImage ? '#fff' : '#ccc'
-                  }">
-                    PNG下载
-                  </div>
-                  <div @click="downloadPSD" v-loading="psdDownloading" :style="{
-                    height: '35px',
-                    lineHeight: '35px',
-                    border: '1px solid #dcdfe6',
-                    borderRadius: '5px',
-                    width: '120px',
-                    fontSize: '12px',
-                    textAlign: 'center',
-                    marginLeft: '5px',
-                    cursor: psdDownloadEnabled ? 'pointer' : 'not-allowed',
-                    backgroundColor: psdDownloadEnabled ? '#fff' : '#ccc'
-                  }">
-                    PSD下载
-                    <el-tooltip content="PSD下载功能" placement="top">
-                      <svg-icon icon-class="question" class="icon-style"
-                        style="position: absolute; right: 15px; top: 10px"></svg-icon>
-                      <!-- <i class="question-icon">?</i> -->
-                    </el-tooltip>
-                  </div>
+                  <el-button v-loading="pngDownloading" :style="{
+                  height: '35px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '1px solid #dcdfe6',
+                  borderRadius: '5px',
+                  width: '120px',
+                  fontSize: '12px',
+                  marginLeft: '5px',
+                  cursor: previewImage ? 'pointer' : 'not-allowed',
+                  backgroundColor: previewImage ? '#fff' : '#ccc',
+                  color: '#000',
+                }" @click="downloadPNG">
+                  PNG下载
+                </el-button>
+
+                <el-button v-loading="psdDownloading" :disabled="!psdDownloadEnabled" :style="{
+                  display: 'flex', // ✅ 关键：用 flex 让内容垂直居中
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '35px',
+                  border: '1px solid #dcdfe6',
+                  borderRadius: '5px',
+                  width: '120px',
+                  fontSize: '12px',
+                  textAlign: 'center',
+                  marginLeft: '5px',
+                  cursor: psdDownloadEnabled ? 'pointer' : 'not-allowed',
+                  backgroundColor: psdDownloadEnabled ? '#fff' : '#ccc',
+                  color: '#000',
+                  position: 'relative',
+                  paddingRight: '25px'
+                }" @click="downloadPSD">
+                  PSD下载
+
+                  <el-tooltip content="PSD下载功能" placement="top">
+                    <svg-icon icon-class="question" class="icon-style"
+                      style="position: absolute; right: 15px; top: 10px; pointer-events: auto; cursor: help;" />
+                  </el-tooltip>
+                </el-button>
                 </div>
               </div>
               <div style="
