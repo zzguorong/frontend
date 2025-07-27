@@ -165,8 +165,7 @@
           <div class="left-panel right-panel">
             <el-tabs v-model="activeName" type="card">
               <el-tab-pane label="生图参数" name="left">
-                <div class="panel-style" ref="paramsScroll" data-simplebar data-simplebar-auto-hide="false">
-                  <simplebar>
+                <div class="panel-style" ref="paramsScroll" >
                     <!-- 提示词 -->
                     <div class="control-section" style="border-radius: 0 0 8px 8px; border-top: none">
                       <div class="section-title">
@@ -313,13 +312,12 @@
                         </el-select>
                       </div>
                     </div>
-                  </simplebar>
                 </div>
               </el-tab-pane>
               <el-tab-pane label="语义分割" name="right">
                 <!-- 语义分割 -->
-                <div class="panel-style" ref="paramsScroll" data-simplebar data-simplebar-auto-hide="false">
-                       <simplebar>
+                <div class="panel-style" ref="paramsScroll" >
+
                   <!-- <div
                     class="section-title"
                     style="justify-content: space-between"
@@ -490,7 +488,7 @@
 
                     </div>
                   </div>
-                </simplebar>
+
                 </div>
               </el-tab-pane>
             </el-tabs>

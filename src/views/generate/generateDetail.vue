@@ -80,8 +80,7 @@
             <el-tabs v-model="activeName" type="card">
               <el-tab-pane label="我的项目" name="left">
                 <!-- 画廊面板 -->
-                <div class="gallery-panel" data-simplebar data-simplebar-auto-hide="false">
-                  <simplebar>
+                <div class="gallery-panel">
                     <div class="gallery-section">
                       <div class="section-favorate">
                         <div class="gallery-actions">
@@ -203,12 +202,10 @@
                         </div>
                       </div>
                     </div>
-                  </simplebar>
                 </div>
               </el-tab-pane>
               <el-tab-pane label="项目参数" name="right">
-                <div ref="paramsScroll" class="project-panel" data-simplebar data-simplebar-auto-hide="false">
-                  <simplebar>
+                <div ref="paramsScroll" class="project-panel" >
                     <!-- 项目参数 -->
                     <div class="params-section">
                       <!-- 提示词 -->
@@ -345,7 +342,6 @@
                       </div>
                     </div> -->
                     <!-- </div> -->
-                  </simplebar>
                 </div>
               </el-tab-pane>
             </el-tabs>
@@ -366,7 +362,7 @@ import {
   unfavoriteGeneratedImage,
   generatePSD
 } from '@/api/generate';
-import 'simplebar/dist/simplebar.min.css';
+// import 'simplebar/dist/simplebar.min.css';
 import { downloadFile } from '@/utils/downLoad';
 
 export default {
@@ -1728,7 +1724,7 @@ export default {
   border: 1px solid #ccc;
   cursor: pointer;
   position: absolute;
-  bottom: 80px;
+  bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
@@ -1934,7 +1930,7 @@ export default {
   transition: all 0.28s;
   padding: 0;
   /* 移除内边距 */
-  height: calc(100vh - 180px);
+  height: calc(100vh - 154px);
   /* 减去tabs 标题高度48px + 边距12px + 收藏栏30px + 顶栏70px + 生图按钮区域 60px*/
   overflow-x: hidden;
   /* 防止横向滚动条 */
@@ -1949,6 +1945,7 @@ export default {
   justify-content: space-between;
   padding-bottom: 80px;
   /* 为底部固定按钮留出空间 */
+  position: relative;
 }
 
 .gallery-section {

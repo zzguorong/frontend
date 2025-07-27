@@ -24,7 +24,7 @@
             <div class="account-form">
               微信绑定
               <template v-if="!userInfo.wechat_openid">
-                <el-button class="btn-wx-check" type="primary" style="width: 15%" @click="wechatBindingDialogVisible = true">
+                <el-button class="btn-wx-check" type="primary" style="width:fit-content" @click="wechatBindingDialogVisible = true">
                   <span>微信验证</span>
                 </el-button>
               </template>
@@ -39,7 +39,7 @@
         <div class="main-card">
           <div class="password-section">
             <div class="main-card-title">密码管理
-              <el-button class="pwd-btn" type="primary" style="width: 15%" :loading="loading" @click="handlePasswordValidation">密码验证</el-button>
+              <el-button class="pwd-btn" type="primary" style="width: fit-content" :loading="loading" @click="handlePasswordValidation">密码验证</el-button>
             </div>
 
             <el-form ref="resetPasswordForm" :model="resetPasswordForm" :rules="resetPasswordFormRules">

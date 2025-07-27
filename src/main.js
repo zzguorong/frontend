@@ -14,10 +14,10 @@ import store from "./store";
 
 import "@/icons"; // icon
 import "@/permission"; // permission control
-import ResizeObserver from "resize-observer-polyfill";
-import "simplebar"; // JS，使 data-simplebar 自动生效
-import "simplebar/dist/simplebar.min.css";
-window.ResizeObserver = ResizeObserver;
+// import ResizeObserver from "resize-observer-polyfill";
+// import "simplebar"; // JS，使 data-simplebar 自动生效
+// import "simplebar/dist/simplebar.min.css";
+// window.ResizeObserver = ResizeObserver;
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
