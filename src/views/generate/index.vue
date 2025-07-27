@@ -568,7 +568,7 @@ export default {
       previewImage: null,
       thumbnails: Array.from({ length: 6 }, (_, i) => ({
         url: null,
-        id: `thumb-${i + 1}`   // 用反引号包裹整个字符串
+        id: `thumb-${i + 1}` // 用反引号包裹整个字符串
       })),
 
       // 悬停状态
@@ -889,14 +889,15 @@ export default {
       preprocessSegment(this.basemapUrlId).then((res) => {
 
         // 1. 兼容不同字段结构，优先取 res.data
-        let base64Str = res.data;
+        const base64Str = res.data;
 
         // 3. 更新预览图
         if (base64Str) {
-          this.previewImage = base64Str;
-
           // 4. 同步更新缩略图第 2 张（语义分割图）
           this.$set(this.thumbnails, 1, { url: base64Str });
+          this.previewImage = base64Str;
+          this.selectedThumbnail = 1; // 选择第二个缩略图位置
+          this.selectedThumbnailItem = this.thumbnails[1]; // 更新当前选中项
 
           // 5. 更新分割图 URL 方便后续操作
           this.semanticImgUrl = base64Str;
@@ -906,8 +907,6 @@ export default {
     updateStyleOptions(e) {
       console.log("updateStyleOptions", e);
       // 保存视角类型
-
-
     },
     switchSemantic() {
       console.log("switchSemantic", this.semanticEnabled);
@@ -928,8 +927,7 @@ export default {
     getUnifiedColor() {
       const { r, g, b } = this.baseColor;
       return `rgb(${r},${g},${b})`;
-    }
-    ,
+    },
 
     // 重新给所有已绘制区域整体着色
     recolorCanvas(rgbaColor) {
@@ -1023,15 +1021,9 @@ export default {
         this.styleCategory = options[0].value; // 设置为第一个选项
       }
     },
-    // 生成图片
-    cleanup() {
-      this.isGenerating = false;
-      // this.$set(this.thumbnails, 2, { ...thumb, loading: false });
-    },
 
     // 主生成方法
     async handleGenerate() {
-
       // 1. 重置错误状态
       this.formErrors = {
         viewType: false,
@@ -1113,14 +1105,16 @@ export default {
         }
       } else {
         // 如果没有启用语义分割，则不传递 segment_image 字段
-        // payload.segment_image = null;
       }
 
       // 3. 开始请求前：设置状态 + 显示遮罩
       this.isGenerating = true;
-      //索引 2 位置插入一个图片位置
-      // this.thumbnails.splice(2, 0, { url: "", id: "thumb-3" });
-      this.thumbnails.splice(2, 0, { url: "",  loading: true });
+      // 索引 2 位置插入一个图片位置
+      this.thumbnails.splice(2, 0, { url: "", loading: true });
+      // 更新预览图为
+      this.previewImage = "";
+      this.selectedThumbnailItem = null;
+      this.selectedThumbnail = -1;
 
       try {
         const res = await generateImages(payload);
@@ -1132,11 +1126,12 @@ export default {
       } catch (err) {
         // 6. 异常处理
         console.error("生成接口错误:", err);
-        this.cleanup();
+        this.isGenerating = false;
+        this.$message.error("生成图片失败，请稍后重试");
         // 删除第三个位置
         this.thumbnails.splice(2, 1);
       }
-    } ,
+    },
 
     // ===== 轮询相关 =====
     startPolling(requestId) {
@@ -1157,10 +1152,11 @@ export default {
               this.pollingTimer = null;
               const imageUrls = res.data.generated_images.map((item) => item);
               imageUrls.forEach((item, idx) => {
-                // 生成图倒序排列，索引为2
+                // 生成图倒序排列，索引为2，同时也就清除了loading状态
                 this.thumbnails.splice(2, 1, { ...item, generatedImageId: item.id, semanticImgUrlId: res.data.segment_image_id });
               });
-              this.cleanup()
+              // 重置生成状态
+              this.isGenerating = false;
               // 保存 语义分割图
               // 判断后端是否传递回来了语义分割图的URL
               if (res.data && res.data.segment_image_id) {
@@ -1175,8 +1171,9 @@ export default {
               clearInterval(this.pollingTimer);
               this.pollingTimer = null;
               this.$message.error("图片生成失败！");
-              this.cleanup()
-              // 删除第三个位置
+              // 重置生成状态
+              this.isGenerating = false;
+              // 删除第三个位置，同时也就清除了loading状态
               this.thumbnails.splice(2, 1);
             }
             // 如果是其他状态（比如 "pending"），继续轮询
@@ -1186,9 +1183,9 @@ export default {
             clearInterval(this.pollingTimer);
             this.pollingTimer = null;
             this.$message.error("生成过程中出现错误，请重试");
-
-            this.cleanup()
-            // 删除第三个位置
+            // 重置生成状态
+            this.isGenerating = false;
+            // 删除第三个位置，同时也就清除了loading状态
             this.thumbnails.splice(2, 1);
           });
       }, 4000); // 每4秒轮询一次
