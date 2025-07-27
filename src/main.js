@@ -3,22 +3,21 @@ import Vue from "vue";
 import "normalize.css/normalize.css"; // A modern alternative to CSS resets
 
 import ElementUI from "element-ui";
-import "element-ui/lib/theme-chalk/index.css";
 import locale from "element-ui/lib/locale/lang/en"; // lang i18n
+import "element-ui/lib/theme-chalk/index.css";
 
 import "@/styles/index.scss"; // global css
 
-
-
 import App from "./App";
-import store from "./store";
 import router from "./router";
+import store from "./store";
 
 import "@/icons"; // icon
 import "@/permission"; // permission control
-import "simplebar/dist/simplebar.min.css";
+import ResizeObserver from "resize-observer-polyfill";
 import "simplebar"; // JS，使 data-simplebar 自动生效
-
+import "simplebar/dist/simplebar.min.css";
+window.ResizeObserver = ResizeObserver;
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

@@ -2,7 +2,7 @@
   <div class="app-container">
     <!-- 主要内容区域 -->
     <div class="content-wrapper">
-      <el-row :gutter="20">
+      <el-row :gutter="20" class="fixed-row">
         <el-col :span="18">
           <!-- 中间主要区域 -->
           <div class="center-panel" ref="centerPanel">
@@ -29,7 +29,7 @@
                 <div class="thumbnail-gallery">
                   <!-- 取前 6 个元素渲染。 -->
                   <template v-for="(thumb, index) in thumbnails.slice(0, 6)">
-                    <div :key="index" class="thumbnail" :class="{ active: selectedThumbnail === index }"
+                    <div :key="index"  v-loading="thumb.loading"  class="thumbnail" :class="{ active: selectedThumbnail === index }"
                       @click="selectThumbnail(thumb, index)">
                       <img v-if="thumb.url" :src="thumb.url" alt="缩略图" class="thumb-img" />
                       <!-- 当无图时显示占位图标 -->
@@ -56,7 +56,7 @@
                       <div v-if="thumb && index === 1" class="image-label">
                         语义分割图
                       </div>
-                      <GlobalMask :ref="`globalMask-${thumb.id}`" />
+                      <!-- <GlobalMask :ref="`globalMask-${thumb.id}`" /> -->
                     </div>
                   </template>
                 </div>
@@ -157,7 +157,7 @@
           <div class="left-panel right-panel">
             <el-tabs v-model="activeName" type="card">
               <el-tab-pane label="生图参数" name="left">
-                <div class="panel-style" ref="paramsScroll" data-simplebar simplebar-auto-hide="false">
+                <div class="panel-style" ref="paramsScroll" data-simplebar data-simplebar-auto-hide="false">
                   <simplebar>
                     <!-- 提示词 -->
                     <div class="control-section" style="border-radius: 0 0 8px 8px; border-top: none">
@@ -311,6 +311,7 @@
               <el-tab-pane label="语义分割" name="right">
                 <!-- 语义分割 -->
                 <div class="panel-style" ref="paramsScroll" data-simplebar data-simplebar-auto-hide="false">
+                       <simplebar>
                   <!-- <div
                     class="section-title"
                     style="justify-content: space-between"
@@ -481,7 +482,7 @@
 
                     </div>
                   </div>
-
+                </simplebar>
                 </div>
               </el-tab-pane>
             </el-tabs>
@@ -778,7 +779,11 @@ export default {
   // 如果组件用了 <keep-alive>，需要在再次激活时同步一次
   activated() {
     // keep-alive 场景下返回页面再次同步
+
+    this.$nextTick(() => {
+    // 等 DOM 渲染完成后再操作滚动条
     this.applyStoredParams();
+  });
   },
   methods: {
     downloadPNG,
@@ -1005,7 +1010,7 @@ getUnifiedColor() {
     // 生成图片
     cleanup() {
       this.isGenerating = false;
-      this.$refs["globalMask-thumb-3"][0].hide();
+      this.$set(this.thumbnails, index, { ...thumb, loading: false });
     },
 
     // 主生成方法
@@ -1099,10 +1104,9 @@ getUnifiedColor() {
       // 3. 开始请求前：设置状态 + 显示遮罩
       this.isGenerating = true;
       //索引 2 位置插入一个图片位置
-      this.thumbnails.splice(2, 0, { url: "", id: "thumb-3" });
-      this.$nextTick(() => {
-        this.$refs["globalMask-thumb-3"][0].show("生成中...");
-      });
+      // this.thumbnails.splice(2, 0, { url: "", id: "thumb-3" });
+      this.thumbnails.splice(2, 0, { url: "", id: "globalMask-thumb-3" ,loading: true});
+
       try {
         const res = await generateImages(payload);
         // 5. 校验接口返回
@@ -1177,7 +1181,6 @@ getUnifiedColor() {
             this.cleanup()
             // 删除第三个位置
             this.removeThumbnailById("thumb-3");
-            this.$refs["globalMask-thumb-3"][0].hide();
           });
       }, 4000); // 每4秒轮询一次
     },
@@ -1579,7 +1582,7 @@ getUnifiedColor() {
 
           await deleteGeneratedImage(this.thumbnails[index].id);
           // 确认删除：将对应位置设为null
-          this.$set(this.thumbnails, index, { url: null });
+this.thumbnails.splice(index, 1);
 
           // 如果删除的是当前预览的图片，清空预览
           if (this.selectedThumbnail === index) {
@@ -2993,6 +2996,10 @@ getUnifiedColor() {
   height: 100%;
 }
 
+.fixed-row{
+  display: flex;
+}
+
 /* 左侧面板 */
 .left-panel {
   display: flex;
@@ -3833,6 +3840,7 @@ getUnifiedColor() {
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   padding: 15px 30px;
+  margin-bottom: 83px;
 
   .category-title{
     display: flex;
@@ -4199,4 +4207,20 @@ getUnifiedColor() {
   width: 100%;
   height: 100%;
 }
+  /*>=0,<1440的设备屏幕*/
+  @media screen and (max-width: 1439px) {
+::v-deep .el-col-18 {
+  min-width: 1009px;
+  }
+
+  .fixed-row {
+    min-width: 1426px;
+  }
+
+  .content-wrapper{
+    overflow-x: auto;
+  }
+
+ }
+
 </style>

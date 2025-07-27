@@ -1,7 +1,7 @@
 <template>
   <div class="generate-detail-container">
     <div class="content-wrapper">
-      <el-row :gutter="20">
+      <el-row :gutter="20"  class="fixed-row">
         <el-col :span="18">
           <!-- 中间预览区域 -->
           <div ref="previewArea" class="center-preview-area">
@@ -195,7 +195,8 @@
                 </div>
               </el-tab-pane>
               <el-tab-pane label="项目参数" name="right">
-                <div ref="paramsScroll" class="project-panel" data-simplebar>
+                <div  ref="paramsScroll" class="project-panel" data-simplebar data-simplebar-auto-hide="false">
+                  <simplebar>
                   <!-- 项目参数 -->
                   <div class="params-section">
                     <!-- 提示词 -->
@@ -331,6 +332,7 @@
                       </div>
                     </div> -->
                   <!-- </div> -->
+                  </simplebar>
                 </div>
               </el-tab-pane>
             </el-tabs>
@@ -2297,4 +2299,25 @@ export default {
 .preview-image {
   overflow: hidden;
 }
+
+
+.fixed-row{
+  display: flex;
+}
+
+  /*>=0,<1440的设备屏幕*/
+  @media screen and (max-width: 1439px) {
+::v-deep .el-col-18 {
+  min-width: 1009px;
+  }
+
+  .fixed-row {
+    min-width: 1426px;
+  }
+
+  .content-wrapper{
+    overflow-x: auto;
+  }
+
+ }
 </style>
