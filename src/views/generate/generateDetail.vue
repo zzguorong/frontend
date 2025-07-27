@@ -32,7 +32,7 @@
                 </el-tooltip>
               </div>
               <div class="download-controls">
-                <div
+                <el-button
                   v-loading="pngDownloading"
                   :style="{
                     height: '35px',
@@ -49,8 +49,8 @@
                   @click="downloadPNG"
                 >
                   PNG下载
-                </div>
-                <div
+                </el-button>
+                <el-button
                   v-loading="psdDownloading"
                   :style="{
                     height: '35px',
@@ -74,7 +74,7 @@
                       style="position: absolute; right: 15px; top: 10px"
                     />
                   </el-tooltip>
-                </div>
+                </el-button>
               </div>
             </div>
           </div>
@@ -631,7 +631,6 @@ export default {
   methods: {
     downloadPNG() {
       if (this.pngDownloadEnabled) {
-        this.$message.info('开始下载PNG ...');
         this.pngDownloading = true;
         // 调用下载方法
         const url = this.currentPreviewImage;
@@ -652,7 +651,6 @@ export default {
 
     downloadPSD() {
       if (this.psdDownloadEnabled) {
-        this.$message.info('开始下载PSD ...');
         this.psdDownloading = true;
         // 调用后端接口下载 PSD 文件
         generatePSD(this.selectedThumbnailItem.id)

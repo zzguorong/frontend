@@ -1230,7 +1230,6 @@ getUnifiedColor() {
 
     downloadPNG() {
       if (this.pngDownloadEnabled) {
-        this.$message.info("开始下载PNG ...");
         this.pngDownloading = true;
         // 调用下载方法
         const url = this.previewImage;
@@ -1251,7 +1250,6 @@ getUnifiedColor() {
 
     downloadPSD() {
       if (this.psdDownloadEnabled) {
-        this.$message.info("开始下载PSD ...");
         this.psdDownloading = true;
         // 调用后端接口下载 PSD 文件
         generatePSD(this.selectedThumbnailItem.id)
