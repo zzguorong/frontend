@@ -33,6 +33,7 @@
               </div>
               <div class="download-controls">
                 <div
+                  v-loading="pngDownloading"
                   :style="{
                     height: '35px',
                     lineHeight: '35px',
@@ -42,14 +43,15 @@
                     fontSize: '12px',
                     textAlign: 'center',
                     marginLeft: '5px',
-                    cursor: currentPreviewImage ? 'pointer' : 'not-allowed',
-                    backgroundColor: currentPreviewImage ? '#fff' : '#ccc'
+                    cursor: pngDownloadEnabled ? 'pointer' : 'not-allowed',
+                    backgroundColor: pngDownloadEnabled ? '#fff' : '#ccc'
                   }"
-                  @click="downloadPNG(currentPreviewImage)"
+                  @click="downloadPNG"
                 >
                   PNG下载
                 </div>
                 <div
+                  v-loading="psdDownloading"
                   :style="{
                     height: '35px',
                     lineHeight: '35px',
@@ -59,8 +61,8 @@
                     fontSize: '12px',
                     textAlign: 'center',
                     marginLeft: '5px',
-                    cursor: currentPreviewImage ? 'pointer' : 'not-allowed',
-                    backgroundColor: currentPreviewImage ? '#fff' : '#ccc'
+                    cursor: psdDownloadEnabled ? 'pointer' : 'not-allowed',
+                    backgroundColor: psdDownloadEnabled ? '#fff' : '#ccc'
                   }"
                   @click="downloadPSD"
                 >
@@ -395,10 +397,11 @@ import {
   getGalleryImages,
   getProjectDetail,
   getUserFavoriteImages,
-  unfavoriteGeneratedImage
+  unfavoriteGeneratedImage,
+  generatePSD
 } from '@/api/generate';
 import 'simplebar/dist/simplebar.min.css';
-import { downloadPNG } from '@/utils/downLoad';
+import { downloadFile } from '@/utils/downLoad';
 
 export default {
   name: 'GenerateDetail',
@@ -448,7 +451,9 @@ export default {
       styleImageId: null,
       styleImgUrl: null,
       projectParameters: {},
-      previewImageLoading: false
+      previewImageLoading: false,
+      pngDownloading: false,
+      psdDownloading: false
     };
   },
   computed: {
@@ -521,6 +526,15 @@ export default {
       }
 
       return filtered;
+    },
+
+    pngDownloadEnabled() {
+      // 只有当预览图存在且可以点击时才允许下载PNG
+      return this.currentPreviewImage !== null && this.currentPreviewImage !== '';
+    },
+    psdDownloadEnabled() {
+      // 只有选择了生图，且该生图存在语义分割图的情况下，才可以点击PSD下载
+      return this.generatedImageId !== null && this.semanticImgUrlId !== null;
     }
   },
   // 生命周期钩子
@@ -615,7 +629,55 @@ export default {
   // },
 
   methods: {
-    downloadPNG,
+    downloadPNG() {
+      if (this.pngDownloadEnabled) {
+        this.$message.info('开始下载PNG ...');
+        this.pngDownloading = true;
+        // 调用下载方法
+        const url = this.currentPreviewImage;
+        const filename = `image_${Date.now()}.png`;
+        downloadFile(url, filename)
+          .then(() => {
+            this.pngDownloading = false;
+            // 下载成功后提示
+            this.$message.success('PNG 下载成功！');
+          })
+          .catch((err) => {
+            this.pngDownloading = false;
+            console.error('下载PNG失败', err);
+            this.$message.error('下载PNG失败，请重试');
+          });
+      }
+    },
+
+    downloadPSD() {
+      if (this.psdDownloadEnabled) {
+        this.$message.info('开始下载PSD ...');
+        this.psdDownloading = true;
+        // 调用后端接口下载 PSD 文件
+        generatePSD(this.selectedThumbnailItem.id)
+          .then((res) => {
+            const url = res.data.url;
+            const filename = res.data.name || `generated_image_${Date.now()}.psd`;
+            downloadFile(url, filename)
+              .then(() => {
+                this.psdDownloading = false;
+                // 下载成功后提示
+                this.$message.success('PSD 下载成功！');
+              })
+              .catch((err) => {
+                this.psdDownloading = false;
+                console.error('下载PSD失败', err);
+                this.$message.error('下载PSD失败，请重试');
+              });
+          })
+          .catch((err) => {
+            this.psdDownloading = false;
+            console.error('下载PSD失败', err);
+            this.$message.error('下载PSD失败，请重试');
+          });
+      }
+    },
     /**
      * 加载画廊图片数据
      */
@@ -1333,10 +1395,6 @@ export default {
       } else {
         this.currentPreviewImage = '';
       }
-    },
-
-    downloadPSD() {
-      this.$message.success('开始下载PSD格式');
     },
     // 保留参数生图
     saveParams() {

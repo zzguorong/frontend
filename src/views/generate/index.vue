@@ -101,7 +101,7 @@
                     size="medium"></el-checkbox>
                 </div>
                 <div class="download-controls">
-                  <div @click="downloadPNG(previewImage)" :style="{
+                  <div @click="downloadPNG" v-loading="pngDownloading" :style="{
                     height: '35px',
                     lineHeight: '35px',
                     border: '1px solid #dcdfe6',
@@ -115,7 +115,7 @@
                   }">
                     PNG下载
                   </div>
-                  <div @click="downloadPSD" :style="{
+                  <div @click="downloadPSD" v-loading="psdDownloading" :style="{
                     height: '35px',
                     lineHeight: '35px',
                     border: '1px solid #dcdfe6',
@@ -124,8 +124,8 @@
                     fontSize: '12px',
                     textAlign: 'center',
                     marginLeft: '5px',
-                    cursor: canClickPsd ? 'pointer' : 'not-allowed',
-                    backgroundColor: canClickPsd ? '#fff' : '#ccc'
+                    cursor: psdDownloadEnabled ? 'pointer' : 'not-allowed',
+                    backgroundColor: psdDownloadEnabled ? '#fff' : '#ccc'
                   }">
                     PSD下载
                     <el-tooltip content="PSD下载功能" placement="top">
@@ -508,10 +508,11 @@ import {
   getImageDetail,
   getPerspectiveStyle,
   preprocessSegment,
-  unfavoriteGeneratedImage
+  unfavoriteGeneratedImage,
+  generatePSD
 } from "@/api/generate";
 import { blobUrlToBase64 } from "@/utils/index";
-import { downloadPNG } from "@/utils/downLoad";
+import { downloadFile } from "@/utils/downLoad";
 
 export default {
   name: "GenerateFile",
@@ -549,15 +550,18 @@ export default {
       // 生成控制
       generateCount: 1,
       isGenerating: false,
+      psdDownloading: false,
+      pngDownloading: false,
       // 轮询定时器
       pollingTimer: null,
       // 预览图
+      selectedThumbnail: -1,
+      selectedThumbnailItem: null,
       previewImage: null,
       thumbnails: Array.from({ length: 6 }, (_, i) => ({
         url: null,
         id: `thumb-${i + 1}`   // 用反引号包裹整个字符串
       })),
-      selectedThumbnail: -1,
 
       // 悬停状态
       favoriteHoverStates: [false, false, false, false, false, false],
@@ -662,14 +666,19 @@ export default {
   computed: {
     // 将 Vuex 中保存的参数映射到本组件
     ...mapState("generation", ["generationParams"]),
-    canClickPsd() {
-      // 遍历thumbnails找到和图像展示区展示的是生成的图地址一样并且有语义分割图才可以点击
-
-      const canClickPsd = this.thumbnails.some(item => {
-        return item.url === this.previewImage && item.semanticImgUrlId !== undefined && item.styleImageId !== null
-      })
-      return canClickPsd
-
+    pngDownloadEnabled() {
+      // 只有当预览图存在且可以点击时才允许下载PNG
+      return this.selectedThumbnailItem && this.selectedThumbnailItem.url && this.selectedThumbnailItem.url !== '';
+    },
+    psdDownloadEnabled() {
+      // 只有选择了生图，且该生图存在语义分割图的情况下，才可以点击PSD下载
+      return this.selectedThumbnailItem &&
+        this.selectedThumbnailItem.url &&
+        this.selectedThumbnailItem.url !== '' &&
+        this.selectedThumbnailItem.generatedImageId !== undefined &&
+        this.selectedThumbnailItem.generatedImageId !== null &&
+        this.selectedThumbnailItem.semanticImgUrlId !== undefined &&
+        this.selectedThumbnailItem.semanticImgUrlId !== null;
     }
   },
   created() {
@@ -780,7 +789,6 @@ export default {
     this.applyStoredParams();
   },
   methods: {
-    downloadPNG,
     // 将 Vuex mutation 映射为本地方法
     ...mapMutations("generation", { setParams: "setGenerationParams" }),
 
@@ -1146,7 +1154,7 @@ getUnifiedColor() {
               const imageUrls = res.data.generated_images.map((item) => item);
               imageUrls.forEach((item, idx) => {
                 // 生成图倒序排列，索引为2
-                this.thumbnails.splice(2, 1, { ...item, semanticImgUrlId: res.data.segment_image_id });
+                this.thumbnails.splice(2, 1, { ...item, generatedImageId: item.id, semanticImgUrlId: res.data.segment_image_id });
               });
               this.cleanup()
               // 保存 语义分割图
@@ -1156,6 +1164,8 @@ getUnifiedColor() {
               }
               // 更新主预览图
               this.previewImage = imageUrls[0].url;
+              this.selectedThumbnailItem = this.thumbnails[2]; // 更新选中项为第三个位置
+              this.selectedThumbnail = 2; // 更新选中缩略图索引
               this.$message.success("图片生成完成！");
             } else if (status === "failed") {
               clearInterval(this.pollingTimer);
@@ -1206,6 +1216,7 @@ getUnifiedColor() {
       // }
 
       // 更新主预览图
+      this.selectedThumbnailItem = thumb;
       this.previewImage = params.url;
 
       // 保存当前画布状态
@@ -1217,7 +1228,55 @@ getUnifiedColor() {
       };
     },
 
-    downloadPSD() { },
+    downloadPNG() {
+      if (this.pngDownloadEnabled) {
+        this.$message.info("开始下载PNG ...");
+        this.pngDownloading = true;
+        // 调用下载方法
+        const url = this.previewImage;
+        const filename = `image_${Date.now()}.png`;
+        downloadFile(url, filename)
+          .then(() => {
+            this.pngDownloading = false;
+            // 下载成功后提示
+            this.$message.success("PNG 下载成功！");
+          })
+          .catch((err) => {
+            this.pngDownloading = false;
+            console.error("下载PNG失败", err);
+            this.$message.error("下载PNG失败，请重试");
+          });
+      }
+    },
+
+    downloadPSD() {
+      if (this.psdDownloadEnabled) {
+        this.$message.info("开始下载PSD ...");
+        this.psdDownloading = true;
+        // 调用后端接口下载 PSD 文件
+        generatePSD(this.selectedThumbnailItem.id)
+          .then((res) => {
+            const url = res.data.url;
+            const filename = res.data.name || `generated_image_${Date.now()}.psd`;
+            downloadFile(url, filename)
+              .then(() => {
+                this.psdDownloading = false;
+                // 下载成功后提示
+                this.$message.success("PSD 下载成功！");
+              })
+              .catch((err) => {
+                this.psdDownloading = false;
+                console.error("下载PSD失败", err);
+                this.$message.error("下载PSD失败，请重试");
+              });
+          })
+          .catch((err) => {
+            this.psdDownloading = false;
+            console.error("下载PSD失败", err);
+            this.$message.error("下载PSD失败，请重试");
+          });
+      }
+    },
 
     // 工具选择
     setTool(tool) {
@@ -1584,6 +1643,7 @@ getUnifiedColor() {
           if (this.selectedThumbnail === index) {
             this.previewImage = null;
             this.selectedThumbnail = -1;
+            this.selectedThumbnailItem = null;
           }
 
           this.$message.success("删除成功");
@@ -1616,6 +1676,8 @@ getUnifiedColor() {
         this.$set(this.thumbnails, 0, { url: imageUrl });
         // 更新主预览图
         this.previewImage = imageUrl;
+        this.selectedThumbnail = 0; // 设置为底图缩略图
+        this.selectedThumbnailItem = this.thumbnails[0];
       } else if (type === 2) {
         this.styleImageId = uploadData.res.data.id;
         this.styleImgUrl = imageUrl;
@@ -1664,19 +1726,10 @@ getUnifiedColor() {
       // 更新缩略图第一个位置（底图）
       this.$set(this.thumbnails, 0, { url: imageUrl });
 
-      // 检查语义分割开关状态，只有开启时才自动传输到语义分割图框
-      if (this.semanticEnabled) {
-        // 将底图自动传输到语义分割图位置（索引1）
-        this.$set(this.thumbnails, 1, { url: imageUrl });
-        console.log(
-          "语义分割开关已开启，底图已通过URL更新自动传输到语义分割图框"
-        );
-      } else {
-        console.log("语义分割开关未开启，跳过URL更新的自动传输到语义分割图框");
-      }
-
       // 更新主预览图
       this.previewImage = imageUrl;
+      this.selectedThumbnail = 0; // 设置为底图缩略图
+      this.selectedThumbnailItem = this.thumbnails[0];
 
       console.log("通过URL更新事件更新缩略图成功");
     },
@@ -1705,6 +1758,8 @@ getUnifiedColor() {
 
       // 更新主预览图
       this.previewImage = imageUrl;
+      this.selectedThumbnail = 1; // 设置为语义分割图缩略图
+      this.selectedThumbnailItem = this.thumbnails[1];
 
       this.$message.success("语义分割图上传成功，已更新到缩略图和预览区域！");
       console.log("语义分割图上传成功，图片URL:", imageUrl);
@@ -1723,6 +1778,8 @@ getUnifiedColor() {
 
       // 更新主预览图
       this.previewImage = imageUrl;
+      this.selectedThumbnail = 1; // 设置为语义分割图缩略图
+      this.selectedThumbnailItem = this.thumbnails[1];
 
       console.log("通过URL更新事件更新语义分割图缩略图和预览区域成功");
     },
@@ -1773,6 +1830,8 @@ getUnifiedColor() {
             this.$set(this.thumbnails, 1, { url: "" });
           }
           this.previewImage = "";
+          this.selectedThumbnail = -1; // 清除选中状态
+          this.selectedThumbnailItem = null;
           this.$message.success("图片删除成功！");
 
           // 停用所有画布交互，要求用户重新选择工具
