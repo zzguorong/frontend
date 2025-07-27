@@ -46,13 +46,13 @@
               <div class="account-form">
                 当前密码
                 <el-form-item prop="password">
-                  <el-input v-model="resetPasswordForm.password" type="password" show-password placeholder="请输入当前密码" />
+                  <el-input v-model="resetPasswordForm.password" type="password" show-password placeholder="请输入当前密码"/>
                 </el-form-item>
               </div>
               <div class="account-form">
                 新密码
                 <el-form-item prop="newPassword">
-                  <el-input v-model="resetPasswordForm.newPassword" type="password" show-password placeholder="请输入新密码" />
+                  <el-input v-model="resetPasswordForm.newPassword" type="password" show-password placeholder="请输入新密码"/>
                 </el-form-item>
               </div>
               <div class="account-form">
@@ -332,7 +332,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   font-size: 18px;
-  margin-bottom: 22px;
+  margin-bottom: 32px;
 
   .btn-wx-check {
     background: #6C6C6C;
@@ -569,5 +569,9 @@ export default {
 ::v-deep .el-dialog__body {
   padding: 0 20px 30px 20px !important;
 
+}
+
+::v-deep .el-input {
+  width: 300px;
 }
 </style>

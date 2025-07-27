@@ -494,7 +494,7 @@ export default {
 }
 
 ::v-deep .el-form-item {
-  margin-bottom: 31px;
+  margin-bottom: 16px;
 }
 /* 去除 el-tabs card 类型自带的边框 */
 ::v-deep .el-tabs--card > .el-tabs__header,
