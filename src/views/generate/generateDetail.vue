@@ -615,7 +615,7 @@ export default {
       if (this.psdDownloadEnabled) {
         this.psdDownloading = true;
         // 调用后端接口下载 PSD 文件
-        generatePSD(this.selectedThumbnailItem.id)
+        generatePSD(this.generatedImageId)
           .then((res) => {
             const url = res.data.url;
             const filename = res.data.name || `generated_image_${Date.now()}.psd`;
