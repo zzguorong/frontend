@@ -852,6 +852,8 @@ export default {
         // 更新缩略图第一个位置（底图）
         this.$set(this.thumbnails, 0, { url: p.basemapUrl });
         this.previewImage = p.basemapUrl;
+        this.selectedThumbnail = 0;
+        this.selectedThumbnailItem = this.thumbnails[0];
       } else {
         this.basemapUrl = "";
         this.basemapUrlId = null;
@@ -1098,7 +1100,6 @@ export default {
           if (!this.thumbnails[1].url.startsWith('data:') || !this.thumbnails[1].url.includes(';base64,')) {
 
             const base64 = await blobUrlToBase64(this.thumbnails[1].url);
-            console.log('base64', base64);
             this.$set(this.thumbnails, 1, { url: base64 });
             this.semanticImgUrl = base64;
             payload.segment_image = base64;
