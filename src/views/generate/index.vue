@@ -29,8 +29,8 @@
                 <div class="thumbnail-gallery">
                   <!-- 取前 6 个元素渲染。 -->
                   <template v-for="(thumb, index) in thumbnails.slice(0, 6)">
-                    <div :key="index"  v-loading="thumb.loading"  class="thumbnail" :class="{ active: selectedThumbnail === index }"
-                      @click="selectThumbnail(thumb, index)">
+                    <div :key="index" v-loading="thumb.loading" class="thumbnail"
+                      :class="{ active: selectedThumbnail === index }" @click="selectThumbnail(thumb, index)">
                       <img v-if="thumb.url" :src="thumb.url" alt="缩略图" class="thumb-img" />
                       <!-- 当无图时显示占位图标 -->
                       <svg-icon v-else icon-class="generateImage" class="placeholder-icon" />
@@ -102,46 +102,46 @@
                 </div>
                 <div class="download-controls">
                   <el-button v-loading="pngDownloading" :style="{
-                  height: '35px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: '1px solid #dcdfe6',
-                  borderRadius: '5px',
-                  width: '120px',
-                  fontSize: '12px',
-                  marginLeft: '5px',
-                  cursor: previewImage ? 'pointer' : 'not-allowed',
-                  backgroundColor: previewImage ? '#fff' : '#ccc',
-                  color: '#000',
-                }" @click="downloadPNG">
-                  PNG下载
-                </el-button>
+                    height: '35px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1px solid #dcdfe6',
+                    borderRadius: '5px',
+                    width: '120px',
+                    fontSize: '12px',
+                    marginLeft: '5px',
+                    cursor: previewImage ? 'pointer' : 'not-allowed',
+                    backgroundColor: previewImage ? '#fff' : '#ccc',
+                    color: '#000',
+                  }" @click="downloadPNG">
+                    PNG下载
+                  </el-button>
 
-                <el-button v-loading="psdDownloading" :disabled="!psdDownloadEnabled" :style="{
-                  display: 'flex', // ✅ 关键：用 flex 让内容垂直居中
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '35px',
-                  border: '1px solid #dcdfe6',
-                  borderRadius: '5px',
-                  width: '120px',
-                  fontSize: '12px',
-                  textAlign: 'center',
-                  marginLeft: '5px',
-                  cursor: psdDownloadEnabled ? 'pointer' : 'not-allowed',
-                  backgroundColor: psdDownloadEnabled ? '#fff' : '#ccc',
-                  color: '#000',
-                  position: 'relative',
-                  paddingRight: '25px'
-                }" @click="downloadPSD">
-                  PSD下载
+                  <el-button v-loading="psdDownloading" :disabled="!psdDownloadEnabled" :style="{
+                    display: 'flex', // ✅ 关键：用 flex 让内容垂直居中
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '35px',
+                    border: '1px solid #dcdfe6',
+                    borderRadius: '5px',
+                    width: '120px',
+                    fontSize: '12px',
+                    textAlign: 'center',
+                    marginLeft: '5px',
+                    cursor: psdDownloadEnabled ? 'pointer' : 'not-allowed',
+                    backgroundColor: psdDownloadEnabled ? '#fff' : '#ccc',
+                    color: '#000',
+                    position: 'relative',
+                    paddingRight: '25px'
+                  }" @click="downloadPSD">
+                    PSD下载
 
-                  <el-tooltip content="PSD下载功能" placement="top">
-                    <svg-icon icon-class="question" class="icon-style"
-                      style="position: absolute; right: 15px; top: 10px; pointer-events: auto; cursor: help;" />
-                  </el-tooltip>
-                </el-button>
+                    <el-tooltip content="PSD下载功能" placement="top">
+                      <svg-icon icon-class="question" class="icon-style"
+                        style="position: absolute; right: 15px; top: 10px; pointer-events: auto; cursor: help;" />
+                    </el-tooltip>
+                  </el-button>
                 </div>
               </div>
               <div style="
@@ -165,80 +165,79 @@
           <div class="left-panel right-panel">
             <el-tabs v-model="activeName" type="card">
               <el-tab-pane label="生图参数" name="left">
-                <div class="panel-style" ref="paramsScroll" >
-                    <!-- 提示词 -->
-                    <div class="control-section" style="border-radius: 0 0 8px 8px; border-top: none">
+                <div class="panel-style" ref="paramsScroll">
+                  <!-- 提示词 -->
+                  <div class="control-section" style="border-radius: 0 0 8px 8px; border-top: none">
+                    <div class="section-title">
+                      <span>提示词</span>
+                      <el-tooltip content="对希望生成的图纸结果进行描述，建议使用名词，并用逗号分隔" placement="top">
+                        <svg-icon icon-class="question" class="icon-style"></svg-icon>
+                        <!-- <i class="question-icon">?</i> -->
+                      </el-tooltip>
+                    </div>
+                    <el-input v-model="promptText" type="textarea" :rows="3" placeholder="所输入的提示词越精准，生成结果越精准" />
+                  </div>
+                  <div class="control-section">
+                    <!-- 视角类型 -->
+                    <div class="section-item" style="margin-bottom: 20px" :class="{ error: formErrors.viewType }">
                       <div class="section-title">
-                        <span>提示词</span>
-                        <el-tooltip content="对希望生成的图纸结果进行描述，建议使用名词，并用逗号分隔" placement="top">
+                        <span>视角类型<span class="required-mark">*</span></span>
+                        <el-tooltip content="决定生成图纸的角度与视野，包含人视、鸟瞰、工程与室内图四个模块" placement="top">
                           <svg-icon icon-class="question" class="icon-style"></svg-icon>
                           <!-- <i class="question-icon">?</i> -->
                         </el-tooltip>
                       </div>
-                      <el-input v-model="promptText" type="textarea" :rows="3" placeholder="所输入的提示词越精准，生成结果越精准" />
+                      <el-select v-model="viewType" placeholder="选择视角类型" style="width: 100%" @change="updateStyleOptions">
+                        <el-option v-for="item in perspectiveOptions" :key="item.id" :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
                     </div>
-                    <div class="control-section">
-                      <!-- 视角类型 -->
-                      <div class="section-item" style="margin-bottom: 20px" :class="{ error: formErrors.viewType }">
-                        <div class="section-title">
-                          <span>视角类型<span class="required-mark">*</span></span>
-                          <el-tooltip content="决定生成图纸的角度与视野，包含人视、鸟瞰、工程与室内图四个模块" placement="top">
-                            <svg-icon icon-class="question" class="icon-style"></svg-icon>
-                            <!-- <i class="question-icon">?</i> -->
-                          </el-tooltip>
-                        </div>
-                        <el-select v-model="viewType" placeholder="选择视角类型" style="width: 100%"
-                          @change="updateStyleOptions">
-                          <el-option v-for="item in perspectiveOptions" :key="item.id" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
+                    <!-- 风格类别 -->
+                    <div class="section-item" :class="{ error: formErrors.styleCategory }">
+                      <div class="section-title">
+                        <span>风格类别<span class="required-mark">*</span></span>
+                        <el-tooltip content="基于视角类型四个模块，选择多种预设风格" placement="top">
+                          <svg-icon icon-class="question" class="icon-style"></svg-icon>
+                          <!-- <i class="question-icon">?</i> -->
+                        </el-tooltip>
                       </div>
-                      <!-- 风格类别 -->
-                      <div class="section-item" :class="{ error: formErrors.styleCategory }">
-                        <div class="section-title">
-                          <span>风格类别<span class="required-mark">*</span></span>
-                          <el-tooltip content="基于视角类型四个模块，选择多种预设风格" placement="top">
-                            <svg-icon icon-class="question" class="icon-style"></svg-icon>
-                            <!-- <i class="question-icon">?</i> -->
-                          </el-tooltip>
-                        </div>
-                        <!--  @change="clearStyleCategoryError"数据写死，目前不需要方法 -->
-                        <el-select v-model="styleCategory" placeholder="选择风格" style="width: 100%">
-                          <el-option v-for="item in styleOptions" :key="item.value" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </div>
+                      <!--  @change="clearStyleCategoryError"数据写死，目前不需要方法 -->
+                      <el-select v-model="styleCategory" placeholder="选择风格" style="width: 100%">
+                        <el-option v-for="item in styleOptions" :key="item.value" :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
                     </div>
-                    <div class="control-section">
-                      <!-- 上传底图 -->
-                      <div class="section-item" style="
+                  </div>
+                  <div class="control-section">
+                    <!-- 上传底图 -->
+                    <div class="section-item" style="
                         padding-bottom: 15px;
                         margin-bottom: 15px;
                         border-bottom: 1px solid #dcdfe6;
                       " :class="{ error: formErrors.basemapUrl }">
-                        <div class="section-title">
-                          <span>上传底图<span class="required-mark">*</span></span>
-                          <el-tooltip content="用于生成基础图像。建议上传底图像素<=2048px*2048px" placement="top">
-                            <svg-icon icon-class="question" class="icon-style"></svg-icon>
-                            <!-- <i class="question-icon">?</i> -->
-                          </el-tooltip>
-                        </div>
-                        <div class="section-content">
-                          <upload-file ref="uploadRef" finalApi="/base_image" :imgUrl.sync="basemapUrl"
-                            describeText="上传底图" @upload-success="onBasemapUpload($event, 1)"
-                            @update:imgUrl="onBasemapUrlUpdate" @delete="onImageDelete(1)"></upload-file>
-                          <div class="slider-control-content">
-                            <div class="slider-control">
-                              <div class="slider-title">
-                                <label>控制程度</label>
-                                <el-tooltip content="是生成图与底图颜色材质的相似程度" placement="top">
-                                  <svg-icon icon-class="question" class="icon-style"></svg-icon>
-                                  <!-- <i class="question-icon">?</i> -->
-                                </el-tooltip>
-                              </div>
-                              <draggable-progress :percentage.sync="baseControlLevel"></draggable-progress>
+                      <div class="section-title">
+                        <span>上传底图<span class="required-mark">*</span></span>
+                        <el-tooltip content="用于生成基础图像。建议上传底图像素<=2048px*2048px" placement="top">
+                          <svg-icon icon-class="question" class="icon-style"></svg-icon>
+                          <!-- <i class="question-icon">?</i> -->
+                        </el-tooltip>
+                      </div>
+                      <div class="section-content">
+                        <upload-file ref="uploadRef" finalApi="/base_image" :imgUrl.sync="basemapUrl" describeText="上传底图"
+                          @upload-success="onBasemapUpload($event, 1)" @update:imgUrl="onBasemapUrlUpdate"
+                          @delete="onImageDelete(1)"></upload-file>
+                        <div class="slider-control-content">
+                          <div class="slider-control">
+                            <div class="slider-title">
+                              <label>控制程度</label>
+                              <el-tooltip content="是生成图与底图颜色材质的相似程度" placement="top">
+                                <svg-icon icon-class="question" class="icon-style"></svg-icon>
+                                <!-- <i class="question-icon">?</i> -->
+                              </el-tooltip>
                             </div>
-                            <!-- <div class="slider-control">
+                            <draggable-progress :percentage.sync="baseControlLevel"></draggable-progress>
+                          </div>
+                          <!-- <div class="slider-control">
                             <div class="slider-title">
                               <label>材质固定</label>
                               <el-tooltip
@@ -255,68 +254,68 @@
                               :percentage.sync="materialPercentage"
                             ></draggable-progress>
                           </div> -->
-                          </div>
                         </div>
                       </div>
-                      <!-- 风格迁移 -->
-                      <div class="section-item">
-                        <div class="section-title transfer-title">
-                          <div class="title-with-tooltip">
-                            <span>风格迁移</span>
-                            <el-tooltip content="提取参考图中配色、灯光、材质等信息来影响生成内容" placement="top">
-                              <svg-icon icon-class="question" class="icon-style"></svg-icon>
-                              <!-- <i class="question-icon">?</i> -->
-                            </el-tooltip>
-                          </div>
-                          <!-- 风格迁移开关 -->
-                          <el-switch v-model="styleTransferEnabled" />
+                    </div>
+                    <!-- 风格迁移 -->
+                    <div class="section-item">
+                      <div class="section-title transfer-title">
+                        <div class="title-with-tooltip">
+                          <span>风格迁移</span>
+                          <el-tooltip content="提取参考图中配色、灯光、材质等信息来影响生成内容" placement="top">
+                            <svg-icon icon-class="question" class="icon-style"></svg-icon>
+                            <!-- <i class="question-icon">?</i> -->
+                          </el-tooltip>
                         </div>
-                        <div class="section-content" v-if="styleTransferEnabled">
-                          <upload-file finalApi="/style_image" :imgUrl="styleImgUrl" describeText="上传风格图"
-                            @upload-success="onBasemapUpload($event, 2)" @delete="onImageDelete(2)"></upload-file>
-                          <div class="slider-control-content">
-                            <div class="slider-control">
-                              <div class="slider-title">
-                                <label>控制程度</label>
-                                <el-tooltip content="是生成图与风格图颜色材质的相似程度" placement="top">
-                                  <svg-icon icon-class="question" class="icon-style"></svg-icon>
-                                  <!-- <i class="question-icon">?</i> -->
-                                </el-tooltip>
-                              </div>
-                              <draggable-progress :percentage.sync="styleTransferLevel"></draggable-progress>
+                        <!-- 风格迁移开关 -->
+                        <el-switch v-model="styleTransferEnabled" />
+                      </div>
+                      <div class="section-content" v-if="styleTransferEnabled">
+                        <upload-file finalApi="/style_image" :imgUrl="styleImgUrl" describeText="上传风格图"
+                          @upload-success="onBasemapUpload($event, 2)" @delete="onImageDelete(2)"></upload-file>
+                        <div class="slider-control-content">
+                          <div class="slider-control">
+                            <div class="slider-title">
+                              <label>控制程度</label>
+                              <el-tooltip content="是生成图与风格图颜色材质的相似程度" placement="top">
+                                <svg-icon icon-class="question" class="icon-style"></svg-icon>
+                                <!-- <i class="question-icon">?</i> -->
+                              </el-tooltip>
                             </div>
+                            <draggable-progress :percentage.sync="styleTransferLevel"></draggable-progress>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div class="control-section" style="margin-bottom: 83px">
-                      <!-- 分辨率 -->
-                      <div class="section-item" style="margin-bottom: 20px">
-                        <div class="section-title">分辨率</div>
-                        <el-select v-model="resolution" placeholder="选择分辨率" style="width: 100%">
-                          <el-option label="标准(1080P)" :value="1"></el-option>
-                          <el-option label="大(2k)" :value="2"></el-option>
-                          <el-option label="超大(4k)" :value="3"></el-option>
-                        </el-select>
-                      </div>
-                      <!-- 图纸比例 -->
-                      <div class="section-item">
-                        <div class="section-title">图纸比例</div>
-                        <el-select v-model="aspectRatio" placeholder="选择比例" style="width: 100%">
-                          <!-- TODO:对接口字段 -->
-                          <el-option label="原始比例" value="detect"></el-option>
-                          <el-option label="1:1" value="1:1"></el-option>
-                          <el-option label="3:2" value="3:2"></el-option>
-                          <el-option label="4:3" value="4:3"></el-option>
-                          <el-option label="16:9" value="16:9"></el-option>
-                        </el-select>
-                      </div>
+                  </div>
+                  <div class="control-section" style="margin-bottom: 83px">
+                    <!-- 分辨率 -->
+                    <div class="section-item" style="margin-bottom: 20px">
+                      <div class="section-title">分辨率</div>
+                      <el-select v-model="resolution" placeholder="选择分辨率" style="width: 100%">
+                        <el-option label="标准(1080P)" :value="1"></el-option>
+                        <el-option label="大(2k)" :value="2"></el-option>
+                        <el-option label="超大(4k)" :value="3"></el-option>
+                      </el-select>
                     </div>
+                    <!-- 图纸比例 -->
+                    <div class="section-item">
+                      <div class="section-title">图纸比例</div>
+                      <el-select v-model="aspectRatio" placeholder="选择比例" style="width: 100%">
+                        <!-- TODO:对接口字段 -->
+                        <el-option label="原始比例" value="detect"></el-option>
+                        <el-option label="1:1" value="1:1"></el-option>
+                        <el-option label="3:2" value="3:2"></el-option>
+                        <el-option label="4:3" value="4:3"></el-option>
+                        <el-option label="16:9" value="16:9"></el-option>
+                      </el-select>
+                    </div>
+                  </div>
                 </div>
               </el-tab-pane>
               <el-tab-pane label="语义分割" name="right">
                 <!-- 语义分割 -->
-                <div class="panel-style" ref="paramsScroll" >
+                <div class="panel-style" ref="paramsScroll">
 
                   <!-- <div
                     class="section-title"
@@ -352,13 +351,14 @@
                             viewType === 'engineering' ||
                             !basemapUrlId,
                         },
-                      ]" style="position: relative" @click="automaticRecognition">自动识别
-                        <el-tooltip class="auto-identify" content="功能目前只对人视图和室内图开发" placement="top"
-                          style="position: absolute; top: 11px; left: 78px">
-                          <svg-icon icon-class="question" class="icon-style"></svg-icon>
-                          <!-- <i class="question-icon">?</i> -->
+                      ]" style="position: relative; display: inline-flex; align-items: center; cursor: pointer; justify-content: center;"
+                        @click="automaticRecognition">
+                        自动识别
+                        <el-tooltip class="auto-identify" content="功能目前只对人视图和室内图开发" placement="top">
+                          <svg-icon icon-class="question" class="icon-style" style="margin-left: 4px;" />
                         </el-tooltip>
                       </span>
+
                     </div>
                   </div>
                   <!-- 工具栏 -->
@@ -459,22 +459,23 @@
                       </div>
                       <!-- 暂存 -->
                       <div class="tool-buttons" style="margin: 24px 0 12px 0;">
-                        <span class="tempo-store select-type" @click="temporaryStore">暂存
-                          <el-tooltip class="auto-identify" content="绘制内容将通过点击 [暂存] 同步到预览区。" placement="top"
-                            style="position: absolute; top: 11px; left: 206px">
-                            <svg-icon icon-class="question" class="icon-style"></svg-icon>
-                            <!-- <i class="question-icon">?</i> -->
-                          </el-tooltip></span>
+                        <span class="tempo-store select-type" @click="temporaryStore"
+                          style="display: inline-flex; align-items: center; cursor: pointer; justify-content: center;">
+                          暂存
+                          <el-tooltip class="auto-identify" content="绘制内容将通过点击 [暂存] 同步到预览区。" placement="top">
+                            <svg-icon icon-class="question" class="icon-style" style="margin-left: 5px;" />
+                          </el-tooltip>
+                        </span>
                       </div>
                     </div>
                   </div>
 
                   <!-- 元素类别 -->
                   <div class="element-category">
-                   <div class="category-title">
-                    <span class="category-label">元素类别</span>
-                   <span class="category-label select"> 当前选择：{{ selectLabel }}</span>
-                   </div>
+                    <div class="category-title">
+                      <span class="category-label">元素类别</span>
+                      <span class="category-label select"> 当前选择：{{ selectLabel }}</span>
+                    </div>
                     <!-- 颜色选择 -->
                     <div class="color-palette" v-for="(items, categoryName) in aerialviewGroups">
                       <!-- <div>{{ categoryName }}</div> -->
@@ -795,9 +796,9 @@ export default {
     // keep-alive 场景下返回页面再次同步
 
     this.$nextTick(() => {
-    // 等 DOM 渲染完成后再操作滚动条
-    this.applyStoredParams();
-  });
+      // 等 DOM 渲染完成后再操作滚动条
+      this.applyStoredParams();
+    });
   },
   methods: {
     // 将 Vuex mutation 映射为本地方法
@@ -851,7 +852,7 @@ export default {
         // 更新缩略图第一个位置（底图）
         this.$set(this.thumbnails, 0, { url: p.basemapUrl });
         this.previewImage = p.basemapUrl;
-      }else{
+      } else {
         this.basemapUrl = "";
         this.basemapUrlId = null;
         this.previewImage = null;
@@ -863,7 +864,7 @@ export default {
         this.semanticImgUrl = p.semanticImgUrl;
         // 更新缩略图第二个位置（语义分割图）
         this.$set(this.thumbnails, 1, { url: p.semanticImgUrl });
-      }else{
+      } else {
         this.semanticImgUrl = "";
         this.semanticImgUrlId = null;
       }
@@ -921,12 +922,12 @@ export default {
       };
     },
 
- // 获取统一颜色（不带透明度，用于不透明填充/描边）
-getUnifiedColor() {
-  const { r, g, b } = this.baseColor;
-  return `rgb(${r},${g},${b})`;
-}
-,
+    // 获取统一颜色（不带透明度，用于不透明填充/描边）
+    getUnifiedColor() {
+      const { r, g, b } = this.baseColor;
+      return `rgb(${r},${g},${b})`;
+    }
+    ,
 
     // 重新给所有已绘制区域整体着色
     recolorCanvas(rgbaColor) {
@@ -1023,7 +1024,7 @@ getUnifiedColor() {
     // 生成图片
     cleanup() {
       this.isGenerating = false;
-      this.$set(this.thumbnails, index, { ...thumb, loading: false });
+      // this.$set(this.thumbnails, 2, { ...thumb, loading: false });
     },
 
     // 主生成方法
@@ -1097,7 +1098,7 @@ getUnifiedColor() {
           if (!this.thumbnails[1].url.startsWith('data:') || !this.thumbnails[1].url.includes(';base64,')) {
 
             const base64 = await blobUrlToBase64(this.thumbnails[1].url);
-            console.log('base64',base64);
+            console.log('base64', base64);
             this.$set(this.thumbnails, 1, { url: base64 });
             this.semanticImgUrl = base64;
             payload.segment_image = base64;
@@ -1118,7 +1119,7 @@ getUnifiedColor() {
       this.isGenerating = true;
       //索引 2 位置插入一个图片位置
       // this.thumbnails.splice(2, 0, { url: "", id: "thumb-3" });
-      this.thumbnails.splice(2, 0, { url: "", id: "globalMask-thumb-3" ,loading: true});
+      this.thumbnails.splice(2, 0, { url: "",  loading: true });
 
       try {
         const res = await generateImages(payload);
@@ -1134,15 +1135,7 @@ getUnifiedColor() {
         // 删除第三个位置
         this.thumbnails.splice(2, 1);
       }
-    }
-    ,
-    // 删除指定位置的缩略图
-    removeThumbnailById(targetId) {
-      const index = this.thumbnails.findIndex(item => item.id === targetId);
-      if (index !== -1) {
-        this.thumbnails.splice(index, 1);
-      }
-    },
+    } ,
 
     // ===== 轮询相关 =====
     startPolling(requestId) {
@@ -1183,7 +1176,7 @@ getUnifiedColor() {
               this.$message.error("图片生成失败！");
               this.cleanup()
               // 删除第三个位置
-              this.removeThumbnailById("thumb-3");
+              this.thumbnails.splice(2, 1);
             }
             // 如果是其他状态（比如 "pending"），继续轮询
           })
@@ -1195,7 +1188,7 @@ getUnifiedColor() {
 
             this.cleanup()
             // 删除第三个位置
-            this.removeThumbnailById("thumb-3");
+            this.thumbnails.splice(2, 1);
           });
       }, 4000); // 每4秒轮询一次
     },
@@ -1227,6 +1220,7 @@ getUnifiedColor() {
       // 更新主预览图
       this.selectedThumbnailItem = thumb;
       this.previewImage = params.url;
+      this.selectedThumbnail = index;
 
       // 保存当前画布状态
       const currentCanvasState = {
@@ -1565,8 +1559,8 @@ getUnifiedColor() {
 
       // 若重复点击相同颜色，直接返回，避免再次着色导致视觉加深
       if (item.color === this.selectedWaterColor) {
-        this.selectedWaterColor="#87CEEB",
-        this.selectLabel = "";
+        this.selectedWaterColor = "#87CEEB",
+          this.selectLabel = "";
         return;
       }
 
@@ -1598,12 +1592,12 @@ getUnifiedColor() {
     async toggleFavorite(thumb) {
 
       try {
-       if (thumb.favoriteStates) {
-        await unfavoriteGeneratedImage(thumb.id)
-       }else{
-        await favoriteGeneratedImage(thumb.id)
-       }
-       // 查找thumbnails的id与给出项目匹配的
+        if (thumb.favoriteStates) {
+          await unfavoriteGeneratedImage(thumb.id)
+        } else {
+          await favoriteGeneratedImage(thumb.id)
+        }
+        // 查找thumbnails的id与给出项目匹配的
         const index = this.thumbnails.findIndex(item => item.id === thumb.id);
         this.$set(this.thumbnails, index, { ...thumb, favoriteStates: !thumb.favoriteStates });
         const message = !thumb.favoriteStates ? "已收藏" : "取消收藏";
@@ -1644,7 +1638,7 @@ getUnifiedColor() {
 
           await deleteGeneratedImage(this.thumbnails[index].id);
           // 确认删除：将对应位置设为null
-this.thumbnails.splice(index, 1);
+          this.thumbnails.splice(index, 1);
 
           // 如果删除的是当前预览的图片，清空预览
           if (this.selectedThumbnail === index) {
@@ -2596,7 +2590,7 @@ this.thumbnails.splice(index, 1);
 
       // 绘制临时点（如果存在）
       if (this.tempPoint) {
-        ctx.globalAlpha =1;
+        ctx.globalAlpha = 1;
         ctx.beginPath();
         ctx.arc(this.tempPoint.x, this.tempPoint.y, 3, 0, Math.PI * 2);
         ctx.fill();
@@ -3058,7 +3052,7 @@ this.thumbnails.splice(index, 1);
   height: 100%;
 }
 
-.fixed-row{
+.fixed-row {
   display: flex;
 }
 
@@ -3802,7 +3796,7 @@ this.thumbnails.splice(index, 1);
 
 }
 
-.select{
+.select {
   margin-left: auto;
 }
 
@@ -3904,7 +3898,7 @@ this.thumbnails.splice(index, 1);
   padding: 15px 30px;
   margin-bottom: 83px;
 
-  .category-title{
+  .category-title {
     display: flex;
     align-items: center;
   }
@@ -4269,20 +4263,20 @@ this.thumbnails.splice(index, 1);
   width: 100%;
   height: 100%;
 }
-  /*>=0,<1440的设备屏幕*/
-  @media screen and (max-width: 1439px) {
-::v-deep .el-col-18 {
-  min-width: 1009px;
+
+/*>=0,<1440的设备屏幕*/
+@media screen and (max-width: 1439px) {
+  ::v-deep .el-col-18 {
+    min-width: 1009px;
   }
 
   .fixed-row {
     min-width: 1426px;
   }
 
-  .content-wrapper{
+  .content-wrapper {
     overflow-x: auto;
   }
 
- }
-
+}
 </style>
