@@ -174,7 +174,7 @@ section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 329px;
+  padding-top: 15vw;
 
   .fullscreen-text {
     color: #fff;
@@ -189,7 +189,7 @@ section {
   }
 
   .subtitle {
-    margin-top: 81px;
+    margin-top: 3vw;
     margin-bottom: 22px;
     font-size: 48px;
     font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -208,7 +208,7 @@ section {
   .generate-btn-wrapper {
     display: flex;
     justify-content: center;
-    margin-top: 186px;
+    margin-top: 11vw;
 
     .generate-btn {
       height: 60px;
@@ -285,12 +285,12 @@ section {
   height: 100%;
   background: url('~@/assets/images/003.jpg') no-repeat center center;
   background-size: cover;
-  width: 590px;
+  width: 30.5vw;
 
   .core-functions {
     color: #fff;
     text-align: center;
-    padding: 0 87px;
+    padding: 0 4.5;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -427,7 +427,7 @@ display: flex
   .image-block-4-right {
     width: 100%;
     background: #1a1a1a;
-    padding: 40px 80px;
+    padding: 3.5vh 4vw;
     color: #fff;
     flex: 1;
 
@@ -437,8 +437,8 @@ display: flex
 
       .logo {
         margin-bottom: 18px;
-        width: 501px;
-    height: 84px;
+        width: 26vw;
+    /* height: 7vh; */
       }
 
       .desc {

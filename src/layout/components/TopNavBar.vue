@@ -104,7 +104,7 @@ export default {
   height: 60px;
 
   box-sizing: border-box;
-  padding: 35px 3vw 0 3vw;
+  padding: 35px 65px 0 3vw;
 
 .header-actions-container{
   display: flex;
