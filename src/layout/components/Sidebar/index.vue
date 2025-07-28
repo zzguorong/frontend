@@ -74,7 +74,7 @@ export default {
   methods: {
     handleLogout() {
       this.$store.dispatch("user/logout").then(() => {
-        this.$router.push("/login");
+        this.$router.push("/dashboard");
       });
     },
   },
