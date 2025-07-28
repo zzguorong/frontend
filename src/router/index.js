@@ -1,10 +1,10 @@
-import Vue from "vue";
-import Router from "vue-router";
+import Vue from 'vue';
+import Router from 'vue-router';
 
 Vue.use(Router);
 
 /* Layout */
-import Layout from "@/layout";
+import Layout from '@/layout';
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -32,205 +32,181 @@ import Layout from "@/layout";
  */
 export const constantRoutes = [
   {
-    path: "/login",
-    component: () => import("@/views/login/index"),
-    hidden: true,
+    path: '/login',
+    component: () => import('@/views/login/index'),
+    hidden: true
   },
 
   {
-    path: "/404",
-    component: () => import("@/views/404"),
-    hidden: true,
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
+  },
+  {
+    path: '/',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        name: 'Dashboard',
+        component: () => import('@/views/dashboard/index'),
+        meta: { title: '首页', icon: 'home', hideHeader: true }
+      }
+    ]
+  },
+  {
+    path: '/resetPassword',
+    component: () => import('@/views/loginInterface/resetPassword'),
+    hidden: true
+  },
+  {
+    path: '/register',
+    component: () => import('@/views/loginInterface/register'),
+    hidden: true
+  },
+  {
+    path: '/termOfservice',
+    component: () => import('@/views/loginInterface/termOfservice'),
+    hidden: true
+  },
+  {
+    path: '/privacyPolicy',
+    component: () => import('@/views/loginInterface/privacyPolicy'),
+    hidden: true
   },
 
   {
-    path: "/dashboard",
-    component: Layout,
-    redirect: "/dashboard",
-    children: [
-      {
-        path: "",
-        name: "Dashboard",
-        component: () => import("@/views/dashboard/index"),
-        meta: { title: "首页", icon: "home", hideHeader: true },
-      },
-    ],
-  },
-  {
-    path: "/resetPassword",
-    component: () => import("@/views/loginInterface/resetPassword"),
-    hidden: true,
-  },
-  {
-    path: "/register",
-    component: () => import("@/views/loginInterface/register"),
-    hidden: true,
-  },
-  {
-    path: "/termOfservice",
-    component: () => import("@/views/loginInterface/termOfservice"),
-    hidden: true,
-  },
-  {
-    path: "/privacyPolicy",
-    component: () => import("@/views/loginInterface/privacyPolicy"),
-    hidden: true,
-  },
-
-  {
-    path: "/",
-    component: Layout,
-    redirect: "/generate",
-    children: [
-      {
-        path: "generate",
-        name: "Generate",
-        component: () => import("@/views/generate/index"),
-        meta: { title: "生成页面", icon: "generateImage" },
-      },
-    ],
-  },
-  {
-    path: "/generateDetail",
+    path: '/generate',
     component: Layout,
     children: [
       {
-        path: "",
-        name: "GenerateDetail",
-        component: () => import("@/views/generate/generateDetail"),
-        meta: { title: "我的项目", icon: "project" },
-      },
-    ],
+        path: '',
+        name: 'Generate',
+        component: () => import('@/views/generate/index'),
+        meta: { title: '生成页面', icon: 'generateImage' }
+      }
+    ]
   },
   {
-    path: "/AIdialogue",
+    path: '/generateDetail',
     component: Layout,
     children: [
       {
-        path: "",
-        name: "AIdialogue",
-        component: () => import("@/views/AIdialogue/AIdialogue"),
-        meta: { title: "AI对话", icon: "AIdialogue" },
-      },
-    ],
+        path: '',
+        name: 'GenerateDetail',
+        component: () => import('@/views/generate/generateDetail'),
+        meta: { title: '我的项目', icon: 'project' }
+      }
+    ]
   },
   {
-    path: "/imageToVideo",
+    path: '/AIdialogue',
     component: Layout,
     children: [
       {
-        path: "",
-        name: "imageToVideo",
-        component: () => import("@/views/imageToVideo/imageToVideo"),
-        meta: { title: "图转视频", icon: "imageToVideo" },
-      },
-    ],
+        path: '',
+        name: 'AIdialogue',
+        component: () => import('@/views/AIdialogue/AIdialogue'),
+        meta: { title: 'AI对话', icon: 'AIdialogue' }
+      }
+    ]
   },
   {
-    path: "/AImodeling",
+    path: '/imageToVideo',
     component: Layout,
     children: [
       {
-        path: "",
-        name: "AImodeling",
-        component: () => import("@/views/AImodeling/AImodeling"),
-        meta: { title: "AI建模", icon: "AImodeling" },
-      },
-    ],
+        path: '',
+        name: 'imageToVideo',
+        component: () => import('@/views/imageToVideo/imageToVideo'),
+        meta: { title: '图转视频', icon: 'imageToVideo' }
+      }
+    ]
   },
   {
-    path: "/communityExploration",
+    path: '/AImodeling',
     component: Layout,
     children: [
       {
-        path: "",
-        name: "communityExploration",
+        path: '',
+        name: 'AImodeling',
+        component: () => import('@/views/AImodeling/AImodeling'),
+        meta: { title: 'AI建模', icon: 'AImodeling' }
+      }
+    ]
+  },
+  {
+    path: '/communityExploration',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        name: 'communityExploration',
         component: () =>
-          import("@/views/communityExploration/communityExploration"),
-        meta: { title: "社区探索", icon: "communityExploration" },
-      },
-    ],
-  },
-  // {
-  //   path: "/example",
-  //   component: Layout,
-  //   redirect: "/example/table",
-  //   name: "Example",
-  //   meta: { title: "Example", icon: "generateImage" },
-  //   children: [
-  //     {
-  //       path: "generateFile",
-  //       name: "GenerateFile",
-  //       component: () => import("@/views/generateFile/index"),
-  //       meta: { title: "GenerateFile", icon: "tree" },
-  //     },
-  //     {
-  //       path: "generateShow",
-  //       name: "GenerateShow",
-  //       component: () => import("@/views/generateShow/index"),
-  //       meta: { title: "GenerateShow", icon: "tree" },
-  //     },
-  //   ],
-  // },
-  {
-    path: "/aboutUs",
-    component: Layout,
-    meta: { fixedBottom: true },
-    redirect: "/aboutUs",
-    children: [
-      {
-        path: "",
-        name: "AboutUs",
-        component: () => import("@/views/aboutUs/aboutUs"),
-        meta: { title: "关于我们", icon: "aboutus", fixedBottom: true },
-      },
-    ],
+          import('@/views/communityExploration/communityExploration'),
+        meta: { title: '社区探索', icon: 'communityExploration' }
+      }
+    ]
   },
   {
-    path: "/subscriptionInterface",
+    path: '/aboutUs',
     component: Layout,
     meta: { fixedBottom: true },
-    redirect: "/subscriptionInterface",
+    redirect: '/aboutUs',
     children: [
       {
-        path: "subscriptionInterface",
-        name: "SubscriptionInterface",
+        path: '',
+        name: 'AboutUs',
+        component: () => import('@/views/aboutUs/aboutUs'),
+        meta: { title: '关于我们', icon: 'aboutus', fixedBottom: true }
+      }
+    ]
+  },
+  {
+    path: '/subscriptionInterface',
+    component: Layout,
+    meta: { fixedBottom: true },
+    redirect: '/subscriptionInterface',
+    children: [
+      {
+        path: 'subscriptionInterface',
+        name: 'SubscriptionInterface',
         component: () =>
-          import("@/views/subscriptionInterface/subscriptionInterface"),
-        meta: { title: "订阅计划", icon: "subscribe", fixedBottom: true },
-      },
-    ],
+          import('@/views/subscriptionInterface/subscriptionInterface'),
+        meta: { title: '订阅计划', icon: 'subscribe', fixedBottom: true }
+      }
+    ]
   },
   {
-    path: "/userInterface",
+    path: '/userInterface',
     component: Layout,
     meta: { fixedBottom: true },
-    redirect: "/userInterface",
+    redirect: '/userInterface',
     children: [
       {
-        path: "userInterface",
-        name: "UserInterface",
-        component: () => import("@/views/userInterface/userInterface"),
-        meta: { title: "用户界面", icon: "user", fixedBottom: true },
-      },
-    ],
+        path: 'userInterface',
+        name: 'UserInterface',
+        component: () => import('@/views/userInterface/userInterface'),
+        meta: { title: '用户界面', icon: 'user', fixedBottom: true }
+      }
+    ]
   },
   // 微信扫码回调路由
   {
-    path: "/auth/wechat/callback",
-    component: () => import("@/views/wechatCallback/index.vue"),
-    hidden: true,
+    path: '/auth/wechat/callback',
+    component: () => import('@/views/wechatCallback/index.vue'),
+    hidden: true
   },
 
   // 404 page must be placed at the end !!!
-  { path: "*", redirect: "/404", hidden: true },
+  { path: '*', redirect: '/404', hidden: true }
 ];
 
 const createRouter = () =>
   new Router({
-    mode: "history", // 启用 HTML5 history 模式，支持微信回调等不带 # 的路径
+    mode: 'history', // 启用 HTML5 history 模式，支持微信回调等不带 # 的路径
     scrollBehavior: () => ({ y: 0 }),
-    routes: constantRoutes,
+    routes: constantRoutes
   });
 
 const router = createRouter();

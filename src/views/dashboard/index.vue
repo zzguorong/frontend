@@ -7,12 +7,11 @@
       <div class="fullscreen-text subtitle">空间的想象，AI来实现</div>
       <div class="fullscreen-text description">草图，生图，语义分割一站式生成支持PSD分层
 
-
       </div>
       <div class="fullscreen-text description">覆盖鸟瞰、人视、平面、室内，重塑你的图像工作流</div>
       <!-- 按钮 -->
-      <div class="login-btn-wrapper">
-        <el-button size="large" class="login-btn" :loading="loading" @click.native.prevent="handleLogin">
+      <div class="generate-btn-wrapper">
+        <el-button size="large" class="generate-btn" @click.native.prevent="handleGenerate">
           开始创作
         </el-button>
       </div>
@@ -32,11 +31,9 @@
         </div>
 
         <!-- 右图 -->
-        <div class="image-block-right">
-        </div>
+        <div class="image-block-right" />
       </div>
     </section>
-
 
     <!-- 第三屏 -->
     <section class="normal-section">
@@ -71,8 +68,7 @@
         </div>
 
         <!-- 右图 -->
-        <div class="image-block-3-right">
-        </div>
+        <div class="image-block-3-right" />
       </div>
     </section>
 
@@ -105,15 +101,15 @@
         <!-- 下半部分：页脚 -->
         <div class="image-block-4-right">
           <div class="footer-info">
-            <img class="logo" src="@/assets/images/dashorard-logo-white.png" />
+            <img class="logo" src="@/assets/images/dashorard-logo-white.png">
             <p class="desc">
               GAIAHubs 是空间领域的AI工具平台，集成 AIGC 生成、语义分割与智能识别功能，助力高效完成设计草图、空间分析与图像处理，提升设计师与团队的创作效率。
             </p>
             <p class="contact">电子邮箱：contact@gaiass.com</p>
             <p class="address">公司地址：深圳市南山区粤海街道高新区社区科技南八路2号豪威科技大厦15F</p>
-           
+
           </div>
-          <p class="copyright" >©2025 深石（深圳）智能科技有限公司版权所有</p>
+          <p class="copyright">©2025 深石（深圳）智能科技有限公司版权所有</p>
         </div>
       </div>
     </section>
@@ -122,13 +118,18 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex';
 
 export default {
-  name: "Dashboard",
+  name: 'Dashboard',
   computed: {
-    ...mapGetters(["name"]),
+    ...mapGetters(['name'])
   },
+  methods: {
+    handleGenerate() {
+      this.$router.push('/generate');
+    }
+  }
 };
 </script>
 
@@ -159,7 +160,6 @@ export default {
   /* Chrome Safari */
 }
 
-
 section {
   height: 100vh;
   scroll-snap-align: start; // 每一屏幕吸附到顶部对齐
@@ -175,7 +175,6 @@ section {
   flex-direction: column;
   align-items: center;
   padding-top: 329px;
-
 
   .fullscreen-text {
     color: #fff;
@@ -206,12 +205,12 @@ section {
     line-height: 28px
   }
 
-  .login-btn-wrapper {
+  .generate-btn-wrapper {
     display: flex;
     justify-content: center;
     margin-top: 186px;
 
-    .login-btn {
+    .generate-btn {
       height: 60px;
       line-height: 13px;
       border-radius: 25px;
@@ -355,8 +354,6 @@ section {
   flex: 1;
 }
 
-
-
 img {
   width: 100%;
   height: auto;
@@ -381,7 +378,7 @@ img {
       display: flex;
       justify-content: space-around;
       width: 100%;
-      
+
       padding: 0 40px;
 
       .feature-item {
@@ -391,7 +388,7 @@ img {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    
+
 .icon-wrapper{
   width: 100px;
 height: 100px;
@@ -455,7 +452,6 @@ display: flex
         margin-bottom: 4px;
       }
 
-  
     }
     .copyright{
         text-align: center !important;
