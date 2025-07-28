@@ -559,6 +559,8 @@ export default {
     }
   },
   // 生命周期钩子
+  activated() {
+  },
   // 在组件挂载时加载画廊图片
   mounted() {
     this.loadGalleryImages().then(() => {
@@ -1425,7 +1427,11 @@ export default {
         styleTransferLevel: this.projectParameters.styleTransferLevel,
         resolution: this.projectParameters.resolution,
         aspectRatio: this.projectParameters.aspectRatio,
-        styleImgUrl: this.currentPreviewImage,
+        basemapUrl: null,
+        basemapUrlId: null,
+        semanticImgUrl: null,
+        semanticImgUrlId: null,
+        styleImgUrl: this.styleImgUrl,
         styleImageId: this.styleImageId
       };
       this.$store.commit('generation/setGenerationParams', params);
