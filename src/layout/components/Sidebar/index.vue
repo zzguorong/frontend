@@ -45,7 +45,7 @@ export default {
     topRoutes() {
       return this.routes.filter(
         (r) =>
-          r.path !== "/dashboard" && // 过滤掉 dashboard 父路由
+          r.path !== "/" && // 过滤掉 dashboard 父路由
           !(r.meta && r.meta.fixedBottom)
       );
     },
@@ -74,7 +74,7 @@ export default {
   methods: {
     handleLogout() {
       this.$store.dispatch("user/logout").then(() => {
-        this.$router.push("/dashboard");
+        this.$router.push("/");
       });
     },
   },

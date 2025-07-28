@@ -16,7 +16,7 @@
       />
       <!-- 左侧侧边栏 -->
       <!-- 动态样式名字 -->
-      <sidebar  v-if="!showDashboardHeader" class="sidebar-container"/>
+      <sidebar v-if="!showDashboardHeader" class="sidebar-container" />
       <!-- 主内容 -->
       <div class="main-container" :class="{'dashboard-sidebar':showDashboardHeader}">
         <app-main />
@@ -26,8 +26,8 @@
 </template>
 
 <script>
-import { AppMain, Sidebar, TopNavBar } from './components'
-import ResizeMixin from './mixin/ResizeHandler'
+import { AppMain, Sidebar, TopNavBar } from './components';
+import ResizeMixin from './mixin/ResizeHandler';
 
 export default {
   name: 'Layout',
@@ -40,15 +40,15 @@ export default {
   data() {
     return {
       headerHeight: 60, // 与 TopNavBar 高度一致，
-      hiddenHeaderRoutes: ['/dashboard'], //这些页面不需要侧边栏
-    }
+      hiddenHeaderRoutes: ['/'] // 这些页面不需要侧边栏
+    };
   },
   computed: {
     sidebar() {
-      return this.$store.state.app.sidebar
+      return this.$store.state.app.sidebar;
     },
     device() {
-      return this.$store.state.app.device
+      return this.$store.state.app.device;
     },
     classObj() {
       return {
@@ -56,25 +56,25 @@ export default {
         openSidebar: this.sidebar.opened,
         withoutAnimation: this.sidebar.withoutAnimation,
         mobile: this.device === 'mobile'
-      }
+      };
     },
     // 展示首页
 
     showDashboardHeader() {
-    return this.hiddenHeaderRoutes.includes(this.$route.path);
-  }
+      return this.hiddenHeaderRoutes.includes(this.$route.path);
+    }
   },
   methods: {
     // 点击遮罩层时关闭侧边栏
     handleClickOutside() {
-      this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
+      this.$store.dispatch('app/closeSideBar', { withoutAnimation: false });
     },
     // 订阅按钮跳转
     goSubscribe() {
-      this.$router.push({ name: 'SubscribePlan' }) // 根据你的路由改
+      this.$router.push({ name: 'SubscribePlan' }); // 根据你的路由改
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

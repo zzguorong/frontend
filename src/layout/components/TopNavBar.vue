@@ -3,7 +3,7 @@
   <header v-if="!$route.meta.hideHeader" class="top-nav-bar">
     <!-- 左侧 logo -->
     <div class="logo" @click="goHome">
-      <img src="../../assets/images/logo.png" alt="Logo" />
+      <img src="../../assets/images/logo.png" alt="Logo">
     </div>
     <!-- 右侧订阅计划按钮 -->
     <button class="subscribe-btn" @click="goSubscribe">订阅计划</button>
@@ -12,41 +12,46 @@
   <header v-else class="simple-header">
     <!-- 左侧 logo -->
     <div class="logo" @click="goHome">
-      <img src="../../assets/images/dashorard-logo.png" alt="Logo" />
+      <img src="../../assets/images/dashorard-logo.png" alt="Logo">
 
     </div>
-    <div class=" login-container">
-      <div class="login-btn-wrapper">
-      <el-button  size="large" class="login-btn" :loading="loading" @click.native.prevent="handleLogin">
-        LOG IN
-      </el-button>
+    <div class="header-actions-container">
+      <div class="header-action-wrapper">
+        <el-button size="large" class="action-btn" @click.native.prevent="handleLogin">
+          LOG IN
+        </el-button>
+      </div>
+      <div class="header-action-wrapper">
+        <el-button type="primary" size="large" class="action-btn" @click.native.prevent="handleGenerate">TRY
+          GAIA
+        </el-button>
+      </div>
     </div>
-    <div class="login-btn-wrapper">
-      <el-button type="primary" size="large" class="login-btn" :loading="loading" @click.native.prevent="handleLogin">TRY
-        GAIA
-      </el-button>
-    </div>
-    </div>
-
   </header>
 </template>
 
 <script>
 export default {
-  name: "TopNavBar",
+  name: 'TopNavBar',
   methods: {
     goHome() {
       this.$router.push({ name: 'Dashboard' });
     },
     goSubscribe() {
       this.$router.push({ name: 'SubscriptionInterface' });
+    },
+    handleLogin() {
+      this.$router.push('/login');
+    },
+    handleGenerate() {
+      this.$router.push('/generate');
     }
   }
 
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .top-nav-bar {
   position: fixed;
   top: 0;
@@ -101,16 +106,15 @@ export default {
   box-sizing: border-box;
   padding: 35px 3vw 0 3vw;
 
-.login-container{
-display: flex;
-
+.header-actions-container{
+  display: flex;
 }
 
-  .login-btn-wrapper {
+  .header-action-wrapper {
     display: flex;
     justify-content: center;
 
-    .login-btn {
+    .action-btn {
       width: fit-content;
             height: 40px;
             line-height: 13px;
