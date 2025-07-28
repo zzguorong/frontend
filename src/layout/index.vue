@@ -7,7 +7,7 @@
     </div>
 
     <!-- 内容区域 -->
-    <div class="content-wrapper">
+    <div class="content-wrapper" :class="{'dashboard-content-wrapper':showDashboardHeader}">
       <!-- 遮罩（仅在移动端且侧边栏打开时显示） -->
       <div
         v-if="device === 'mobile' && sidebar.opened"
@@ -15,9 +15,10 @@
         @click="handleClickOutside"
       />
       <!-- 左侧侧边栏 -->
-      <sidebar class="sidebar-container" />
+      <!-- 动态样式名字 -->
+      <sidebar  v-if="!showDashboardHeader" class="sidebar-container"/>
       <!-- 主内容 -->
-      <div class="main-container">
+      <div class="main-container" :class="{'dashboard-sidebar':showDashboardHeader}">
         <app-main />
       </div>
     </div>
@@ -38,7 +39,8 @@ export default {
   mixins: [ResizeMixin],
   data() {
     return {
-      headerHeight: 60 // 与 TopNavBar 高度一致
+      headerHeight: 60, // 与 TopNavBar 高度一致，
+      hiddenHeaderRoutes: ['/dashboard'], //这些页面不需要侧边栏
     }
   },
   computed: {
@@ -55,7 +57,12 @@ export default {
         withoutAnimation: this.sidebar.withoutAnimation,
         mobile: this.device === 'mobile'
       }
-    }
+    },
+    // 展示首页
+
+    showDashboardHeader() {
+    return this.hiddenHeaderRoutes.includes(this.$route.path);
+  }
   },
   methods: {
     // 点击遮罩层时关闭侧边栏
@@ -105,8 +112,6 @@ $appHeaderHeight: 60px; // 与 TopNavBar 高度一致
 .top-header-wrapper {
   width: 100%;
   height: $appHeaderHeight;
-  background: #fff;
-  border-bottom: 1px solid #e5e5e5;
   z-index: 999;
   line-height: $appHeaderHeight;
 }
@@ -125,6 +130,11 @@ $appHeaderHeight: 60px; // 与 TopNavBar 高度一致
   height: 100%;
   padding-top: calc(10px + #{$appHeaderHeight});// 10px + $HeaderHeight; // 留出顶部导航高度
   box-sizing: border-box;
+}
+
+.dashboard-content-wrapper{
+  padding-top:0;
+  height: 100vh;
 }
 
 /* 左侧侧边栏 */
@@ -157,5 +167,11 @@ $appHeaderHeight: 60px; // 与 TopNavBar 高度一致
 }
 .hideSidebar .sidebar-container {
   width: 54px;
+}
+
+.main-container.dashboard-sidebar {
+  margin: 0 !important;
+  padding: 0  0 !important;
+  /* padding: 0  2vw !important; */
 }
 </style>

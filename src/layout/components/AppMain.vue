@@ -22,11 +22,11 @@ export default {
 <style scoped>
 .app-main {
   /* // 根据顶部导航栏的高度 */
-  min-height:calc(100vh - 70px);  
+  min-height:calc(100vh - 70px);
   width: 100%;
   position: relative;
   overflow: hidden;
-  background: #efefef;
+  /* background: #efefef; */
 }
 .fixed-header + .app-main {
   padding-top: 50px;
