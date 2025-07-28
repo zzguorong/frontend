@@ -56,7 +56,6 @@
                       <div v-if="thumb && index === 1" class="image-label">
                         语义分割图
                       </div>
-                      <!-- <GlobalMask :ref="`globalMask-${thumb.id}`" /> -->
                     </div>
                   </template>
                 </div>
@@ -810,7 +809,6 @@ export default {
     },
     // 页面激活或首次进入时，把 Vuex 中存储的参数写回表单
     applyStoredParams() {
-      console.log("applyStoredParams");
       const p = this.generationParams || {};
       if (!Object.keys(p).length) return;
 
@@ -839,11 +837,11 @@ export default {
 
       if (p.baseControlLevel) this.baseControlLevel = p.baseControlLevel;
 
-      // 清空画廊
-      this.thumbnails = Array.from({ length: 6 }, (_, i) => ({
-        url: null,
-        id: `thumb-${i + 1}`   // 用反引号包裹整个字符串
-      }));
+      // // 清空画廊
+      // this.thumbnails = Array.from({ length: 6 }, (_, i) => ({
+      //   url: null,
+      //   id: `thumb-${i + 1}`   // 用反引号包裹整个字符串
+      // }));
 
       // 底图
       if (p.basemapUrl && p.basemapUrlId) {
@@ -851,13 +849,13 @@ export default {
         this.basemapUrlId = p.basemapUrlId;
         // 更新缩略图第一个位置（底图）
         this.$set(this.thumbnails, 0, { url: p.basemapUrl });
-        this.previewImage = p.basemapUrl;
-        this.selectedThumbnail = 0;
-        this.selectedThumbnailItem = this.thumbnails[0];
+        // this.previewImage = p.basemapUrl;
+        // this.selectedThumbnail = 0;
+        // this.selectedThumbnailItem = this.thumbnails[0];
       } else {
         this.basemapUrl = "";
         this.basemapUrlId = null;
-        this.previewImage = null;
+        this.$set(this.thumbnails, 0, { url: "" });
       }
 
       // 语义分割图
@@ -866,9 +864,35 @@ export default {
         this.semanticImgUrl = p.semanticImgUrl;
         // 更新缩略图第二个位置（语义分割图）
         this.$set(this.thumbnails, 1, { url: p.semanticImgUrl });
+      } else if (p.semanticImgUrl) {
+        this.semanticImgUrl = p.semanticImgUrl;
+        this.semanticImgUrlId = null;
+        // 更新缩略图第二个位置（语义分割图）
+        this.$set(this.thumbnails, 1, { url: p.semanticImgUrl });
       } else {
         this.semanticImgUrl = "";
         this.semanticImgUrlId = null;
+        this.$set(this.thumbnails, 1, { url: "" });
+      }
+
+      // * 如果是通过点击’保留底图生图‘跳转过来的，那么底图不为空，语义分割图可能为空
+      // * 如果是通过点击’保留生图参数‘跳转过来的，那么底图和语义分割图都为空
+      // 设置预览图的规则：
+      // 1. 如果有语义分割图，则预览图为语义分割图，同时更新selectedThumbnail和selectedThumbnailItem
+      // 2. 如果没有语义分割图，但有底图，则预览图为底图，同时更新selectedThumbnail和selectedThumbnailItem
+      // 3. 如果都没有，则预览图为 null，并清空选中项
+      if (this.semanticImgUrl) {
+        this.previewImage = this.semanticImgUrl;
+        this.selectedThumbnail = 1; // 选择第二个缩略图位置
+        this.selectedThumbnailItem = this.thumbnails[1]; // 更新当前选中项
+      } else if (this.basemapUrl) {
+        this.previewImage = this.basemapUrl;
+        this.selectedThumbnail = 0; // 选择第一个缩略图位置
+        this.selectedThumbnailItem = this.thumbnails[0]; // 更新当前选中项
+      } else {
+        this.previewImage = null;
+        this.selectedThumbnail = -1; // 无选中项
+        this.selectedThumbnailItem = null;
       }
 
       console.log("页面激活或首次进入时this.thumbnails", this.thumbnails);
