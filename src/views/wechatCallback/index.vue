@@ -68,7 +68,7 @@ export default {
         .then(() => {
           this.$message.success('登录成功');
           setTimeout(() => {
-            this.$router.replace('/');
+            this.$router.replace('/generate');
           }, 1000);
         })
         .catch((error) => {
