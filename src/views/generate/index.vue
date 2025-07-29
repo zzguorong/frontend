@@ -1923,6 +1923,9 @@ export default {
 
       // 重置当前工具，让用户显式再次选择
       this.currentTool = "";
+      // 清空选择的元素类别
+      this.selectedWaterColor = "#87CEEB",
+          this.selectLabel = "";
     },
 
     // 跳转到详情页面

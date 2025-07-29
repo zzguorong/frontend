@@ -17,7 +17,7 @@
     </div>
     <div class="header-actions-container">
       <div class="header-action-wrapper">
-        <el-button size="large" class="action-btn" @click.native.prevent="handleLogin">
+        <el-button size="large" class="login-btn" @click.native.prevent="handleLogin">
           LOG IN
         </el-button>
       </div>
@@ -108,6 +108,7 @@ export default {
 
 .header-actions-container{
   display: flex;
+  gap: 20px;
 }
 
   .header-action-wrapper {
@@ -122,6 +123,25 @@ export default {
             font-size: 28px;
             padding: 0 38px 0 38px;
 
+    }
+.action-btn:hover{
+  background-color: #fff !important;
+      color: #000 !important;
+      border:none !important;
+}
+
+    .login-btn{
+      width: fit-content;
+            height: 40px;
+            line-height: 13px;
+            border-radius: 25px;
+            font-size: 28px;
+            padding: 0 38px 0 38px;
+    }
+    .login-btn:hover{
+      background-color: #000 !important;
+      color: #fff !important;
+      border:none !important;
     }
   }
 }

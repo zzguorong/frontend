@@ -257,7 +257,8 @@
                 </div>
               </el-tab-pane>
               <el-tab-pane label="项目参数" name="right">
-                <div ref="paramsScroll" class="project-panel">
+            <div>
+              <div ref="paramsScroll" class="project-panel">
                   <!-- 项目参数 -->
                   <div class="params-section">
                     <!-- 提示词 -->
@@ -307,7 +308,9 @@
                         </div> -->
                         <div class="button-group">
                           <span>
-                            通用类别
+                            {{ Object.keys(projectParameters).length === 0 ? '' : '通用类别' }}
+
+                            
                           </span>
                         </div>
                       </div>
@@ -339,7 +342,10 @@
                         <label>风格迁移控制程度</label>
                         <div class="button-group">
                           <span>
-                            {{ styleImageId ? projectParameters.styleTransferLevel : 0 }}
+                            {{ styleImageId 
+    ? projectParameters.styleTransferLevel 
+    : (Object.keys(this.projectParameters).length === 0 ? '' : 0) 
+}}
                           </span>
                         </div>
                       </div>
@@ -366,18 +372,18 @@
                         </div>
                       </div>
                     </div>
-                    <!-- 保留参数按钮 -->
-                    <div class="save-params-btn" @click="saveParams">
+              
+                  </div>
+                      <!-- 保留参数按钮 -->
+                      <div class="save-params-btn" @click="saveParams">
                       保留参数生图
                       <el-tooltip content="更换底图保留参数，生成类似风格的图框" placement="top">
                         <svg-icon
                           icon-class="question"
-                          class="icon-style"
-                          style="position: absolute; right: 13px; top: 11px"
+                          class="icon-style-np-absolute"
                         />
                       </el-tooltip>
                     </div>
-                  </div>
 
                   <!-- 语义分割元素 -->
                   <!-- <div class="params-section"> -->
@@ -401,7 +407,9 @@
                       </div>
                     </div> -->
                   <!-- </div> -->
-                </div>
+     
+                </div>      </div>
+  
               </el-tab-pane>
             </el-tabs>
           </div>
@@ -1189,6 +1197,9 @@ export default {
 
     // 画廊标题图标交互方法
     toggleGalleryFavorite() {
+      if (!this.galleryItems.legnth) {
+        return ;
+      }
       this.showOnlyFavorites = !this.showOnlyFavorites;
       this.galleryFavoriteActive = this.showOnlyFavorites;
 
@@ -1419,6 +1430,11 @@ export default {
     },
     // 保留参数生图
     saveParams() {
+      if ( Object.keys(this.projectParameters.length === 0) ){
+        // 项目参数为空
+        this.$message.error('项目参数为空');
+        return ;
+      }
       this.$message.success('参数已保存');
       const params = {
         promptText: this.projectParameters.promptText,
@@ -1439,6 +1455,11 @@ export default {
     },
     // 保留底图生图
     keepBaseGenerate() {
+      if ( Object.keys(this.projectParameters.length === 0) ){
+        // 项目参数为空
+        this.$message.error('项目参数为空');
+        return ;
+      }
       const params = {
         promptText: this.projectParameters.promptText,
         viewType: this.projectParameters.viewType,
@@ -1593,6 +1614,7 @@ export default {
 }
 
 .params-section {
+  overflow-y: auto;
   width: 100%;
   padding: 15px 15px 80px 15px;
   /* 底部添加额外间距 */
@@ -1788,12 +1810,11 @@ export default {
   padding: 8px 0;
   border: 1px solid #ccc;
   cursor: pointer;
-  position: absolute;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
   z-index: 100;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  width: 100%;
+    padding: 10px 0;
+    margin-top: 20px;
 }
 
 /* 中间预览区域 */
@@ -2008,9 +2029,10 @@ export default {
 .project-panel {
   /* height: calc(100vh - 28px); 与gallery-panel保持一致 */
   justify-content: space-between;
-  padding-bottom: 80px;
+  /* padding-bottom: 80px; */
   /* 为底部固定按钮留出空间 */
   position: relative;
+  overflow: hidden;
 }
 
 .gallery-section {
@@ -2102,6 +2124,11 @@ export default {
   font-size: 13px;
   position: absolute;
   right: -18px;
+  color: #000;
+}
+
+.icon-style-np-absolute {
+  font-size: 13px;
   color: #000;
 }
 
