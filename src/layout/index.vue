@@ -80,6 +80,10 @@ export default {
 <style lang="scss" scoped>
 @import "~@/styles/mixin.scss";
 @import "~@/styles/variables.scss";
+* {
+  cursor: default !important;
+  /* 光标为默认箭头 */
+}
 
 $appHeaderHeight: 60px; // 与 TopNavBar 高度一致
 
