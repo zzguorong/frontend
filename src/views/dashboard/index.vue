@@ -1,43 +1,45 @@
 <template>
-  <div class="scroll-container" id="fullpage">
+  <div class="scroll-container">
     <!-- 第一屏 -->
-    <section class="section fullscreen-section">
-      <div class="fullscreen-bg">
-        <div class="fullscreen-text title-main">GAIAHubs: Spatial AIGC</div>
+    <section class="fullscreen-section">
+      <!-- 背景图 -->
+      <div class="fullscreen-text title-main">GAIAHubs: Spatial AIGC</div>
       <div class="fullscreen-text subtitle">空间的想象，AI来实现</div>
-      <div class="fullscreen-text description">
-        草图，生图，语义分割一站式生成支持PSD分层
+      <div class="fullscreen-text description">草图，生图，语义分割一站式生成支持PSD分层
+
       </div>
-      <div class="fullscreen-text description">
-        覆盖鸟瞰、人视、平面、室内，重塑你的图像工作流
-      </div>
+      <div class="fullscreen-text description">覆盖鸟瞰、人视、平面、室内，重塑你的图像工作流</div>
+      <!-- 按钮 -->
       <div class="generate-btn-wrapper">
         <el-button size="large" class="generate-btn" @click.native.prevent="handleGenerate">
           开始创作
         </el-button>
       </div>
-      </div>
-     
     </section>
 
     <!-- 第二屏 -->
-    <section class="section normal-section">
+    <section class="normal-section">
       <div class="section-content no-gap">
+        <!-- 左图 -->
         <div class="image-block-left">
           <div class="image-text">
-            <div class="title" @mouseover="changeImage('birdview')" :class="{ active: activeImage === 'birdview' }">鸟瞰图</div>
+            <div class="title" @mouseover="changeImage('birdview')" :class="{ active: activeImage === 'birdview' }">鸟瞰图
+            </div>
             <div class="title" @mouseover="changeImage('eyeview')">人视图</div>
             <div class="title" @mouseover="changeImage('planview')">平面图</div>
             <div class="title" @mouseover="changeImage('indoor')">室内图</div>
           </div>
         </div>
-        <div class="image-block-right" :class="activeImage"></div>
+
+        <!-- 右图 -->
+        <div class="image-block-right" :class="activeImage" />
       </div>
     </section>
 
     <!-- 第三屏 -->
-    <section class="section normal-section">
+    <section class="normal-section">
       <div class="section-content no-gap">
+        <!-- 左图 -->
         <div class="image-block-3-left">
           <div class="core-functions">
             <h2 class="title">核心功能</h2>
@@ -63,13 +65,16 @@
             </ul>
           </div>
         </div>
-        <div class="image-block-3-right" :class="currentView"></div>
+
+        <!-- 右图 -->
+        <div class="image-block-3-right" :class="currentView" />
       </div>
     </section>
 
     <!-- 第四屏 -->
-    <section class="section normal-section">
+    <section class="normal-section">
       <div class="section-content no-gap full-section">
+        <!-- 上半部分：三项功能 -->
         <div class="image-block-4-left">
           <div class="features-row">
             <div class="feature-item">
@@ -79,35 +84,39 @@
             </div>
             <div class="feature-item">
               <div class="icon-wrapper"><svg-icon icon-class="AIdialogue" class="icon" /></div>
+
               <div class="title">AI对话式设计</div>
               <div class="desc">输入项目意图，和AI共同探索方案思路、风格方向</div>
             </div>
             <div class="feature-item">
               <div class="icon-wrapper"><svg-icon icon-class="AImodeling" class="icon" /></div>
+
               <div class="title">图转3D模型</div>
               <div class="desc">一张图生成可编辑的3D模型，反向捕捉空间关系</div>
             </div>
           </div>
         </div>
+
+        <!-- 下半部分：页脚 -->
         <div class="image-block-4-right">
           <div class="footer-info">
-            <img class="logo" src="@/assets/images/dashorard-logo-white.png" />
+            <img class="logo" src="@/assets/images/dashorard-logo-white.png">
             <p class="desc">
               GAIAHubs 是空间领域的AI工具平台，集成 AIGC 生成、语义分割与智能识别功能，助力高效完成设计草图、空间分析与图像处理，提升设计师与团队的创作效率。
             </p>
             <p class="contact">电子邮箱：contact@gaiass.com</p>
             <p class="address">公司地址：深圳市南山区粤海街道高新区社区科技南八路2号豪威科技大厦15F</p>
+
           </div>
           <p class="copyright">©2025 深石（深圳）智能科技有限公司版权所有</p>
         </div>
       </div>
     </section>
+
   </div>
 </template>
 
 <script>
-import fullpage from 'fullpage.js';
-import 'fullpage.js/dist/fullpage.css';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -115,9 +124,8 @@ export default {
   data() {
     return {
       activeImage: 'birdview',
-      currentView: 'psd_segmentation',
-      fp: null
-    };
+      currentView: 'psd_segmentation'
+    }
   },
   computed: {
     ...mapGetters(['name'])
@@ -126,51 +134,56 @@ export default {
     handleGenerate() {
       this.$router.push('/generate');
     },
+    // 第二屏
     changeImage(type) {
       this.activeImage = type;
     },
+    // 第三屏
     changeView(type) {
       this.currentView = type;
     }
-  },
-  mounted() {
-    this.fp = new fullpage('#fullpage', {
-      autoScrolling: true,
-      navigation: true,
-      scrollingSpeed: 1100,
-      loopBottom: false,
-      keyboardScrolling: true,
-      sectionSelector: '.section'
-    });
-  },
-  beforeDestroy() {
-    if (this.fp) {
-      this.fp.destroy('all');
-    }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
-html, body {
-  height: 100%;
-  margin: 0;
-  overflow: hidden;
-}
-
+/* 禁止页面所有文字选中，鼠标光标显示普通箭头 */
 * {
   user-select: none !important;
+  /* 禁止选中 */
   cursor: default !important;
+  /* 光标为默认箭头 */
 }
 
 .scroll-container {
   height: 100vh;
+  overflow-y: scroll;
+  /*  开启纵向滚动吸附，强制吸附 */
+  scroll-snap-type: y mandatory;
+  /* 平滑滚动（非必须） */
+  scroll-behavior: smooth;
+  will-change: scroll-position;
+  transform: translateZ(0);
+
+  /* 隐藏滚动条 */
+  -ms-overflow-style: none;
+  /* IE/Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.scroll-container::-webkit-scrollbar {
+  display: none;
+  /* Chrome Safari */
 }
 
 section {
   height: 100vh;
+  /*  每一屏幕吸附到顶部对齐 */
+  scroll-snap-align: start;
+  /* 每屏占满整个视口高度 */
+  position: relative;
 }
-
 
 /* 第一屏 */
 
@@ -181,14 +194,6 @@ section {
   flex-direction: column;
   align-items: center;
     justify-content: center;
-
-.fullscreen-bg{
-  display: flex
-;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-} 
 
   .fullscreen-text {
     color: #fff;
