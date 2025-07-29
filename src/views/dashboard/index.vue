@@ -23,7 +23,7 @@
         <!-- 左图 -->
         <div class="image-block-left">
           <div class="image-text">
-            <div class="title" @mouseover="changeImage('birdview')" :class="{ active: activeImage === 'birdview' }">鸟瞰图
+            <div class="title" :class="{ active: activeImage === 'birdview' }" @mouseover="changeImage('birdview')">鸟瞰图
             </div>
             <div class="title" @mouseover="changeImage('eyeview')">人视图</div>
             <div class="title" @mouseover="changeImage('planview')">平面图</div>
@@ -125,7 +125,7 @@ export default {
     return {
       activeImage: 'birdview',
       currentView: 'psd_segmentation'
-    }
+    };
   },
   computed: {
     ...mapGetters(['name'])
@@ -143,7 +143,7 @@ export default {
       this.currentView = type;
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -400,8 +400,6 @@ section {
   font-size: 1.05vw;
   color: rgba(206, 206, 206, 1);
 }
-
-
 
 .image-block-3-right {
   height: 100%;
