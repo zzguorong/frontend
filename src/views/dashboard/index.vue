@@ -1,115 +1,247 @@
 <template>
   <div class="scroll-container">
-    <!-- 第一屏 -->
-    <section class="fullscreen-section">
-      <!-- 背景图 -->
-      <div class="fullscreen-text title-main">GAIAHubs: Spatial AIGC</div>
-      <div class="fullscreen-text subtitle">空间的想象，AI来实现</div>
-      <div class="fullscreen-text description">草图，生图，语义分割一站式生成支持PSD分层
+    <!-- 第一屏 - Hero Section -->
+    <section class="fullscreen-section" role="banner">
+      <header class="hero-content">
+        <!-- SEO优化：使用h1作为主标题 -->
+        <h1 class="fullscreen-text title-main">GAIAHubs: Spatial AIGC</h1>
+        <h2 class="fullscreen-text subtitle">空间的想象，AI来实现</h2>
+        <p class="fullscreen-text description">
+          草图，生图，语义分割一站式生成支持PSD分层
+        </p>
+        <p class="fullscreen-text description">
+          覆盖鸟瞰、人视、平面、室内，重塑你的图像工作流
+        </p>
+        <!-- 按钮 -->
+        <nav class="generate-btn-wrapper" role="navigation" aria-label="主要操作">
+          <el-button
+            size="large"
+            class="generate-btn"
+            aria-label="开始使用GAIAHubs创作空间设计"
+            @click.native.prevent="handleGenerate"
+          >
+            开始创作
+          </el-button>
+        </nav>
+      </header>
+    </section>
 
-      </div>
-      <div class="fullscreen-text description">覆盖鸟瞰、人视、平面、室内，重塑你的图像工作流</div>
-      <!-- 按钮 -->
-      <div class="generate-btn-wrapper">
-        <el-button size="large" class="generate-btn" @click.native.prevent="handleGenerate">
-          开始创作
-        </el-button>
+    <!-- 第二屏 - 空间类型展示 -->
+    <section class="normal-section" role="main" aria-labelledby="spatial-types">
+      <div class="section-content no-gap">
+        <!-- 左侧导航 -->
+        <aside class="image-block-left" role="complementary">
+          <nav class="image-text" aria-label="空间类型选择">
+            <h3 id="spatial-types" class="visually-hidden">空间设计类型</h3>
+            <button
+              type="button"
+              class="title"
+              :class="{ active: activeImage === 'birdview' }"
+              role="tab"
+              tabindex="0"
+              :aria-selected="activeImage === 'birdview'"
+              :aria-label="`选择鸟瞰图设计 - ${getImageTypeLabel('birdview')}`"
+              @mouseover="changeImage('birdview')"
+              @focus="changeImage('birdview')"
+              @keydown.enter="changeImage('birdview')"
+            >
+              鸟瞰图
+            </button>
+            <button
+              type="button"
+              class="title"
+              :class="{ active: activeImage === 'eyeview' }"
+              role="tab"
+              tabindex="0"
+              :aria-selected="activeImage === 'eyeview'"
+              :aria-label="`选择人视图设计 - ${getImageTypeLabel('eyeview')}`"
+              @mouseover="changeImage('eyeview')"
+              @focus="changeImage('eyeview')"
+              @keydown.enter="changeImage('eyeview')"
+            >
+              人视图
+            </button>
+            <button
+              type="button"
+              class="title"
+              :class="{ active: activeImage === 'planview' }"
+              role="tab"
+              tabindex="0"
+              :aria-selected="activeImage === 'planview'"
+              :aria-label="`选择平面图设计 - ${getImageTypeLabel('planview')}`"
+              @mouseover="changeImage('planview')"
+              @focus="changeImage('planview')"
+              @keydown.enter="changeImage('planview')"
+            >
+              平面图
+            </button>
+            <button
+              type="button"
+              class="title"
+              :class="{ active: activeImage === 'indoor' }"
+              role="tab"
+              tabindex="0"
+              :aria-selected="activeImage === 'indoor'"
+              :aria-label="`选择室内图设计 - ${getImageTypeLabel('indoor')}`"
+              @mouseover="changeImage('indoor')"
+              @focus="changeImage('indoor')"
+              @keydown.enter="changeImage('indoor')"
+            >
+              室内图
+            </button>
+          </nav>
+        </aside>
+
+        <!-- 右侧展示图片 -->
+        <div
+          class="image-block-right"
+          :class="activeImage"
+          role="img"
+          :aria-label="`GAIAHubs ${getImageTypeLabel(activeImage)}案例展示`"
+        />
       </div>
     </section>
 
-    <!-- 第二屏 -->
-    <section class="normal-section">
+    <!-- 第三屏 - 核心功能展示 -->
+    <section class="normal-section" role="main" aria-labelledby="core-functions">
       <div class="section-content no-gap">
-        <!-- 左图 -->
-        <div class="image-block-left">
-          <div class="image-text">
-            <div class="title" @mouseover="changeImage('birdview')" :class="{ active: activeImage === 'birdview' }">鸟瞰图
-            </div>
-            <div class="title" @mouseover="changeImage('eyeview')">人视图</div>
-            <div class="title" @mouseover="changeImage('planview')">平面图</div>
-            <div class="title" @mouseover="changeImage('indoor')">室内图</div>
-          </div>
-        </div>
-
-        <!-- 右图 -->
-        <div class="image-block-right" :class="activeImage" />
-      </div>
-    </section>
-
-    <!-- 第三屏 -->
-    <section class="normal-section">
-      <div class="section-content no-gap">
-        <!-- 左图 -->
-        <div class="image-block-3-left">
+        <!-- 左侧功能介绍 -->
+        <aside class="image-block-3-left" role="complementary">
           <div class="core-functions">
-            <h2 class="title">核心功能</h2>
-            <ul class="function-list">
-              <li class="function-item" @mouseover="changeView('psd_segmentation')">
-                <h3 class="item-title" :class="{ active: currentView === 'psd_segmentation' }">
-                  PSD下载 + 语义分割
-                </h3>
-                <p class="item-desc">可后期编辑，支持专业制图</p>
+            <h2 id="core-functions" class="title">核心功能</h2>
+            <ul class="function-list" role="tablist" aria-label="核心功能列表">
+              <li class="function-item" role="presentation">
+                <button
+                  type="button"
+                  role="tab"
+                  tabindex="0"
+                  :aria-selected="currentView === 'psd_segmentation'"
+                  @mouseover="changeView('psd_segmentation')"
+                  @focus="changeView('psd_segmentation')"
+                  @keydown.enter="changeView('psd_segmentation')"
+                >
+                  <h3 class="item-title" :class="{ active: currentView === 'psd_segmentation' }">
+                    PSD下载 + 语义分割
+                  </h3>
+                  <p class="item-desc">可后期编辑，支持专业制图</p>
+                </button>
               </li>
-              <li class="function-item" @mouseover="changeView('sketch_generate')">
-                <h3 class="item-title">支持草图 / 关键词 / 模型图生成</h3>
-                <p class="item-desc">多方式嵌入，适配不同工作流</p>
+              <li class="function-item" role="presentation">
+                <button
+                  type="button"
+                  role="tab"
+                  tabindex="0"
+                  :aria-selected="currentView === 'sketch_generate'"
+                  @mouseover="changeView('sketch_generate')"
+                  @focus="changeView('sketch_generate')"
+                  @keydown.enter="changeView('sketch_generate')"
+                >
+                  <h3 class="item-title" :class="{ active: currentView === 'sketch_generate' }">
+                    支持草图 / 关键词 / 模型图生成
+                  </h3>
+                  <p class="item-desc">多方式嵌入，适配不同工作流</p>
+                </button>
               </li>
-              <li class="function-item" @mouseover="changeView('multi_view_scene')">
-                <h3 class="item-title">多视角场景覆盖</h3>
-                <p class="item-desc">鸟瞰、人视、室内、平面一网打尽</p>
+              <li class="function-item" role="presentation">
+                <button
+                  type="button"
+                  role="tab"
+                  tabindex="0"
+                  :aria-selected="currentView === 'multi_view_scene'"
+                  @mouseover="changeView('multi_view_scene')"
+                  @focus="changeView('multi_view_scene')"
+                  @keydown.enter="changeView('multi_view_scene')"
+                >
+                  <h3 class="item-title" :class="{ active: currentView === 'multi_view_scene' }">
+                    多视角场景覆盖
+                  </h3>
+                  <p class="item-desc">鸟瞰、人视、室内、平面一网打尽</p>
+                </button>
               </li>
-              <li class="function-item" @mouseover="changeView('cloud_generate')">
-                <h3 class="item-title">快速响应云端生成</h3>
-                <p class="item-desc">不限设备，无需安装</p>
+              <li class="function-item" role="presentation">
+                <button
+                  type="button"
+                  role="tab"
+                  tabindex="0"
+                  :aria-selected="currentView === 'cloud_generate'"
+                  @mouseover="changeView('cloud_generate')"
+                  @focus="changeView('cloud_generate')"
+                  @keydown.enter="changeView('cloud_generate')"
+                >
+                  <h3 class="item-title" :class="{ active: currentView === 'cloud_generate' }">
+                    快速响应云端生成
+                  </h3>
+                  <p class="item-desc">不限设备，无需安装</p>
+                </button>
               </li>
             </ul>
           </div>
-        </div>
+        </aside>
 
-        <!-- 右图 -->
-        <div class="image-block-3-right" :class="currentView" />
+        <!-- 右侧功能演示图 -->
+        <div
+          class="image-block-3-right"
+          :class="currentView"
+          role="img"
+          :aria-label="`GAIAHubs ${getFunctionLabel(currentView)}功能演示`"
+        />
       </div>
     </section>
 
-    <!-- 第四屏 -->
+    <!-- 第四屏 - 扩展功能与联系方式 -->
     <section class="normal-section">
       <div class="section-content no-gap full-section">
-        <!-- 上半部分：三项功能 -->
+        <!-- 上半部分：扩展功能 -->
         <div class="image-block-4-left">
           <div class="features-row">
-            <div class="feature-item">
-              <div class="icon-wrapper"><svg-icon icon-class="imageToVideo" class="icon" /></div>
-              <div class="title">图转视频</div>
-              <div class="desc">一张图转换成动态视频效果，身临其境</div>
-            </div>
-            <div class="feature-item">
-              <div class="icon-wrapper"><svg-icon icon-class="AIdialogue" class="icon" /></div>
-
-              <div class="title">AI对话式设计</div>
-              <div class="desc">输入项目意图，和AI共同探索方案思路、风格方向</div>
-            </div>
-            <div class="feature-item">
-              <div class="icon-wrapper"><svg-icon icon-class="AImodeling" class="icon" /></div>
-
-              <div class="title">图转3D模型</div>
-              <div class="desc">一张图生成可编辑的3D模型，反向捕捉空间关系</div>
-            </div>
+            <article class="feature-item">
+              <div class="icon-wrapper" aria-hidden="true">
+                <svg-icon icon-class="imageToVideo" class="icon" />
+              </div>
+              <h3 class="title">图转视频</h3>
+              <p class="desc">一张图转换成动态视频效果，身临其境</p>
+            </article>
+            <article class="feature-item">
+              <div class="icon-wrapper" aria-hidden="true">
+                <svg-icon icon-class="AIdialogue" class="icon" />
+              </div>
+              <h3 class="title">AI对话式设计</h3>
+              <p class="desc">输入项目意图，和AI共同探索方案思路、风格方向</p>
+            </article>
+            <article class="feature-item">
+              <div class="icon-wrapper" aria-hidden="true">
+                <svg-icon icon-class="AImodeling" class="icon" />
+              </div>
+              <h3 class="title">图转3D模型</h3>
+              <p class="desc">一张图生成可编辑的3D模型，反向捕捉空间关系</p>
+            </article>
           </div>
         </div>
 
-        <!-- 下半部分：页脚 -->
-        <div class="image-block-4-right">
+        <!-- 下半部分：页脚信息 -->
+        <footer class="image-block-4-right" role="contentinfo">
           <div class="footer-info">
-            <img class="logo" src="@/assets/images/dashorard-logo-white.png">
+            <img
+              class="logo"
+              src="@/assets/images/dashorard-logo-white.png"
+              alt="GAIAHubs - 专业空间AI工具平台Logo"
+              width="501"
+              height="84"
+            >
             <p class="desc">
               GAIAHubs 是空间领域的AI工具平台，集成 AIGC 生成、语义分割与智能识别功能，助力高效完成设计草图、空间分析与图像处理，提升设计师与团队的创作效率。
             </p>
-            <p class="contact">电子邮箱：contact@gaiass.com</p>
-            <p class="address">公司地址：深圳市南山区粤海街道高新区社区科技南八路2号豪威科技大厦15F</p>
-
+            <address class="contact-info">
+              <p class="contact">
+                电子邮箱：<a href="mailto:contact@gaiass.com" rel="noopener">contact@gaiass.com</a>
+              </p>
+              <p class="address">
+                公司地址：深圳市南山区粤海街道高新区社区科技南八路2号豪威科技大厦15F
+              </p>
+            </address>
           </div>
           <p class="copyright">©2025 深石（深圳）智能科技有限公司版权所有</p>
-        </div>
+        </footer>
       </div>
     </section>
 
@@ -125,7 +257,7 @@ export default {
     return {
       activeImage: 'birdview',
       currentView: 'psd_segmentation'
-    }
+    };
   },
   computed: {
     ...mapGetters(['name'])
@@ -141,18 +273,120 @@ export default {
     // 第三屏
     changeView(type) {
       this.currentView = type;
+    },
+
+    // SEO优化：为生成类型提供友好的标签
+    getImageTypeLabel(type) {
+      const typeMap = {
+        'sketch_generate': '草图生成',
+        'cloud_generate': '点云生成',
+        'psd_segmentation': '图像分割',
+        'indoor': '室内空间',
+        'outdoor': '室外场景',
+        'birdview': '俯视图',
+        'eyeview': '透视图',
+        'planview': '平面图'
+      };
+      return typeMap[type] || '智能设计';
+    },
+
+    // SEO优化：为功能视图提供友好的标签
+    getFunctionLabel(view) {
+      const functionMap = {
+        'indoor': '室内设计',
+        'birdview': '鸟瞰设计',
+        'eyeview': '透视设计',
+        'planview': '平面设计',
+        'psd_segmentation': 'PSD分层',
+        'sketch_generate': '草图生成',
+        'multi_view_scene': '多视角场景',
+        'cloud_generate': '云端生成'
+      };
+      return functionMap[view] || '空间设计';
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
+
+@font-face {
+    font-family: 'Lora';
+    src: url('~@/assets/fonts/Lora-Bold.woff2') format('woff2'),
+        url('~@/assets/fonts/Lora-Bold.woff') format('woff'),
+        url('~@/assets/fonts/Lora-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* SEO优化：隐藏视觉元素但保持可访问性 */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
 /* 禁止页面所有文字选中，鼠标光标显示普通箭头 */
 * {
   user-select: none !important;
   /* 禁止选中 */
   cursor: default !important;
   /* 光标为默认箭头 */
+}
+
+/* SEO优化：确保按钮元素正常显示 */
+button.title {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer !important;
+  display: block;
+}
+
+/* SEO优化：功能按钮样式 */
+.function-item button {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer !important;
+  width: 100%;
+  display: block;
+  padding: 0;
+}
+
+/* SEO优化：联系信息样式 */
+.contact-info {
+  font-style: normal;
+}
+
+.contact-info a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.contact-info a:hover {
+  text-decoration: underline;
+}
+
+/* 第一屏优化 */
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
 }
 
 .scroll-container {
@@ -202,8 +436,8 @@ section {
   .title-main {
     font-size: 72px;
     color: #fff;
-    font-family: 'Lora', serif;
-    font-weight: 700;
+    font-family: 'Lora', "Noto Serif SC", serif;
+    font-weight: bold;
     line-height: 101px
   }
 
@@ -218,6 +452,7 @@ section {
 
   .description {
     font-size: 1.05vw;
+    margin-top: 0;
     margin-bottom: 10px;
     font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: bold;
@@ -286,8 +521,8 @@ section {
     justify-content: space-evenly;
     width: 100%;
     align-items: anchor-center;
-    font-family: 'Lora', serif;
-    font-weight: 700;
+    font-family: 'Lora', "Noto Serif SC", serif;
+    font-weight: bold;
 
     .title {
       padding: 10px;
@@ -401,8 +636,6 @@ section {
   color: rgba(206, 206, 206, 1);
 }
 
-
-
 .image-block-3-right {
   height: 100%;
   background-size: cover;
@@ -481,17 +714,19 @@ img {
         .title {
           font-size: 22px;
           font-weight: bold;
-          /* margin-bottom: 12px; */
           color: #fff;
           height: 53px;
           line-height: 50px;
           margin-top: 1.05vw;
+          margin-bottom: 0
         }
 
         .desc {
           font-size: 16px;
           line-height: 24px;
           color: rgba(255, 255, 255, 0.85);
+          margin-top: 0;
+          margin-bottom: 0
         }
       }
     }
