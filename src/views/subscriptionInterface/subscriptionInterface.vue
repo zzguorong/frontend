@@ -54,17 +54,17 @@
               <!-- 下拉选择价格周期 -->
               <el-dropdown trigger="click" class="price-dropdown" @command="handlePlusPriceChange">
                 <div class="subscription-price price-trigger">
-                  <span class="price-amount"><span class="price-amount-symbol">￥</span><span
+                  <span class="price-amount"><span class="price-amount-symbol">{{ plusPriceDisplay. currency_symbol}}</span><span
                     class="price-amount-number"
                   >{{
-                    plusPriceDisplay.amount
+                    plusPriceDisplay.price
                   }}</span></span>
-                  <span class="price-unit">RMB&nbsp;/{{ plusPriceDisplay.unit }}</span>
+                  <span class="price-unit">{{plusPriceDisplay.currency_code}}&nbsp;/{{ plusPriceDisplay.level && plusPriceDisplay.level.name }}</span>
                   <i class="el-icon-arrow-down price-arrow" />
                 </div>
                 <el-dropdown-menu slot="dropdown" class="price-dropdown-menu">
-                  <el-dropdown-item v-for="item in plusPriceOptions" :key="item.unit" :command="item.unit">
-                    {{ item.label }}
+                  <el-dropdown-item v-for="item in plusPriceOptions" :key="item.unit" :command="item.id">
+                    {{item.currency_symbol}}&nbsp;{{item.price}}&nbsp;{{item.currency_code}}&nbsp;/&nbsp;{{item.level && item.level.name}}
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -332,7 +332,7 @@
         </div>
         <div class="footer-right">
           <div>
-            <span>实付金额</span><span>￥</span><span>48.00</span>
+            <span>实付金额</span><span>{{ currentPayCurrency }}</span><span>{{ currentPayAmount }}</span>
           </div>
         </div>
       </div>
@@ -341,6 +341,9 @@
 </template>
 <script>
 import QRCode from 'qrcode';
+import {
+  getAllMembershipPlans,createOrder,getOrderDetail
+} from '@/api/subscription';
 
 export default {
   name: 'SubscriptionInterface',
@@ -348,19 +351,30 @@ export default {
     return {
       payVisible: false,
       qrcodePayVisible: false,
-      orderId: null,
+      orderNo: null,
       codeUrl: null,
-      plusPriceOptions: [
-        { unit: '周', amount: 49, label: '￥49 RMB / 周' },
-        { unit: '月', amount: 129, label: '￥129 RMB / 月' },
-        { unit: '年', amount: 999, label: '￥999 RMB / 年' }
-      ],
-      plusPriceDisplay: { unit: '月', amount: 129 },
+      plusPriceOptions: [],
+      plusPriceDisplay: {},
       remainingTime: 0, // 支付剩余时间
       remainingTimeString: '',
       remainingTimeTimer: null, // 定时器
-      monitorOrderInterval: null // 监控订单状态的定时器
+      monitorOrderInterval: null, // 监控订单状态的定时器
+      currentPayAmount: 0,
+      currentPayCurrency: ''
     };
+  },
+  async created() {
+    try {
+          // 获取所有会员计划信息
+      const {data} = await getAllMembershipPlans();
+      // 过滤data里面duration_type等于0的数据
+      const filteredData = data.filter(item => item.duration_type !== 'lifetime');
+      console.log('获取所有会员计划信息', data);
+      this.plusPriceOptions = filteredData;
+      this.plusPriceDisplay = filteredData[0];
+    } catch (error) {
+      console.log();
+    }
   },
   destroyed() {
     if (this.remainingTimeTimer) {
@@ -380,17 +394,28 @@ export default {
     handlePayClose() {
       this.payVisible = false;
     },
-    handlePlusPriceChange(unit) {
-      const found = this.plusPriceOptions.find((o) => o.unit === unit);
+    handlePlusPriceChange(id) {
+
+      const found = this.plusPriceOptions.find((o) => o.id === id);
       if (found) {
-        this.plusPriceDisplay = { unit: found.unit, amount: found.amount };
+        this.plusPriceDisplay = found;
       }
     },
-    handleQRCodePayAction() {
+    async handleQRCodePayAction() {
       this.payVisible = false;
+const {data} = await createOrder({
+  membership_plan_id: this.plusPriceDisplay.id,
+  payment_channel_id: 1,// 微信支付
+  currency_id: 1})
+
       // TODO 提交订单获取code_url
-      this.orderId = '123456789'; // 模拟订单ID
-      this.codeUrl = 'https://example.com/pay'; // 模拟支付链接
+      this.orderNo = data.order_no; // 订单ID
+      this.codeUrl = data.payment_url; // 支付链接
+     // 设置支付金额和币种
+      this.currentPayAmount = data.amount;     
+      this.currentPayCurrency = data.currency;   
+
+
       // 这里可以添加支付逻辑
       this.qrcodePayVisible = true;
     },
@@ -424,7 +449,7 @@ export default {
       }
       this.remainingTime = 0;
       this.remainingTimeString = '';
-      this.orderId = null;
+      this.orderNo = null;
       this.codeUrl = null;
     },
     startPaymentTimer() {
@@ -447,11 +472,11 @@ export default {
       this.monitorOrderInterval = setInterval(() => {
         // TODO: 轮询订单状态
         // 模拟订单状态检查
-        console.log('Checking order status for order ID:', this.orderId);
+        console.log('Checking order status for order ID:', this.orderNo);
         // 假设支付成功后调用handlePaymentSuccess
         // 这里可以添加实际的订单状态检查逻辑
         // 如果支付成功，调用handlePaymentSuccess
-        // this.handlePaymentSuccess();
+        this.handlePaymentSuccess();
       }, 1000);
     },
     // 假设支付成功后调用
@@ -460,9 +485,11 @@ export default {
       clearInterval(this.monitorOrderInterval);
       this.qrcodePayVisible = false;
       this.$message.success('支付成功！');
+      this.currentPayAmount = 0;
+      this.currentPayCurrency = '';
       // 跳转到用户界面
       this.$router.push('/userInterface/userInterface');
-    }
+    },
   }
 };
 </script>

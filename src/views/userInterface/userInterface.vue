@@ -81,7 +81,7 @@
             <span>我的订阅计划</span>
           </div>
           <div class="plan-info">
-            <div class="plan-title">当前计划 <el-button class="buy-btn" type="text">购买记录</el-button></div>
+            <div class="plan-title">当前计划 <el-button class="buy-btn" type="text" @click="purchaseVisible = true">购买记录</el-button></div>
             <div class="plan-name">
               <div class="plan-name-title">订阅计划名称 <span>xxxxx</span></div>
               <div class="plan-name-title">到期时间 <span>xxxxx</span></div>
@@ -151,6 +151,45 @@
         </div>
       </div>
     </el-dialog>
+
+    <el-dialog
+      :visible.sync="purchaseVisible"
+      width="50%"
+      :before-close="handlePurchaseClose"
+      :show-close="false"
+    >
+      <template slot="title">
+        <div class="purchase-dialog-header">
+          <span>购买记录</span>
+          <span class="purchase-dialog-back" @click="purchaseVisible = false"
+            >返回</span
+          >
+        </div>
+      </template>
+      <el-table
+        :data="tableData"
+        style="width: 100%; padding-bottom: 150px; color: #000"
+        :header-cell-style="{
+          color: '#000',
+          fontWeight: 'normal',
+          background: '#f6f6f6',
+        }"
+        :row-style="setRowStyle"
+        class="custom-row-height"
+      >
+        <el-table-column prop="orderCode" label="订单号"> </el-table-column>
+        <el-table-column
+          prop="subscriptionName"
+          label="订阅计划名称"
+          width="180"
+        >
+        </el-table-column>
+        <el-table-column prop="moneyAmount" label="金额"> </el-table-column>
+        <el-table-column prop="amount" label="数量"> </el-table-column>
+        <el-table-column prop="payStatus" label="支付状态"> </el-table-column>
+        <el-table-column prop="payType" label="支付方式"> </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -196,7 +235,8 @@ export default {
         ]
       },
       loading: false,
-      wechatBindingDialogVisible: false
+      wechatBindingDialogVisible: false,
+      purchaseVisible: false,
     };
   },
   async created() {
@@ -266,7 +306,12 @@ export default {
         // stylelite: 1,
         href: 'data:text/css;base64,LmltcG93ZXJCb3ggLnN0YXR1c190eHQge2ZvbnQtc2l6ZTogMjRweH0KLmltcG93ZXJCb3ggLnN0YXR1c190eHQgcCB7Zm9udC1zaXplOiAxOHB4fQouaW1wb3dlckJveCAuc3RhdHVzLnN0YXR1c19mYWlsIHAge2ZvbnQtc2l6ZTogMTZweCB9Ci5pbXBvd2VyQm94IC5zdGF0dXMuc3RhdHVzX2Jyb3dzZXIgcCB7Zm9udC1zaXplOiAxOHB4IH0KLmltcG93ZXJCb3ggLnN0YXR1cyB7cGFkZGluZzogN3B4IDB9Cmg0IHtmb250LXNpemU6IDE4cHh9Ci5pbXBvd2VyQm94IHtwYWRkaW5nLXRvcDogNXB4fQo='
       });
-    }
+    },
+    setRowStyle({ row, rowIndex }) {
+      return {
+        height: "20px", // 设置行高为20px
+      };
+    },
   }
 };
 </script>
@@ -573,5 +618,39 @@ export default {
 
 ::v-deep .el-input {
   width: 300px;
+}
+
+/* 购买记录弹框 */
+.purchase-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .purchase-dialog-back {
+  font-size: 12px;
+  color: #000;
+  cursor: pointer;
+}
+}
+
+
+::v-deep .custom-row-height .el-table__row {
+  height: 20px !important;
+}
+::v-deep .custom-row-height .el-table__row > td {
+  padding: 4px 0 !important;
+}
+::v-deep .custom-row-height .cell {
+  line-height: 20px !important;
+  padding: 0 10px !important;
+  text-align: center !important;
+}
+/* 表头顶部边框，保持与行边框一致 */
+::v-deep .custom-row-height .el-table__header-wrapper thead th {
+  border-top: 1px solid #ebeef5;
+  padding: 0 10px !important;
+}
+::v-deep .custom-row-height .el-table__header-wrapper thead th .cell {
+  line-height: 30px !important;
 }
 </style>
