@@ -2108,6 +2108,8 @@ export default {
 .gallery-item.active {
   border-color: #000;
   background: #f0f9ff;
+  padding: 2px;
+  border: 1px solid #000;
 }
 
 /* 画册操作按钮 */
