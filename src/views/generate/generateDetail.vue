@@ -257,27 +257,27 @@
                 </div>
               </el-tab-pane>
               <el-tab-pane label="项目参数" name="right">
-            <div>
-              <div ref="paramsScroll" class="project-panel">
-                  <!-- 项目参数 -->
-                  <div class="params-section">
-                    <!-- 提示词 -->
-                    <div class="param-item horizontal-item">
-                      <div class="base-style">
-                        <label>提示词</label>
-                        <el-input
-                          v-model="projectParameters.promptText"
-                          type="textarea"
-                          :rows="4"
-                          placeholder="请输入提示词"
-                        />
+                <div>
+                  <div ref="paramsScroll" class="project-panel">
+                    <!-- 项目参数 -->
+                    <div class="params-section">
+                      <!-- 提示词 -->
+                      <div class="param-item horizontal-item">
+                        <div class="base-style">
+                          <label>提示词</label>
+                          <el-input
+                            v-model="projectParameters.promptText"
+                            type="textarea"
+                            :rows="4"
+                            placeholder="请输入提示词"
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <!-- 视角类型 -->
-                    <div class="param-item horizontal-item">
-                      <div class="base-style">
-                        <label>视角类型</label>
-                        <!-- <div class="button-group">
+                      <!-- 视角类型 -->
+                      <div class="param-item horizontal-item">
+                        <div class="base-style">
+                          <label>视角类型</label>
+                          <!-- <div class="button-group">
                           <span
                             v-for="option in viewTypeOptions"
                             :key="option.value"
@@ -286,18 +286,18 @@
                             {{ option.label }}
                           </span>
                         </div> -->
-                        <div class="button-group">
-                          <span>
-                            {{ viewTypeFormat(projectParameters.viewType) }}
-                          </span>
+                          <div class="button-group">
+                            <span>
+                              {{ viewTypeFormat(projectParameters.viewType) }}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <!-- 风格类别 -->
-                    <div class="param-item horizontal-item">
-                      <div class="base-style">
-                        <label>风格类别</label>
-                        <!-- <div class="button-group">
+                      <!-- 风格类别 -->
+                      <div class="param-item horizontal-item">
+                        <div class="base-style">
+                          <label>风格类别</label>
+                          <!-- <div class="button-group">
                           <span
                             v-for="option in styleCategoryOptions"
                             :key="option.value"
@@ -306,26 +306,25 @@
                             {{ option.label }}
                           </span>
                         </div> -->
-                        <div class="button-group">
-                          <span>
-                            {{ Object.keys(projectParameters).length === 0 ? '' : '通用类别' }}
+                          <div class="button-group">
+                            <span>
+                              {{ Object.keys(projectParameters).length === 0 ? '' : '通用类别' }}
 
-
-                          </span>
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <!-- 底图控制程度 -->
-                    <!-- 底图材质固定 -->
-                    <div class="param-item horizontal-item">
-                      <div class="base-style">
-                        <label>底图控制程度</label>
-                        <div class="button-group">
-                          <span>
-                            {{ projectParameters.baseControlLevel }}
-                          </span>
+                      <!-- 底图控制程度 -->
+                      <!-- 底图材质固定 -->
+                      <div class="param-item horizontal-item">
+                        <div class="base-style">
+                          <label>底图控制程度</label>
+                          <div class="button-group">
+                            <span>
+                              {{ projectParameters.baseControlLevel }}
+                            </span>
+                          </div>
                         </div>
-                      </div>
                       <!-- <div class="base-style">
                         <label>底图材质固定</label>
                         <div class="button-group">
@@ -334,48 +333,48 @@
                           </span>
                         </div>
                       </div> -->
-                    </div>
+                      </div>
 
-                    <!-- 风格迁移控制程度 -->
-                    <div class="param-item horizontal-item">
-                      <div class="base-style">
-                        <label>风格迁移控制程度</label>
-                        <div class="button-group">
-                          <span>
-                            {{ styleImageId
-    ? projectParameters.styleTransferLevel
-    : (Object.keys(this.projectParameters).length === 0 ? '' : 0)
-}}
-                          </span>
+                      <!-- 风格迁移控制程度 -->
+                      <div class="param-item horizontal-item">
+                        <div class="base-style">
+                          <label>风格迁移控制程度</label>
+                          <div class="button-group">
+                            <span>
+                              {{ styleImageId
+                                ? projectParameters.styleTransferLevel
+                                : (Object.keys(projectParameters).length === 0 ? '' : 0)
+                              }}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <!-- 分辨率 -->
-                    <!-- 图纸比例 -->
-                    <div class="param-item horizontal-item">
-                      <div class="base-style">
-                        <label>分辨率</label>
-                        <div class="button-group">
-                          <span>
-                            {{ scaleFormat(projectParameters.resolution) }}
-                          </span>
+                      <!-- 分辨率 -->
+                      <!-- 图纸比例 -->
+                      <div class="param-item horizontal-item">
+                        <div class="base-style">
+                          <label>分辨率</label>
+                          <div class="button-group">
+                            <span>
+                              {{ scaleFormat(projectParameters.resolution) }}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="param-item horizontal-item">
-                      <div class="base-style">
-                        <label>图纸比例</label>
-                        <div class="button-group">
-                          <span>
-                            {{ projectParameters.aspectRatio == 'detect' ? '原始比例' : projectParameters.aspectRatio }}
-                          </span>
+                      <div class="param-item horizontal-item">
+                        <div class="base-style">
+                          <label>图纸比例</label>
+                          <div class="button-group">
+                            <span>
+                              {{ projectParameters.aspectRatio == 'detect' ? '原始比例' : projectParameters.aspectRatio }}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                  </div>
-                      <!-- 保留参数按钮 -->
-                      <div class="save-params-btn" @click="saveParams">
+                    </div>
+                    <!-- 保留参数按钮 -->
+                    <div class="save-params-btn" @click="saveParams">
                       保留参数生图
                       <el-tooltip content="更换底图保留参数，生成类似风格的图框" placement="top">
                         <svg-icon
@@ -408,7 +407,7 @@
                     </div> -->
                   <!-- </div> -->
 
-                </div>      </div>
+                  </div>      </div>
 
               </el-tab-pane>
             </el-tabs>
@@ -424,7 +423,6 @@ import {
   deleteGeneratedImage,
   favoriteGeneratedImage,
   getGalleryImages,
-  getProjectDetail,
   getUserFavoriteImages,
   unfavoriteGeneratedImage,
   generatePSD
@@ -440,7 +438,7 @@ export default {
       materialFixed: 10,
       // 预览相关
       currentPreviewImage: '',
-      currentImageIndex: 0, // 当前选中的画廊项目索引
+      currentImageIndex: -1, // 当前选中的画廊项目索引
       currentImageInSet: 0, // 当前显示的是该项目images数组中的第几张图片
 
       // 选项数据
@@ -568,63 +566,89 @@ export default {
   },
   // 生命周期钩子
   activated() {
+    this.$nextTick(() => {
+      // 组件被激活时，重新加载画廊图片
+      this.loadGalleryImages().then(() => {
+        if (this.currentImageIndex >= 0) {
+          // 更新预览图
+          this.updatePreviewAfterFilter();
+        } else {
+          // 初始化显示最后一张图片
+          if (
+            !this.$route.query.id &&
+            this.galleryItems.length > 0
+          ) {
+            // 显示第一个日期组
+            // 找到第一个日期组
+            const firstDateIndex = 0;
+            const firstDateGroup = this.galleryItems[firstDateIndex];
+
+            // 确保第一个日期组有图片
+            if (firstDateGroup.galleryItem.length > 0) {
+              // 找到该日期组内的第一个项目
+              const firstItemIndex = 0;
+              // 计算全局索引
+              const globalIndex = this.getGlobalIndex(firstDateIndex, firstItemIndex);
+              // 选中第一个图片
+              this.selectGalleryItem(globalIndex, firstDateIndex, firstItemIndex);
+            }
+          }
+        }
+      });
+    });
   },
   // 在组件挂载时加载画廊图片
   mounted() {
-    this.loadGalleryImages().then(() => {
-      // 初始化显示最后一张图片
-      if (
-        !this.$route.query.id &&
-        this.galleryItems.length > 0
-      ) {
-        // 显示第一个日期组
-        // 找到第一个日期组
-        const firstDateIndex = 0;
-        const firstDateGroup = this.galleryItems[firstDateIndex];
+    // this.loadGalleryImages().then(() => {
+    //   // 初始化显示最后一张图片
+    //   if (
+    //     !this.$route.query.id &&
+    //     this.galleryItems.length > 0
+    //   ) {
+    //     // 显示第一个日期组
+    //     // 找到第一个日期组
+    //     const firstDateIndex = 0;
+    //     const firstDateGroup = this.galleryItems[firstDateIndex];
 
-        // 确保第一个日期组有图片
-        if (firstDateGroup.galleryItem.length > 0) {
-          // 找到该日期组内的第一个项目
-          const firstItemIndex = 0;
-          // 计算全局索引
-          const globalIndex = this.getGlobalIndex(firstDateIndex, firstItemIndex);
-          // 选中第一个图片
-          this.selectGalleryItem(globalIndex, firstDateIndex, firstItemIndex);
-        }
-      }
-    });
-
-    // 如果有项目ID，则获取项目详情
-    if (this.$route.query.id) {
-      getProjectDetail(this.$route.query.id).then((res) => {
-        console.log('getProjectDetail', res);
-        const generationRequest = res.generation_request;
-        this.generatedImageId = res.id;
-        this.projectParameters.promptText = generationRequest.prompt;
-        this.projectParameters.aspectRatio = generationRequest.aspect_ratio;
-        this.projectParameters.baseControlLevel = parseInt(
-          generationRequest.base_image_control
-        );
-        this.projectParameters.viewType =
-          generationRequest.generation_categories.id;
-        this.projectParameters.resolution = generationRequest.scale;
-        this.projectParameters.styleTransferLevel = parseInt(
-          generationRequest.style_image_control
-        );
-        this.projectParameters.styleCategory =
-          generationRequest.generation_categories.id;
-        if (res.url !== this.currentPreviewImage) {
-          this.previewImageLoading = true; // 开始加载预览图
-        }
-        this.currentPreviewImage = res.url;
-        (this.semanticImgUrlId = generationRequest.segment_image_id);
-        (this.styleImageId = generationRequest.style_image_id);
-      });
-    }
-    // getProjectDetail(1).then((res) => {
-
+    //     // 确保第一个日期组有图片
+    //     if (firstDateGroup.galleryItem.length > 0) {
+    //       // 找到该日期组内的第一个项目
+    //       const firstItemIndex = 0;
+    //       // 计算全局索引
+    //       const globalIndex = this.getGlobalIndex(firstDateIndex, firstItemIndex);
+    //       // 选中第一个图片
+    //       this.selectGalleryItem(globalIndex, firstDateIndex, firstItemIndex);
+    //     }
+    //   }
     // });
 
+    // // 如果有项目ID，则获取项目详情
+    // if (this.$route.query.id) {
+    //   getProjectDetail(this.$route.query.id).then((res) => {
+    //     console.log('getProjectDetail', res);
+    //     const generationRequest = res.generation_request;
+    //     this.generatedImageId = res.id;
+    //     this.projectParameters.promptText = generationRequest.prompt;
+    //     this.projectParameters.aspectRatio = generationRequest.aspect_ratio;
+    //     this.projectParameters.baseControlLevel = parseInt(
+    //       generationRequest.base_image_control
+    //     );
+    //     this.projectParameters.viewType =
+    //       generationRequest.generation_categories.id;
+    //     this.projectParameters.resolution = generationRequest.scale;
+    //     this.projectParameters.styleTransferLevel = parseInt(
+    //       generationRequest.style_image_control
+    //     );
+    //     this.projectParameters.styleCategory =
+    //       generationRequest.generation_categories.id;
+    //     if (res.url !== this.currentPreviewImage) {
+    //       this.previewImageLoading = true; // 开始加载预览图
+    //     }
+    //     this.currentPreviewImage = res.url;
+    //     (this.semanticImgUrlId = generationRequest.segment_image_id);
+    //     (this.styleImageId = generationRequest.style_image_id);
+    //   });
+    // }
     // 阻止参数滚动区域到达边界后继续滚动父容器
     //   this.$nextTick(() => {
     //     const elWrapper = this.$refs.paramsScroll;
@@ -1198,7 +1222,7 @@ export default {
     // 画廊标题图标交互方法
     toggleGalleryFavorite() {
       if (!this.galleryItems.legnth) {
-        return ;
+        return;
       }
       this.showOnlyFavorites = !this.showOnlyFavorites;
       this.galleryFavoriteActive = this.showOnlyFavorites;
@@ -1379,6 +1403,22 @@ export default {
                 this.currentPreviewImage = '';
                 this.currentImageIndex = -1;
                 this.currentImageInSet = 0;
+                this.generatedImageId = null;
+                this.semanticImgUrlId = null;
+                this.semanticImgUrl = '';
+                this.styleImageId = null;
+                this.styleImgUrl = '';
+                this.baseImgUrl = '';
+                this.baseImgUrlId = '';
+                this.projectParameters = {
+                  promptText: '',
+                  viewType: null,
+                  styleCategory: null,
+                  styleTransferLevel: null,
+                  resolution: null,
+                  aspectRatio: null,
+                  baseControlLevel: null
+                };
               }
             } else if (globalIndex < this.currentImageIndex) {
               this.currentImageIndex--;
