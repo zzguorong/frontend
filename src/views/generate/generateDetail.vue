@@ -310,7 +310,7 @@
                           <span>
                             {{ Object.keys(projectParameters).length === 0 ? '' : '通用类别' }}
 
-                            
+
                           </span>
                         </div>
                       </div>
@@ -342,9 +342,9 @@
                         <label>风格迁移控制程度</label>
                         <div class="button-group">
                           <span>
-                            {{ styleImageId 
-    ? projectParameters.styleTransferLevel 
-    : (Object.keys(this.projectParameters).length === 0 ? '' : 0) 
+                            {{ styleImageId
+    ? projectParameters.styleTransferLevel
+    : (Object.keys(this.projectParameters).length === 0 ? '' : 0)
 }}
                           </span>
                         </div>
@@ -372,7 +372,7 @@
                         </div>
                       </div>
                     </div>
-              
+
                   </div>
                       <!-- 保留参数按钮 -->
                       <div class="save-params-btn" @click="saveParams">
@@ -407,9 +407,9 @@
                       </div>
                     </div> -->
                   <!-- </div> -->
-     
+
                 </div>      </div>
-  
+
               </el-tab-pane>
             </el-tabs>
           </div>
@@ -1430,10 +1430,10 @@ export default {
     },
     // 保留参数生图
     saveParams() {
-      if ( Object.keys(this.projectParameters.length === 0) ){
+      if (Object.keys(this.projectParameters).length === 0) {
         // 项目参数为空
         this.$message.error('项目参数为空');
-        return ;
+        return;
       }
       this.$message.success('参数已保存');
       const params = {
@@ -1455,10 +1455,10 @@ export default {
     },
     // 保留底图生图
     keepBaseGenerate() {
-      if ( Object.keys(this.projectParameters.length === 0) ){
+      if (Object.keys(this.projectParameters).length === 0) {
         // 项目参数为空
         this.$message.error('项目参数为空');
-        return ;
+        return;
       }
       const params = {
         promptText: this.projectParameters.promptText,
