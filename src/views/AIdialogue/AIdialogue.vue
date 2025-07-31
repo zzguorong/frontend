@@ -6,6 +6,6 @@
 
 <script>
 export default {
-  name: "AIdialogue",
+  name: 'AIdialogue'
 };
 </script>

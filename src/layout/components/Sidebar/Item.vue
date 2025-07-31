@@ -13,31 +13,31 @@ export default {
     }
   },
   render(h, context) {
-    const { icon, title } = context.props
-    const vnodes = []
+    const { icon, title } = context.props;
+    const vnodes = [];
 
     if (icon) {
       if (icon.includes('el-icon')) {
         vnodes.push(
-          <div class="icon-wrapper">
+          <div class='icon-wrapper'>
             <i class={[icon, 'sub-el-icon']} />
           </div>
-        )
+        );
       } else {
         vnodes.push(
-          <div class="icon-wrapper">
+          <div class='icon-wrapper'>
             <svg-icon icon-class={icon} />
           </div>
-        )
+        );
       }
     }
 
     if (title) {
-      vnodes.push(<span slot='title'>{(title)}</span>)
+      vnodes.push(<span slot='title'>{(title)}</span>);
     }
-    return vnodes
+    return vnodes;
   }
-}
+};
 </script>
 
 <style scoped>
@@ -79,6 +79,6 @@ export default {
   height: 30px !important;
   top: 0px;
   left: -15px;
- 
+
 }
 </style>

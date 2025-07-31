@@ -2,19 +2,34 @@
   <div :class="{ 'has-logo': showLogo }" class="sidebar-wrapper">
     <logo v-if="showLogo" :collapse="isCollapse" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
-      <el-menu :default-active="activeMenu" :collapse="isCollapse" :background-color="variables.menuBg"
-        :text-color="variables.menuText" :unique-opened="false" :active-text-color="variables.menuActiveText"
-        :collapse-transition="false" mode="vertical" class="top-fixed-menu">
+      <el-menu
+        :default-active="activeMenu"
+        :collapse="isCollapse"
+        :background-color="variables.menuBg"
+        :text-color="variables.menuText"
+        :unique-opened="false"
+        :active-text-color="variables.menuActiveText"
+        :collapse-transition="false"
+        mode="vertical"
+        class="top-fixed-menu"
+      >
         <sidebar-item v-for="route in topRoutes" :key="route.path" :item="route" :base-path="route.path" />
       </el-menu>
     </el-scrollbar>
     <!-- 底部区域容器 -->
     <div class="bottom-section">
       <!-- 底部固定菜单 -->
-      <el-menu v-if="bottomRoutes.length" :default-active="activeMenu" :collapse="isCollapse"
-        :background-color="variables.menuBg" :text-color="variables.menuText"
-        :active-text-color="variables.menuActiveText" :collapse-transition="false" mode="vertical"
-        class="bottom-fixed-menu">
+      <el-menu
+        v-if="bottomRoutes.length"
+        :default-active="activeMenu"
+        :collapse="isCollapse"
+        :background-color="variables.menuBg"
+        :text-color="variables.menuText"
+        :active-text-color="variables.menuActiveText"
+        :collapse-transition="false"
+        mode="vertical"
+        class="bottom-fixed-menu"
+      >
         <sidebar-item v-for="route in bottomRoutes" :key="route.path" :item="route" :base-path="route.path" />
       </el-menu>
 
@@ -29,15 +44,15 @@
 </template>
 
 <script>
-import variables from "@/styles/variables.scss";
-import { mapGetters } from "vuex";
-import Logo from "./Logo";
-import SidebarItem from "./SidebarItem";
+import variables from '@/styles/variables.scss';
+import { mapGetters } from 'vuex';
+import Logo from './Logo';
+import SidebarItem from './SidebarItem';
 
 export default {
   components: { SidebarItem, Logo },
   computed: {
-    ...mapGetters(["sidebar"]),
+    ...mapGetters(['sidebar']),
     routes() {
       return this.$router.options.routes;
     },
@@ -45,7 +60,7 @@ export default {
     topRoutes() {
       return this.routes.filter(
         (r) =>
-          r.path !== "/" && // 过滤掉 dashboard 父路由
+          r.path !== '/' && // 过滤掉 dashboard 父路由
           !(r.meta && r.meta.fixedBottom)
       );
     },
@@ -69,15 +84,15 @@ export default {
     },
     isCollapse() {
       return !this.sidebar.opened;
-    },
+    }
   },
   methods: {
     handleLogout() {
-      this.$store.dispatch("user/logout").then(() => {
-        this.$router.push("/");
+      this.$store.dispatch('user/logout').then(() => {
+        this.$router.push('/');
       });
-    },
-  },
+    }
+  }
 };
 </script>
 <style scoped lang="scss">
@@ -202,7 +217,6 @@ export default {
   /* 图标样式 */
 
 }
-
 
 /* 禁用 icon-wrapper 内图标的悬浮背景色 */
 .icon-wrapper:hover .svg-icon,

@@ -56,8 +56,8 @@
                 <div class="subscription-price price-trigger">
                   <span class="price-amount"><span class="price-amount-symbol">{{ plusPriceDisplay.
                     currency_symbol }}</span><span class="price-amount-number">{{
-    plusPriceDisplay.price
-  }}</span></span>
+                    plusPriceDisplay.price
+                  }}</span></span>
                   <span class="price-unit">{{ plusPriceDisplay.currency_code }}&nbsp;/{{ plusPriceDisplay.level &&
                     plusPriceDisplay.level.name }}</span>
                   <i class="el-icon-arrow-down price-arrow" />
@@ -66,7 +66,7 @@
                   <el-dropdown-item v-for="item in plusPriceOptions" :key="item.unit" :command="item.id">
                     {{ item.currency_symbol }}&nbsp;{{ item.price }}&nbsp;{{ item.currency_code }}&nbsp;/&nbsp;{{
                       item.level &&
-                      item.level.name }}
+                        item.level.name }}
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -194,64 +194,87 @@
           <div class="item-word">
             <span class="item-word-title">生成次数</span>
             <span class="item-word-item">3次免费生成</span><span class="item-word-item">当周无限</span><span
-              class="item-word-item">当月无限</span><span class="item-word-item">无限</span><span
-              class="item-word-item last">无限</span>
+              class="item-word-item"
+            >当月无限</span><span class="item-word-item">无限</span><span
+              class="item-word-item last"
+            >无限</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">排队优先权</span>
             <span class="item-word-item">/</span><span class="item-word-item">/</span><span
-              class="item-word-item">√</span><span class="item-word-item">√</span><span
-              class="item-word-item last">√</span>
+              class="item-word-item"
+            >√</span><span class="item-word-item">√</span><span
+              class="item-word-item last"
+            >√</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">GAIA模型</span>
             <span class="item-word-item">√</span><span class="item-word-item">√</span><span
-              class="item-word-item">√</span><span class="item-word-item">√</span><span
-              class="item-word-item last">√</span>
+              class="item-word-item"
+            >√</span><span class="item-word-item">√</span><span
+              class="item-word-item last"
+            >√</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">语义分割功能</span>
             <span class="item-word-item">3次</span><span class="item-word-item">当周无限</span><span
-              class="item-word-item">当月无限</span><span class="item-word-item">当年无限</span><span
-              class="item-word-item last">无限</span>
+              class="item-word-item"
+            >当月无限</span><span class="item-word-item">当年无限</span><span
+              class="item-word-item last"
+            >无限</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">语义分割工具包</span>
             <span class="item-word-item">3次</span><span class="item-word-item">当周无限</span><span
-              class="item-word-item">当月无限</span><span class="item-word-item">当年无限</span><span
-              class="item-word-item last">无限</span>
+              class="item-word-item"
+            >当月无限</span><span class="item-word-item">当年无限</span><span
+              class="item-word-item last"
+            >无限</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">PNG下载</span>
             <span class="item-word-item">3次</span><span class="item-word-item">当周无限</span><span
-              class="item-word-item">当月无限</span><span class="item-word-item">当年无限</span><span
-              class="item-word-item last">无限</span>
+              class="item-word-item"
+            >当月无限</span><span class="item-word-item">当年无限</span><span
+              class="item-word-item last"
+            >无限</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">PSD下载</span>
             <span class="item-word-item">/</span><span class="item-word-item">当周无限</span><span
-              class="item-word-item">当月无限</span><span class="item-word-item">当年无限</span><span
-              class="item-word-item last">无限</span>
+              class="item-word-item"
+            >当月无限</span><span class="item-word-item">当年无限</span><span
+              class="item-word-item last"
+            >无限</span>
           </div>
           <div class="item-title item-title-last">支持服务</div>
           <div class="item-word">
             <span class="item-word-title">用户培训计划</span>
             <span class="item-word-item">/</span><span class="item-word-item">/</span><span
-              class="item-word-item">/</span><span class="item-word-item">√</span><span
-              class="item-word-item last">√</span>
+              class="item-word-item"
+            >/</span><span class="item-word-item">√</span><span
+              class="item-word-item last"
+            >√</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">技术咨询</span>
             <span class="item-word-item">/</span><span class="item-word-item">/</span><span
-              class="item-word-item">/</span><span class="item-word-item">√</span><span
-              class="item-word-item last">√</span>
+              class="item-word-item"
+            >/</span><span class="item-word-item">√</span><span
+              class="item-word-item last"
+            >√</span>
           </div>
         </div>
       </div>
       <div class="subscription-contact-customer" @click="toAboutUs"><span>联系专属客服</span></div>
     </div>
-    <el-dialog :visible.sync="payVisible" width="400px" :before-close="handlePayClose" :show-close="false"
-      :lock-scroll="false">
+    <el-dialog
+      :visible.sync="payVisible"
+      width="400px"
+      :before-close="handlePayClose"
+      :show-close="false"
+      :lock-scroll="false"
+    >
       <div class="pay-dialog-container">
         <div class="plan-container">
           <!-- <div class="pay-dialog-plan">
@@ -275,7 +298,8 @@
           </div>
           <div class="pay-content-item">
             <span class="pay-content-item-title">生效时间</span><span
-              class="pay-content-item-value">2025-06-01-2025-06-01</span>
+              class="pay-content-item-value"
+            >2025-06-01-2025-06-01</span>
           </div>
           <div class="pay-content-item">
             <span class="pay-content-item-title">付款方式</span><span class="pay-content-item-value">微信支付</span>
@@ -283,8 +307,10 @@
         </div>
         <div class="pay-content" style="margin-top: 25px">
           <div class="pay-content-item">
-            <span class="pay-content-item-title">应付款</span><span class="pay-content-item-value"
-              style="color: #000; font-size: 20px">￥570</span>
+            <span class="pay-content-item-title">应付款</span><span
+              class="pay-content-item-value"
+              style="color: #000; font-size: 20px"
+            >￥570</span>
           </div>
         </div>
         <div class="pay-btn-container">
@@ -293,8 +319,16 @@
         </div>
       </div>
     </el-dialog>
-    <el-dialog :visible.sync="qrcodePayVisible" title="微信支付" width="400px" :before-close="handleQRCodePayClose"
-      :show-close="true" :lock-scroll="false" :destroy-on-close="true" @opened="generateQRCode">
+    <el-dialog
+      :visible.sync="qrcodePayVisible"
+      title="微信支付"
+      width="400px"
+      :before-close="handleQRCodePayClose"
+      :show-close="true"
+      :lock-scroll="false"
+      :destroy-on-close="true"
+      @opened="generateQRCode"
+    >
       <div class="pay-dialog-content">
         <div class="pay-dialog-body">
           <canvas id="qrCodeCanvas" />
@@ -337,14 +371,14 @@ export default {
       monitorOrderInterval: null, // 监控订单状态的定时器
       currentPayAmount: 0,
       currentPayCurrency: '',
-      paymentChannelId: '',//支付方式
+      paymentChannelId: ''// 支付方式
     };
   },
   async created() {
     try {
       // 获取所有会员计划信息
       const { data } = await getAllMembershipPlans();
-      const paymentChannelsData = await getAllPaymentChannels();//获取所有支付渠道列表
+      const paymentChannelsData = await getAllPaymentChannels();// 获取所有支付渠道列表
       // 筛选出来code = "wechatNative"的数据
       const filteredPaymentData = paymentChannelsData.data.filter(item => item.code === 'wechatNative');
       console.log('filteredPaymentData', filteredPaymentData);
@@ -376,7 +410,6 @@ export default {
       this.payVisible = false;
     },
     handlePlusPriceChange(id) {
-
       const found = this.plusPriceOptions.find((o) => o.id === id);
       if (found) {
         this.plusPriceDisplay = found;
@@ -386,9 +419,9 @@ export default {
       this.payVisible = false;
       const { data } = await createOrder({
         membership_plan_id: this.plusPriceDisplay.id,
-        payment_channel_id: this.paymentChannelId,// 微信支付
+        payment_channel_id: this.paymentChannelId, // 微信支付
         currency_id: this.plusPriceDisplay.currency_id
-      })
+      });
 
       // TODO 提交订单获取code_url
       this.orderNo = data.order_no; // 订单ID
@@ -396,7 +429,6 @@ export default {
       // 设置支付金额和币种
       this.currentPayAmount = data.amount;
       this.currentPayCurrency = data.currency;
-
 
       // 这里可以添加支付逻辑
       this.qrcodePayVisible = true;
@@ -411,7 +443,7 @@ export default {
       QRCode.toCanvas(canvas, this.codeUrl, {
         width: 150,
         height: 150
-      }, function (error) {
+      }, function(error) {
         if (error) console.error(error);
         console.log('success!');
       });
@@ -451,17 +483,16 @@ export default {
       }, 1000);
     },
     async startMonitorOrder() {
-      this.monitorOrderInterval = setInterval(async () => {
+      this.monitorOrderInterval = setInterval(async() => {
         // TODO: 轮询订单状态
         // 模拟订单状态检查
         try {
           const { data } = await getOrderDetail(this.orderNo);
           if (data.payment_status === 'paid') {
             this.handlePaymentSuccess();
-          }else if (data.payment_status === 'failed') {
+          } else if (data.payment_status === 'failed') {
             this.$message.error('支付失败');
           }
-
         } catch (error) {
           if (this.remainingTimeTimer) {
             clearInterval(this.remainingTimeTimer);
@@ -489,7 +520,7 @@ export default {
       this.currentPayCurrency = '';
       // 跳转到用户界面
       this.$router.push('/userInterface/userInterface');
-    },
+    }
   }
 };
 </script>

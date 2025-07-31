@@ -3,10 +3,10 @@
     <div class="about-us-content">关于我们</div>
     <div class="about-us-code">
       <div class="about-us-title">
-        <img src="@/assets/images/weixin.jpg" alt="" />
+        <img src="@/assets/images/weixin.jpg" alt="">
       </div>
       <div class="about-us-title">
-        <img src="@/assets/images/weixin.jpg" alt="" />
+        <img src="@/assets/images/weixin.jpg" alt="">
       </div>
     </div>
     <div class="about-us-text">请使用微信扫描二维码</div>

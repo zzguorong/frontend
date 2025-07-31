@@ -1,19 +1,19 @@
 <template>
   <div class="slider-wrapper">
     <div
-      class="slider"
       ref="slider"
+      class="slider"
       @mousedown="startDrag"
       @click="onTrackClick"
     >
       <div
         class="slider-bar"
         :style="{ width: computedPercentage + '%' }"
-      ></div>
+      />
       <div
         class="slider-dot"
         :style="{ left: computedPercentage + '%' }"
-      ></div>
+      />
     </div>
     <span class="slider-value">{{ percentage }}</span>
   </div>
@@ -30,65 +30,65 @@ export default {
     range: {
       type: Number,
       default: 0 // 0-10
-    },
+    }
   },
   data() {
     return {
       dragging: false
-    }
+    };
   },
   computed: {
     computedPercentage() {
-      if(this.range===5){
-        return Math.min(100, Math.max(1, (this.percentage /5) * 100))
+      if (this.range === 5) {
+        return Math.min(100, Math.max(1, (this.percentage / 5) * 100));
       }
       // 将刻度 0-10 映射到 0-100%
-      return Math.min(100, Math.max(0, (this.percentage / 10) * 100))
+      return Math.min(100, Math.max(0, (this.percentage / 10) * 100));
     }
   },
   mounted() {
-    document.addEventListener('mousemove', this.onDrag)
-    document.addEventListener('mouseup', this.stopDrag)
+    document.addEventListener('mousemove', this.onDrag);
+    document.addEventListener('mouseup', this.stopDrag);
   },
   beforeDestroy() {
-    document.removeEventListener('mousemove', this.onDrag)
-    document.removeEventListener('mouseup', this.stopDrag)
+    document.removeEventListener('mousemove', this.onDrag);
+    document.removeEventListener('mouseup', this.stopDrag);
   },
   methods: {
     startDrag(e) {
-      this.dragging = true
-      this.updateByEvent(e)
-      e.preventDefault()
+      this.dragging = true;
+      this.updateByEvent(e);
+      e.preventDefault();
     },
     onDrag(e) {
-      if (!this.dragging) return
-      this.updateByEvent(e)
+      if (!this.dragging) return;
+      this.updateByEvent(e);
     },
     stopDrag() {
-      this.dragging = false
+      this.dragging = false;
     },
     onTrackClick(e) {
       // 若不是拖动中的 mouseup，再次计算
-      if (!this.dragging) this.updateByEvent(e)
+      if (!this.dragging) this.updateByEvent(e);
     },
     updateByEvent(e) {
-      const track = this.$refs.slider
-      const rect = track.getBoundingClientRect()
-      const offset = Math.min(Math.max(0, e.clientX - rect.left), rect.width)
-      const percent = offset / rect.width // 0-1
+      const track = this.$refs.slider;
+      const rect = track.getBoundingClientRect();
+      const offset = Math.min(Math.max(0, e.clientX - rect.left), rect.width);
+      const percent = offset / rect.width; // 0-1
       // 根据不同 range 计算刻度值
-      let value
+      let value;
       if (this.range === 5) {
         // 1-5 的整数范围（最小为 1，最大为 5）
-        value = Math.max(1, Math.round(percent * 5))
+        value = Math.max(1, Math.round(percent * 5));
       } else {
         // 默认 0-10
-        value = Math.round(percent * 10)
+        value = Math.round(percent * 10);
       }
-      this.$emit('update:percentage', value)
+      this.$emit('update:percentage', value);
     }
   }
-}
+};
 </script>
 
 <style scoped>
