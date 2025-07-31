@@ -6,7 +6,7 @@
       <img
         class="logo"
         src="@/assets/images/gaia.png"
-        alt="GAIAHub"
+        alt="GAIAHubs"
         width="300px"
         height="auto"
       >

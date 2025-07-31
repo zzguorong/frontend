@@ -24,7 +24,8 @@
             <div class="account-form">
               微信绑定
               <template v-if="!userInfo.wechat_openid">
-                <el-button class="btn-wx-check" type="primary" style="width:fit-content" @click="wechatBindingDialogVisible = true">
+                <el-button class="btn-wx-check" type="primary" style="width:fit-content"
+                  @click="wechatBindingDialogVisible = true">
                   <span>微信验证</span>
                 </el-button>
               </template>
@@ -39,26 +40,28 @@
         <div class="main-card">
           <div class="password-section">
             <div class="main-card-title">密码管理
-              <el-button class="pwd-btn" type="primary" style="width: fit-content" :loading="loading" @click="handlePasswordValidation">密码验证</el-button>
+              <el-button class="pwd-btn" type="primary" style="width: fit-content" :loading="loading"
+                @click="handlePasswordValidation">密码验证</el-button>
             </div>
 
             <el-form ref="resetPasswordForm" :model="resetPasswordForm" :rules="resetPasswordFormRules">
               <div class="account-form">
                 当前密码
                 <el-form-item prop="password">
-                  <el-input v-model="resetPasswordForm.password" type="password" show-password placeholder="请输入当前密码"/>
+                  <el-input v-model="resetPasswordForm.password" type="password" show-password placeholder="请输入当前密码" />
                 </el-form-item>
               </div>
               <div class="account-form">
                 新密码
                 <el-form-item prop="newPassword">
-                  <el-input v-model="resetPasswordForm.newPassword" type="password" show-password placeholder="请输入新密码"/>
+                  <el-input v-model="resetPasswordForm.newPassword" type="password" show-password placeholder="请输入新密码" />
                 </el-form-item>
               </div>
               <div class="account-form">
                 重复输入新密码
                 <el-form-item prop="confirmNewPassword">
-                  <el-input v-model="resetPasswordForm.confirmNewPassword" type="password" show-password placeholder="请再次输入密码" />
+                  <el-input v-model="resetPasswordForm.confirmNewPassword" type="password" show-password
+                    placeholder="请再次输入密码" />
                 </el-form-item>
               </div>
             </el-form>
@@ -81,7 +84,8 @@
             <span>我的订阅计划</span>
           </div>
           <div class="plan-info">
-            <div class="plan-title">当前计划 <el-button class="buy-btn" type="text" @click="purchaseVisible = true">购买记录</el-button></div>
+            <div class="plan-title">当前计划 <el-button class="buy-btn" type="text"
+                @click="purchaseVisible = true">购买记录</el-button></div>
             <div class="plan-name">
               <div class="plan-name-title">订阅计划名称 <span>xxxxx</span></div>
               <div class="plan-name-title">到期时间 <span>xxxxx</span></div>
@@ -98,17 +102,23 @@
                 <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" /> <span>GAIA模型支持</span>
                 </div>
                 <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
-                  <span>服务期内无限图像生成次数</span></div>
+                  <span>服务期内无限图像生成次数</span>
+                </div>
                 <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
-                  <span>服务期内无限语义分割功能使用次数</span></div>
+                  <span>服务期内无限语义分割功能使用次数</span>
+                </div>
                 <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
-                  <span>服务期内无限语义分割工具包使用次数</span></div>
+                  <span>服务期内无限语义分割工具包使用次数</span>
+                </div>
                 <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
-                  <span>服务期内无限PNG下载次数</span></div>
+                  <span>服务期内无限PNG下载次数</span>
+                </div>
                 <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
-                  <span>服务期内无限PSD下载次数</span></div>
+                  <span>服务期内无限PSD下载次数</span>
+                </div>
                 <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
-                  <span>服务器内生图排队优先权</span></div>
+                  <span>服务器内生图排队优先权</span>
+                </div>
               </div>
             </div>
 
@@ -135,16 +145,9 @@
       <span class="agree-word footer-link" @click="handlePrivacyPolicy">隐私政策</span>
     </div>
 
-    <el-dialog
-      :visible.sync="wechatBindingDialogVisible"
-      title="微信验证"
-      width="400px"
-      :before-close="handleWechatBindingDialogClose"
-      :show-close="true"
-      :lock-scroll="false"
-      :destroy-on-close="true"
-      @opened="generateWechatLoginQRCode"
-    >
+    <el-dialog :visible.sync="wechatBindingDialogVisible" title="微信验证" width="400px"
+      :before-close="handleWechatBindingDialogClose" :show-close="true" :lock-scroll="false" :destroy-on-close="true"
+      @opened="generateWechatLoginQRCode">
       <div class="wechat-binding-dialog-content">
         <div class="wechat-binding-dialog-body">
           <div id="wechat-login-container" />
@@ -152,42 +155,25 @@
       </div>
     </el-dialog>
 
-    <el-dialog
-      :visible.sync="purchaseVisible"
-      width="50%"
-      :before-close="handlePurchaseClose"
-      :show-close="false"
-    >
+    <el-dialog :visible.sync="purchaseVisible" width="70%" :show-close="false" @open="onDialogOpen">
       <template slot="title">
         <div class="purchase-dialog-header">
           <span>购买记录</span>
-          <span class="purchase-dialog-back" @click="purchaseVisible = false"
-            >返回</span
-          >
+          <span class="purchase-dialog-back" @click="purchaseVisible = false">返回</span>
         </div>
       </template>
-      <el-table
-        :data="tableData"
-        style="width: 100%; padding-bottom: 150px; color: #000"
-        :header-cell-style="{
-          color: '#000',
-          fontWeight: 'normal',
-          background: '#f6f6f6',
-        }"
-        :row-style="setRowStyle"
-        class="custom-row-height"
-      >
-        <el-table-column prop="orderCode" label="订单号"> </el-table-column>
-        <el-table-column
-          prop="subscriptionName"
-          label="订阅计划名称"
-          width="180"
-        >
+      <el-table :data="tableData" style="width: 100%;  color: #000" height="500" :header-cell-style="{
+        color: '#000',
+        fontWeight: 'normal',
+        background: '#f6f6f6',
+      }" :row-style="setRowStyle" class="custom-row-height">
+        <el-table-column prop="order_no" label="订单号"> </el-table-column>
+        <el-table-column prop="subscriptionName" label="订阅计划名称" width="180">
         </el-table-column>
         <el-table-column prop="moneyAmount" label="金额"> </el-table-column>
         <el-table-column prop="amount" label="数量"> </el-table-column>
-        <el-table-column prop="payStatus" label="支付状态"> </el-table-column>
-        <el-table-column prop="payType" label="支付方式"> </el-table-column>
+        <el-table-column prop="payment_status" label="支付状态"> </el-table-column>
+        <el-table-column prop="payment_channel.name" label="支付方式"> </el-table-column>
       </el-table>
     </el-dialog>
   </div>
@@ -200,7 +186,9 @@ import {
 } from '@/api/generate';
 import { updatePassword } from '@/api/index';
 import { generateRandomString } from '@/utils/index';
-
+import {
+  getAllOrders, getAllMembershipPlans
+} from '@/api/subscription';
 export default {
   name: 'UserInterface',
   data() {
@@ -225,18 +213,21 @@ export default {
         confirmNewPassword: [
           { required: true, message: '请确认新密码', trigger: 'blur' },
           { min: 8, max: 20, message: '密码长度必须在8-20位之间', trigger: 'blur' },
-          { validator: (rule, value, callback) => {
-            if (value !== this.resetPasswordForm.newPassword) {
-              callback(new Error('两次输入的密码不一致'));
-            } else {
-              callback();
-            }
-          }, trigger: 'blur' }
+          {
+            validator: (rule, value, callback) => {
+              if (value !== this.resetPasswordForm.newPassword) {
+                callback(new Error('两次输入的密码不一致'));
+              } else {
+                callback();
+              }
+            }, trigger: 'blur'
+          }
         ]
       },
       loading: false,
       wechatBindingDialogVisible: false,
       purchaseVisible: false,
+      tableData: []
     };
   },
   async created() {
@@ -250,7 +241,7 @@ export default {
   methods: {
     // 处理密码验证
     handlePasswordValidation() {
-      this.$refs.resetPasswordForm.validate(async(valid) => {
+      this.$refs.resetPasswordForm.validate(async (valid) => {
         if (valid) {
           try {
             this.loading = true;
@@ -312,6 +303,21 @@ export default {
         height: "20px", // 设置行高为20px
       };
     },
+    // “弹窗打开 -> 表格显示”
+    async onDialogOpen() {
+      const res = await getAllOrders();
+      // 获取订阅计划
+      const { data } = await getAllMembershipPlans();
+      // 遍历res.data改数据
+      const modifiedData = res.data.map(item => {
+        return {
+          ...item,
+          payment_status: item.payment_status === 'paid' ? '已支付' : (item.payment_status === 'pending'?'未支付':'支付失败')
+        };
+      });
+
+      this.tableData = modifiedData;
+    }
   }
 };
 </script>
@@ -388,6 +394,7 @@ export default {
     height: 38px;
   }
 }
+
 ::v-deep .el-form {
   padding: 12px 0;
 }
@@ -491,7 +498,7 @@ export default {
       display: flex;
       justify-content: space-between;
       font-size: 14px;
-            font-weight: 600;
+      font-weight: 600;
     }
   }
 }
@@ -627,29 +634,33 @@ export default {
   align-items: center;
 
   .purchase-dialog-back {
-  font-size: 12px;
-  color: #000;
-  cursor: pointer;
-}
+    font-size: 12px;
+    color: #000;
+    cursor: pointer;
+  }
 }
 
 
 ::v-deep .custom-row-height .el-table__row {
   height: 20px !important;
 }
-::v-deep .custom-row-height .el-table__row > td {
+
+::v-deep .custom-row-height .el-table__row>td {
   padding: 4px 0 !important;
 }
+
 ::v-deep .custom-row-height .cell {
   line-height: 20px !important;
   padding: 0 10px !important;
   text-align: center !important;
 }
+
 /* 表头顶部边框，保持与行边框一致 */
 ::v-deep .custom-row-height .el-table__header-wrapper thead th {
   border-top: 1px solid #ebeef5;
   padding: 0 10px !important;
 }
+
 ::v-deep .custom-row-height .el-table__header-wrapper thead th .cell {
   line-height: 30px !important;
 }

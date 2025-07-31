@@ -54,17 +54,19 @@
               <!-- 下拉选择价格周期 -->
               <el-dropdown trigger="click" class="price-dropdown" @command="handlePlusPriceChange">
                 <div class="subscription-price price-trigger">
-                  <span class="price-amount"><span class="price-amount-symbol">{{ plusPriceDisplay. currency_symbol}}</span><span
-                    class="price-amount-number"
-                  >{{
-                    plusPriceDisplay.price
-                  }}</span></span>
-                  <span class="price-unit">{{plusPriceDisplay.currency_code}}&nbsp;/{{ plusPriceDisplay.level && plusPriceDisplay.level.name }}</span>
+                  <span class="price-amount"><span class="price-amount-symbol">{{ plusPriceDisplay.
+                    currency_symbol }}</span><span class="price-amount-number">{{
+    plusPriceDisplay.price
+  }}</span></span>
+                  <span class="price-unit">{{ plusPriceDisplay.currency_code }}&nbsp;/{{ plusPriceDisplay.level &&
+                    plusPriceDisplay.level.name }}</span>
                   <i class="el-icon-arrow-down price-arrow" />
                 </div>
                 <el-dropdown-menu slot="dropdown" class="price-dropdown-menu">
                   <el-dropdown-item v-for="item in plusPriceOptions" :key="item.unit" :command="item.id">
-                    {{item.currency_symbol}}&nbsp;{{item.price}}&nbsp;{{item.currency_code}}&nbsp;/&nbsp;{{item.level && item.level.name}}
+                    {{ item.currency_symbol }}&nbsp;{{ item.price }}&nbsp;{{ item.currency_code }}&nbsp;/&nbsp;{{
+                      item.level &&
+                      item.level.name }}
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -192,90 +194,75 @@
           <div class="item-word">
             <span class="item-word-title">生成次数</span>
             <span class="item-word-item">3次免费生成</span><span class="item-word-item">当周无限</span><span
-              class="item-word-item"
-            >当月无限</span><span class="item-word-item">无限</span><span
-              class="item-word-item last"
-            >无限</span>
+              class="item-word-item">当月无限</span><span class="item-word-item">无限</span><span
+              class="item-word-item last">无限</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">排队优先权</span>
             <span class="item-word-item">/</span><span class="item-word-item">/</span><span
-              class="item-word-item"
-            >√</span><span class="item-word-item">√</span><span class="item-word-item last">√</span>
+              class="item-word-item">√</span><span class="item-word-item">√</span><span
+              class="item-word-item last">√</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">GAIA模型</span>
             <span class="item-word-item">√</span><span class="item-word-item">√</span><span
-              class="item-word-item"
-            >√</span><span class="item-word-item">√</span><span class="item-word-item last">√</span>
+              class="item-word-item">√</span><span class="item-word-item">√</span><span
+              class="item-word-item last">√</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">语义分割功能</span>
             <span class="item-word-item">3次</span><span class="item-word-item">当周无限</span><span
-              class="item-word-item"
-            >当月无限</span><span class="item-word-item">当年无限</span><span
-              class="item-word-item last"
-            >无限</span>
+              class="item-word-item">当月无限</span><span class="item-word-item">当年无限</span><span
+              class="item-word-item last">无限</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">语义分割工具包</span>
             <span class="item-word-item">3次</span><span class="item-word-item">当周无限</span><span
-              class="item-word-item"
-            >当月无限</span><span class="item-word-item">当年无限</span><span
-              class="item-word-item last"
-            >无限</span>
+              class="item-word-item">当月无限</span><span class="item-word-item">当年无限</span><span
+              class="item-word-item last">无限</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">PNG下载</span>
             <span class="item-word-item">3次</span><span class="item-word-item">当周无限</span><span
-              class="item-word-item"
-            >当月无限</span><span class="item-word-item">当年无限</span><span
-              class="item-word-item last"
-            >无限</span>
+              class="item-word-item">当月无限</span><span class="item-word-item">当年无限</span><span
+              class="item-word-item last">无限</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">PSD下载</span>
             <span class="item-word-item">/</span><span class="item-word-item">当周无限</span><span
-              class="item-word-item"
-            >当月无限</span><span class="item-word-item">当年无限</span><span
-              class="item-word-item last"
-            >无限</span>
+              class="item-word-item">当月无限</span><span class="item-word-item">当年无限</span><span
+              class="item-word-item last">无限</span>
           </div>
           <div class="item-title item-title-last">支持服务</div>
           <div class="item-word">
             <span class="item-word-title">用户培训计划</span>
             <span class="item-word-item">/</span><span class="item-word-item">/</span><span
-              class="item-word-item"
-            >/</span><span class="item-word-item">√</span><span class="item-word-item last">√</span>
+              class="item-word-item">/</span><span class="item-word-item">√</span><span
+              class="item-word-item last">√</span>
           </div>
           <div class="item-word">
             <span class="item-word-title">技术咨询</span>
             <span class="item-word-item">/</span><span class="item-word-item">/</span><span
-              class="item-word-item"
-            >/</span><span class="item-word-item">√</span><span class="item-word-item last">√</span>
+              class="item-word-item">/</span><span class="item-word-item">√</span><span
+              class="item-word-item last">√</span>
           </div>
         </div>
       </div>
       <div class="subscription-contact-customer" @click="toAboutUs"><span>联系专属客服</span></div>
     </div>
-    <el-dialog
-      :visible.sync="payVisible"
-      width="400px"
-      :before-close="handlePayClose"
-      :show-close="false"
-      :lock-scroll="false"
-    >
+    <el-dialog :visible.sync="payVisible" width="400px" :before-close="handlePayClose" :show-close="false"
+      :lock-scroll="false">
       <div class="pay-dialog-container">
         <div class="plan-container">
-          <div class="pay-dialog-plan">
+          <!-- <div class="pay-dialog-plan">
             <div>当前订阅计划</div>
             <div class="plan-content">
               <div><span>订阅计划名称</span><span>优惠计划</span></div>
               <div><span>到期时间</span><span>2025.06.04</span></div>
             </div>
-          </div>
+          </div> -->
           <div class="pay-dialog-plan">
-            <div>切换到订阅计划</div>
+            <div>购买计划</div>
             <div class="plan-content">
               <div><span>订阅计划名称</span><span>优惠计划</span></div>
               <div><span>到期时间</span><span>2025.06.04</span></div>
@@ -288,8 +275,7 @@
           </div>
           <div class="pay-content-item">
             <span class="pay-content-item-title">生效时间</span><span
-              class="pay-content-item-value"
-            >2025-06-01-2025-06-01</span>
+              class="pay-content-item-value">2025-06-01-2025-06-01</span>
           </div>
           <div class="pay-content-item">
             <span class="pay-content-item-title">付款方式</span><span class="pay-content-item-value">微信支付</span>
@@ -297,10 +283,8 @@
         </div>
         <div class="pay-content" style="margin-top: 25px">
           <div class="pay-content-item">
-            <span class="pay-content-item-title">应付款</span><span
-              class="pay-content-item-value"
-              style="color: #000; font-size: 20px"
-            >￥570</span>
+            <span class="pay-content-item-title">应付款</span><span class="pay-content-item-value"
+              style="color: #000; font-size: 20px">￥570</span>
           </div>
         </div>
         <div class="pay-btn-container">
@@ -309,16 +293,8 @@
         </div>
       </div>
     </el-dialog>
-    <el-dialog
-      :visible.sync="qrcodePayVisible"
-      title="微信支付"
-      width="400px"
-      :before-close="handleQRCodePayClose"
-      :show-close="true"
-      :lock-scroll="false"
-      :destroy-on-close="true"
-      @opened="generateQRCode"
-    >
+    <el-dialog :visible.sync="qrcodePayVisible" title="微信支付" width="400px" :before-close="handleQRCodePayClose"
+      :show-close="true" :lock-scroll="false" :destroy-on-close="true" @opened="generateQRCode">
       <div class="pay-dialog-content">
         <div class="pay-dialog-body">
           <canvas id="qrCodeCanvas" />
@@ -342,7 +318,7 @@
 <script>
 import QRCode from 'qrcode';
 import {
-  getAllMembershipPlans,createOrder,getOrderDetail
+  getAllMembershipPlans, createOrder, getOrderDetail, getAllPaymentChannels
 } from '@/api/subscription';
 
 export default {
@@ -360,16 +336,21 @@ export default {
       remainingTimeTimer: null, // 定时器
       monitorOrderInterval: null, // 监控订单状态的定时器
       currentPayAmount: 0,
-      currentPayCurrency: ''
+      currentPayCurrency: '',
+      paymentChannelId: '',//支付方式
     };
   },
   async created() {
     try {
-          // 获取所有会员计划信息
-      const {data} = await getAllMembershipPlans();
+      // 获取所有会员计划信息
+      const { data } = await getAllMembershipPlans();
+      const paymentChannelsData = await getAllPaymentChannels();//获取所有支付渠道列表
+      // 筛选出来code = "wechatNative"的数据
+      const filteredPaymentData = paymentChannelsData.data.filter(item => item.code === 'wechatNative');
+      console.log('filteredPaymentData', filteredPaymentData);
+      this.paymentChannelId = filteredPaymentData[0].id;
       // 过滤data里面duration_type等于0的数据
       const filteredData = data.filter(item => item.duration_type !== 'lifetime');
-      console.log('获取所有会员计划信息', data);
       this.plusPriceOptions = filteredData;
       this.plusPriceDisplay = filteredData[0];
     } catch (error) {
@@ -403,17 +384,18 @@ export default {
     },
     async handleQRCodePayAction() {
       this.payVisible = false;
-const {data} = await createOrder({
-  membership_plan_id: this.plusPriceDisplay.id,
-  payment_channel_id: 1,// 微信支付
-  currency_id: 1})
+      const { data } = await createOrder({
+        membership_plan_id: this.plusPriceDisplay.id,
+        payment_channel_id: this.paymentChannelId,// 微信支付
+        currency_id: this.plusPriceDisplay.currency_id
+      })
 
       // TODO 提交订单获取code_url
       this.orderNo = data.order_no; // 订单ID
       this.codeUrl = data.payment_url; // 支付链接
-     // 设置支付金额和币种
-      this.currentPayAmount = data.amount;     
-      this.currentPayCurrency = data.currency;   
+      // 设置支付金额和币种
+      this.currentPayAmount = data.amount;
+      this.currentPayCurrency = data.currency;
 
 
       // 这里可以添加支付逻辑
@@ -429,7 +411,7 @@ const {data} = await createOrder({
       QRCode.toCanvas(canvas, this.codeUrl, {
         width: 150,
         height: 150
-      }, function(error) {
+      }, function (error) {
         if (error) console.error(error);
         console.log('success!');
       });
@@ -468,15 +450,33 @@ const {data} = await createOrder({
         }
       }, 1000);
     },
-    startMonitorOrder() {
-      this.monitorOrderInterval = setInterval(() => {
+    async startMonitorOrder() {
+      this.monitorOrderInterval = setInterval(async () => {
         // TODO: 轮询订单状态
         // 模拟订单状态检查
-        console.log('Checking order status for order ID:', this.orderNo);
+        try {
+          const { data } = await getOrderDetail(this.orderNo);
+          if (data.payment_status === 'paid') {
+            this.handlePaymentSuccess();
+          }else if (data.payment_status === 'failed') {
+            this.$message.error('支付失败');
+          }
+
+        } catch (error) {
+          if (this.remainingTimeTimer) {
+            clearInterval(this.remainingTimeTimer);
+          }
+          if (this.monitorOrderInterval) {
+            clearInterval(this.monitorOrderInterval);
+          }
+        }
+
+        // console.log('Checking order status for order ID:', this.orderNo);
         // 假设支付成功后调用handlePaymentSuccess
         // 这里可以添加实际的订单状态检查逻辑
         // 如果支付成功，调用handlePaymentSuccess
-        this.handlePaymentSuccess();
+        // this.handlePaymentSuccess();
+        // 订单号关掉的时候轮询应该停掉
       }, 1000);
     },
     // 假设支付成功后调用
@@ -614,7 +614,7 @@ const {data} = await createOrder({
   /* padding-right: 26px; */
 }
 
-.subscription-compare-content-item{
+.subscription-compare-content-item {
   /* padding-right: 26px; */
 }
 
@@ -630,13 +630,15 @@ const {data} = await createOrder({
   margin-bottom: 30px;
 }
 
-.last{
+.last {
   margin-right: 7% !important;
-  }
-.temp-block{
-  /* width: 400px; */
- width: 100px;
 }
+
+.temp-block {
+  /* width: 400px; */
+  width: 100px;
+}
+
 .table-style {
   position: relative;
 
@@ -662,8 +664,8 @@ const {data} = await createOrder({
   border-bottom: 1px solid #ccc;
 }
 
-.item-title-last{
-  padding: 24px   0 10px 0 ;
+.item-title-last {
+  padding: 24px 0 10px 0;
 }
 
 .item-word {
@@ -672,9 +674,9 @@ const {data} = await createOrder({
   border-bottom: 1px solid #ccc;
   /* gap: 60px; */
   display: flex;
-    justify-content: space-between;
-    /* gap: 120px; */
-    align-items: center;
+  justify-content: space-between;
+  /* gap: 120px; */
+  align-items: center;
 
   .item-word-item {
     /* width: 300px; */
@@ -683,7 +685,7 @@ const {data} = await createOrder({
     width: 140px;
   }
 
-  .last{
+  .last {
     margin-right: 7%;
   }
 }
@@ -963,4 +965,8 @@ table tbody tr:nth-child(odd) {
   padding-left: 0 !important;
   padding-right: 0 !important;
 } */
+
+::v-deep .el-dialog__header {
+  /* padding: 0 20px 10px; */
+}
 </style>
