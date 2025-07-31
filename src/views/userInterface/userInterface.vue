@@ -312,7 +312,7 @@ export default {
       const modifiedData = res.data.map(item => {
         return {
           ...item,
-          payment_status: item.payment_status === 'paid' ? '已支付' : '未支付'
+          payment_status: item.payment_status === 'paid' ? '已支付' : (item.payment_status === 'pending'?'未支付':'支付失败')
         };
       });
 

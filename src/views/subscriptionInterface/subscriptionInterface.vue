@@ -458,6 +458,8 @@ export default {
           const { data } = await getOrderDetail(this.orderNo);
           if (data.payment_status === 'paid') {
             this.handlePaymentSuccess();
+          }else if (data.payment_status === 'failed') {
+            this.$message.error('支付失败');
           }
 
         } catch (error) {
