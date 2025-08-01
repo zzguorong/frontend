@@ -14,12 +14,8 @@
         </p>
         <!-- 按钮 -->
         <nav class="generate-btn-wrapper" role="navigation" aria-label="主要操作">
-          <el-button
-            size="large"
-            class="generate-btn"
-            aria-label="开始使用GAIAHubs创作空间设计"
-            @click.native.prevent="handleGenerate"
-          >
+          <el-button size="large" class="generate-btn" aria-label="开始使用GAIAHubs创作空间设计"
+            @click.native.prevent="handleGenerate">
             开始创作
           </el-button>
         </nav>
@@ -33,72 +29,51 @@
         <aside class="image-block-left" role="complementary">
           <nav class="image-text" aria-label="空间类型选择">
             <h3 id="spatial-types" class="visually-hidden">空间设计类型</h3>
-            <button
-              type="button"
-              class="title"
-              :class="{ active: activeImage === 'birdview' }"
-              role="tab"
-              tabindex="0"
-              :aria-selected="activeImage === 'birdview'"
-              :aria-label="`选择鸟瞰图设计 - ${getImageTypeLabel('birdview')}`"
-              @mouseover="changeImage('birdview')"
-              @focus="changeImage('birdview')"
-              @keydown.enter="changeImage('birdview')"
-            >
+            <button type="button" class="title" :class="{ active: activeImage === 'birdview' }" role="tab" tabindex="0"
+              :aria-selected="activeImage === 'birdview'" :aria-label="`选择鸟瞰图设计 - ${getImageTypeLabel('birdview')}`"
+              @mouseover="changeImage('birdview')" @focus="changeImage('birdview')"
+              @keydown.enter="changeImage('birdview')">
               鸟瞰图
             </button>
-            <button
-              type="button"
-              class="title"
-              :class="{ active: activeImage === 'eyeview' }"
-              role="tab"
-              tabindex="0"
-              :aria-selected="activeImage === 'eyeview'"
-              :aria-label="`选择人视图设计 - ${getImageTypeLabel('eyeview')}`"
-              @mouseover="changeImage('eyeview')"
-              @focus="changeImage('eyeview')"
-              @keydown.enter="changeImage('eyeview')"
-            >
+            <button type="button" class="title" :class="{ active: activeImage === 'eyeview' }" role="tab" tabindex="0"
+              :aria-selected="activeImage === 'eyeview'" :aria-label="`选择人视图设计 - ${getImageTypeLabel('eyeview')}`"
+              @mouseover="changeImage('eyeview')" @focus="changeImage('eyeview')" @keydown.enter="changeImage('eyeview')">
               人视图
             </button>
-            <button
-              type="button"
-              class="title"
-              :class="{ active: activeImage === 'planview' }"
-              role="tab"
-              tabindex="0"
-              :aria-selected="activeImage === 'planview'"
-              :aria-label="`选择平面图设计 - ${getImageTypeLabel('planview')}`"
-              @mouseover="changeImage('planview')"
-              @focus="changeImage('planview')"
-              @keydown.enter="changeImage('planview')"
-            >
+            <button type="button" class="title" :class="{ active: activeImage === 'planview' }" role="tab" tabindex="0"
+              :aria-selected="activeImage === 'planview'" :aria-label="`选择平面图设计 - ${getImageTypeLabel('planview')}`"
+              @mouseover="changeImage('planview')" @focus="changeImage('planview')"
+              @keydown.enter="changeImage('planview')">
               平面图
             </button>
-            <button
-              type="button"
-              class="title"
-              :class="{ active: activeImage === 'indoor' }"
-              role="tab"
-              tabindex="0"
-              :aria-selected="activeImage === 'indoor'"
-              :aria-label="`选择室内图设计 - ${getImageTypeLabel('indoor')}`"
-              @mouseover="changeImage('indoor')"
-              @focus="changeImage('indoor')"
-              @keydown.enter="changeImage('indoor')"
-            >
+            <button type="button" class="title" :class="{ active: activeImage === 'indoor' }" role="tab" tabindex="0"
+              :aria-selected="activeImage === 'indoor'" :aria-label="`选择室内图设计 - ${getImageTypeLabel('indoor')}`"
+              @mouseover="changeImage('indoor')" @focus="changeImage('indoor')" @keydown.enter="changeImage('indoor')">
               室内图
             </button>
           </nav>
         </aside>
 
         <!-- 右侧展示图片 -->
-        <div
-          class="image-block-right"
-          :class="activeImage"
-          role="img"
-          :aria-label="`GAIAHubs ${getImageTypeLabel(activeImage)}案例展示`"
-        />
+        <!-- 替换原图展示区域为对比滑块区域 -->
+        <div class="compare-wrapper" @mousedown="startDrag" @touchstart="startDrag">
+          <!-- 下层图（原图） -->
+          <div class="image-block-base" :class="activeImage" />
+
+          <!-- 上层图（生成图） -->
+          <div class="image-block-overlay" :style="{ width: sliderX + '%' }">
+            <div class="image-block-top" :class="activeImage + '_generate'" />
+          </div>
+
+          <!-- 滑块 -->
+          <div class="slider-handle" :style="{ left: sliderX + '%' }">
+            <div class="slider-dot">
+              <i class="el-icon-arrow-left" style="color: #101010; font-size: 18px;"></i>
+              <i class="el-icon-arrow-right" style="color: #101010; font-size: 18px;"></i>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -111,15 +86,9 @@
             <h2 id="core-functions" class="title">核心功能</h2>
             <ul class="function-list" role="tablist" aria-label="核心功能列表">
               <li class="function-item" role="presentation">
-                <button
-                  type="button"
-                  role="tab"
-                  tabindex="0"
-                  :aria-selected="currentView === 'psd_segmentation'"
-                  @mouseover="changeView('psd_segmentation')"
-                  @focus="changeView('psd_segmentation')"
-                  @keydown.enter="changeView('psd_segmentation')"
-                >
+                <button type="button" role="tab" tabindex="0" :aria-selected="currentView === 'psd_segmentation'"
+                  @mouseover="changeView('psd_segmentation')" @focus="changeView('psd_segmentation')"
+                  @keydown.enter="changeView('psd_segmentation')">
                   <h3 class="item-title" :class="{ active: currentView === 'psd_segmentation' }">
                     PSD下载 + 语义分割
                   </h3>
@@ -127,15 +96,9 @@
                 </button>
               </li>
               <li class="function-item" role="presentation">
-                <button
-                  type="button"
-                  role="tab"
-                  tabindex="0"
-                  :aria-selected="currentView === 'sketch_generate'"
-                  @mouseover="changeView('sketch_generate')"
-                  @focus="changeView('sketch_generate')"
-                  @keydown.enter="changeView('sketch_generate')"
-                >
+                <button type="button" role="tab" tabindex="0" :aria-selected="currentView === 'sketch_generate'"
+                  @mouseover="changeView('sketch_generate')" @focus="changeView('sketch_generate')"
+                  @keydown.enter="changeView('sketch_generate')">
                   <h3 class="item-title" :class="{ active: currentView === 'sketch_generate' }">
                     支持草图 / 关键词 / 模型图生成
                   </h3>
@@ -143,15 +106,9 @@
                 </button>
               </li>
               <li class="function-item" role="presentation">
-                <button
-                  type="button"
-                  role="tab"
-                  tabindex="0"
-                  :aria-selected="currentView === 'multi_view_scene'"
-                  @mouseover="changeView('multi_view_scene')"
-                  @focus="changeView('multi_view_scene')"
-                  @keydown.enter="changeView('multi_view_scene')"
-                >
+                <button type="button" role="tab" tabindex="0" :aria-selected="currentView === 'multi_view_scene'"
+                  @mouseover="changeView('multi_view_scene')" @focus="changeView('multi_view_scene')"
+                  @keydown.enter="changeView('multi_view_scene')">
                   <h3 class="item-title" :class="{ active: currentView === 'multi_view_scene' }">
                     多视角场景覆盖
                   </h3>
@@ -159,15 +116,9 @@
                 </button>
               </li>
               <li class="function-item" role="presentation">
-                <button
-                  type="button"
-                  role="tab"
-                  tabindex="0"
-                  :aria-selected="currentView === 'cloud_generate'"
-                  @mouseover="changeView('cloud_generate')"
-                  @focus="changeView('cloud_generate')"
-                  @keydown.enter="changeView('cloud_generate')"
-                >
+                <button type="button" role="tab" tabindex="0" :aria-selected="currentView === 'cloud_generate'"
+                  @mouseover="changeView('cloud_generate')" @focus="changeView('cloud_generate')"
+                  @keydown.enter="changeView('cloud_generate')">
                   <h3 class="item-title" :class="{ active: currentView === 'cloud_generate' }">
                     快速响应云端生成
                   </h3>
@@ -179,12 +130,8 @@
         </aside>
 
         <!-- 右侧功能演示图 -->
-        <div
-          class="image-block-3-right"
-          :class="currentView"
-          role="img"
-          :aria-label="`GAIAHubs ${getFunctionLabel(currentView)}功能演示`"
-        />
+        <div class="image-block-3-right" :class="currentView" role="img"
+          :aria-label="`GAIAHubs ${getFunctionLabel(currentView)}功能演示`" />
       </div>
     </section>
 
@@ -193,6 +140,7 @@
       <div class="section-content no-gap full-section">
         <!-- 上半部分：扩展功能 -->
         <div class="image-block-4-left">
+          <h1 class="subtitle">未来功能/正在开发中</h1>
           <div class="features-row">
             <article class="feature-item">
               <div class="icon-wrapper" aria-hidden="true">
@@ -221,13 +169,8 @@
         <!-- 下半部分：页脚信息 -->
         <footer class="image-block-4-right" role="contentinfo">
           <div class="footer-info">
-            <img
-              class="logo"
-              src="@/assets/images/dashorard-logo-white.png"
-              alt="GAIAHubs - 专业空间AI工具平台Logo"
-              width="501"
-              height="84"
-            >
+            <img class="logo" src="@/assets/images/dashorard-logo-white.png" alt="GAIAHubs - 专业空间AI工具平台Logo" width="501"
+              height="84">
             <p class="desc">
               GAIAHubs 是空间领域的AI工具平台，集成 AIGC 生成、语义分割与智能识别功能，助力高效完成设计草图、空间分析与图像处理，提升设计师与团队的创作效率。
             </p>
@@ -240,7 +183,8 @@
               </p>
             </address>
           </div>
-          <p class="copyright">©2025 深石（深圳）智能科技有限公司版权所有</p>
+          <p class="copyright"><span>©2025 深石（深圳）智能科技有限公司版权所有</span> <span style="margin-left: 40px;">粤ICP备
+              2025438620号</span></p>
         </footer>
       </div>
     </section>
@@ -255,8 +199,10 @@ export default {
   name: 'Dashboard',
   data() {
     return {
-      activeImage: 'birdview',
-      currentView: 'psd_segmentation'
+      activeImage: 'birdview', // 默认图像，可以根据需要切换
+      currentView: 'psd_segmentation',
+      sliderX: 50, // 初始中间位置
+      dragging: false,
     };
   },
   computed: {
@@ -303,21 +249,42 @@ export default {
         'cloud_generate': '云端生成'
       };
       return functionMap[view] || '空间设计';
-    }
+    },
+    startDrag(e) {
+      this.dragging = true;
+      document.addEventListener('mousemove', this.onDrag);
+      document.addEventListener('mouseup', this.stopDrag);
+      document.addEventListener('touchmove', this.onDrag, { passive: false });
+      document.addEventListener('touchend', this.stopDrag);
+    },
+    onDrag(e) {
+      if (!this.dragging) return;
+      const wrapper = this.$el.querySelector('.compare-wrapper');
+      const rect = wrapper.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const x = clientX - rect.left;
+      this.sliderX = Math.max(0, Math.min((x / rect.width) * 100, 100));
+    },
+    stopDrag() {
+      this.dragging = false;
+      document.removeEventListener('mousemove', this.onDrag);
+      document.removeEventListener('mouseup', this.stopDrag);
+      document.removeEventListener('touchmove', this.onDrag);
+      document.removeEventListener('touchend', this.stopDrag);
+    },
   }
 };
 </script>
 
 <style lang="scss" scoped>
-
 @font-face {
-    font-family: 'Lora';
-    src: url('~@/assets/fonts/Lora-Bold.woff2') format('woff2'),
-        url('~@/assets/fonts/Lora-Bold.woff') format('woff'),
-        url('~@/assets/fonts/Lora-Bold.ttf') format('truetype');
-    font-weight: bold;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'Lora';
+  src: url('~@/assets/fonts/Lora-Bold.woff2') format('woff2'),
+    url('~@/assets/fonts/Lora-Bold.woff') format('woff'),
+    url('~@/assets/fonts/Lora-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
 }
 
 /* SEO优化：隐藏视觉元素但保持可访问性 */
@@ -335,9 +302,9 @@ export default {
 
 /* 禁止页面所有文字选中，鼠标光标显示普通箭头 */
 * {
-  user-select: none !important;
+  /* user-select: none !important; */
   /* 禁止选中 */
-  cursor: default !important;
+  /* cursor: default !important; */
   /* 光标为默认箭头 */
 }
 
@@ -390,16 +357,10 @@ button.title {
 }
 
 .scroll-container {
-  height: 100vh;
-  overflow-y: scroll;
-  /*  开启纵向滚动吸附，强制吸附 */
-  scroll-snap-type: y mandatory;
-  /* 平滑滚动（非必须） */
-  scroll-behavior: smooth;
-  will-change: scroll-position;
-  transform: translateZ(0);
+  height: auto;
+  overflow-y: visible;
+  /* 不再需要强制 scroll */
 
-  /* 隐藏滚动条 */
   -ms-overflow-style: none;
   /* IE/Edge */
   scrollbar-width: none;
@@ -412,11 +373,10 @@ button.title {
 }
 
 section {
-  height: 100vh;
-  /*  每一屏幕吸附到顶部对齐 */
-  scroll-snap-align: start;
-  /* 每屏占满整个视口高度 */
+  /* padding: 80px 0; 或根据需要设置间距 */
   position: relative;
+  height: auto;
+  /* 取消强制占满视口 */
 }
 
 /* 第一屏 */
@@ -427,7 +387,9 @@ section {
   display: flex;
   flex-direction: column;
   align-items: center;
-    justify-content: center;
+  justify-content: center;
+  position: relative;
+  height: 100vh;
 
   .fullscreen-text {
     color: #fff;
@@ -444,7 +406,8 @@ section {
   .subtitle {
     margin-top: 3vw;
     margin-bottom: 22px;
-    font-size: 3.01vw;;
+    font-size: 3.01vw;
+    ;
     font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: bold;
     line-height: 68px
@@ -472,10 +435,11 @@ section {
       padding: 0 38px 0 38px;
       cursor: pointer ! important;
     }
-     .generate-btn:hover {
+
+    .generate-btn:hover {
       background-color: #000 !important;
       color: #fff !important;
-      border:none !important;
+      border: none !important;
     }
   }
 
@@ -540,29 +504,106 @@ section {
   }
 }
 
-.image-block-right {
+.compare-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  overflow: hidden;
+}
+
+.image-block-base,
+.image-block-top {
+  position: absolute;
+  top: 0;
+  left: 0;
   height: 100%;
   width: 100%;
   background-size: cover;
   background-position: center;
-  transition: background-image 0.5s ease-in-out;
+  background-repeat: no-repeat;
+}
+
+.image-block-overlay {
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.image-block-top{
+}
+
+.slider-handle {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background: #fff;
+  z-index: 20;
+  cursor: ew-resize;
+}
+
+/* 滑块小球 */
+.slider-dot {
+  position: relative;
+  top: 50%;
+  left: -1.1vw;
+  /* 调整滑块位置，可根据需要改 */
+  transform: translateY(-50%);
+  width: 2.2vw;
+  height: 2.2vw;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  cursor: ew-resize;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* padding: 0 8px; */
+  font-size: 22px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: bold;
+  user-select: none;
+}
+
+.slider-dot:hover {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.7);
 }
 
 /* 四张图 */
-.image-block-right.birdview {
+.image-block-base.birdview {
   background-image: url('~@/assets/images/birdview.jpg');
 }
 
-.image-block-right.eyeview {
+.image-block-top.birdview_generate {
+  background-image: url('~@/assets/images/birdview_generate.jpg');
+}
+
+.image-block-base.eyeview {
   background-image: url('~@/assets/images/eyeview.jpg');
 }
 
-.image-block-right.planview {
+.image-block-top.eyeview_generate {
+  background-image: url('~@/assets/images/eyeview_generate.jpg');
+}
+
+.image-block-base.planview {
   background-image: url('~@/assets/images/planview.jpg');
 }
 
-.image-block-right.indoor {
+.image-block-top.planview_generate {
+  background-image: url('~@/assets/images/planview_generate.jpg');
+}
+
+.image-block-base.indoor {
   background-image: url('~@/assets/images/indoor.jpg');
+}
+
+.image-block-top.indoor_generate {
+  background-image: url('~@/assets/images/indoor_generate.jpg');
 }
 
 .image-block-3-left {
@@ -582,7 +623,8 @@ section {
   }
 
   .title {
-    font-size: 3.01vw;;
+    font-size: 3.01vw;
+    ;
     font-weight: bold;
     margin-bottom: 56px;
     font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -677,14 +719,24 @@ img {
     background: url('~@/assets/images/dashboard-1.jpg') no-repeat center center;
     background-size: cover;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding-top: 5vw;
+    justify-content: space-evenly;
+
+    .subtitle {
+      font-size: 2.5vw;
+      color: #fff;
+      font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+
 
     .features-row {
       display: flex;
       justify-content: space-around;
       width: 100%;
-
       padding: 0 40px;
 
       .feature-item {
@@ -769,4 +821,5 @@ img {
     }
   }
 
-}</style>
+}
+</style>
