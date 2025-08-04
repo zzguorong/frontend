@@ -16,6 +16,7 @@ const whiteList = [
   '/resetPassword',
   '/termOfservice', // 服务条款
   '/privacyPolicy', // 隐私政策
+  '/aboutUs', // 关于我们
   '/auth/wechat/callback' // 微信 OAuth 回调（history 模式）
 ];
 
