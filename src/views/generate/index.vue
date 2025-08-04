@@ -174,14 +174,14 @@
                         <!-- <i class="question-icon">?</i> -->
                       </el-tooltip>
                     </div>
-                    <el-input v-model="promptText" type="textarea" :rows="3" placeholder="所输入的提示词越精准，生成结果越精准" />
+                    <el-input v-model="promptText" type="textarea" :rows="3" :placeholder="'输入英文提示词\n所输入的提示词越精准，生成结果越精准\n保持空白，预设提示词也会帮您得到好的效果图'" />
                   </div>
                   <div class="control-section">
                     <!-- 视角类型 -->
                     <div class="section-item" style="margin-bottom: 20px" :class="{ error: formErrors.viewType }">
                       <div class="section-title">
                         <span>视角类型<span class="required-mark">*</span></span>
-                        <el-tooltip content="决定生成图纸的角度与视野，包含人视、鸟瞰、工程与室内图四个模块" placement="top">
+                        <el-tooltip content="包含鸟瞰、人视、平面、室内图四个模块" placement="top">
                           <svg-icon icon-class="question" class="icon-style"></svg-icon>
                           <!-- <i class="question-icon">?</i> -->
                         </el-tooltip>
@@ -216,7 +216,7 @@
                       " :class="{ error: formErrors.basemapUrl }">
                       <div class="section-title">
                         <span>上传底图<span class="required-mark">*</span></span>
-                        <el-tooltip content="用于生成基础图像。建议上传底图像素<=2048px*2048px" placement="top">
+                        <el-tooltip content="用于生成基础图像，文件不超过50MB；建议上传底图像素<=2048px*2048px" placement="top">
                           <svg-icon icon-class="question" class="icon-style"></svg-icon>
                           <!-- <i class="question-icon">?</i> -->
                         </el-tooltip>
@@ -261,7 +261,7 @@
                       <div class="section-title transfer-title">
                         <div class="title-with-tooltip">
                           <span>风格迁移</span>
-                          <el-tooltip content="提取参考图中配色、灯光、材质等信息来影响生成内容" placement="top">
+                          <el-tooltip content="生成图与风格图的相似程度。非艺术展示，建议控制程度低于5；文件不超过50MB" placement="top">
                             <svg-icon icon-class="question" class="icon-style"></svg-icon>
                             <!-- <i class="question-icon">?</i> -->
                           </el-tooltip>
@@ -290,7 +290,14 @@
                   <div class="control-section" style="margin-bottom: 83px">
                     <!-- 分辨率 -->
                     <div class="section-item" style="margin-bottom: 20px">
-                      <div class="section-title">分辨率</div>
+                      <div class="section-title">
+                        <div class="title-with-tooltip">
+                          <span>分辨率</span>
+                          <el-tooltip content="4k大小生图时间较久" placement="top">
+                            <svg-icon icon-class="question" class="icon-style"></svg-icon>
+                          </el-tooltip>
+                        </div>
+                      </div>
                       <el-select v-model="resolution" placeholder="选择分辨率" style="width: 100%">
                         <el-option label="标准(1080P)" :value="1"></el-option>
                         <el-option label="大(2k)" :value="2"></el-option>
@@ -337,7 +344,7 @@
                   <div class="semantic-controls">
                     <!-- 上传语义分割图 -->
                     <div class="semantic-upload-section">
-                      <upload-file finalApi="/segment_image" :imgUrl.sync="semanticImgUrl" describeText="上传语义分割图"
+                      <upload-file finalApi="/segment_image" :imgUrl.sync="semanticImgUrl" :describeText="'上传语义分割图（文件不超过50MB）'"
                         @upload-success="onBasemapUpload($event, 3)" @update:imgUrl="onSemanticUrlUpdate"
                         @delete="onImageDelete(3)"></upload-file>
                     </div>
@@ -1276,6 +1283,8 @@ export default {
     downloadPSD() {
       if (this.psdDownloadEnabled) {
         this.psdDownloading = true;
+        // 提示：图像文件较大，请耐心等待。
+        this.$message.info("图像文件较大，请耐心等待下载完成。");
         // 调用后端接口下载 PSD 文件
         generatePSD(this.selectedThumbnailItem.id)
           .then((res) => {
