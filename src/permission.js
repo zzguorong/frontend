@@ -35,21 +35,29 @@ router.beforeEach(async(to, from, next) => {
       next({ path: '/generate' });
       NProgress.done();
     } else {
-      const hasGetUserInfo = store.getters.name;
-      console.log('hasGetUserInfo', hasGetUserInfo);
-      if (hasGetUserInfo) {
-        next();
+      // 如果to.path是这些路径：/AIdialogue，/imageToVideo， /AImodeling，/communityExploration，则中断跳转：
+      if (['/AIdialogue', '/imageToVideo', '/AImodeling', '/communityExploration'].includes(to.path)) {
+        Message.warning('该功能正在研发中，请耐心等待！');
+        // 中断跳转
+        next(false);
+        NProgress.done();
       } else {
-        try {
-          // get user info
-          // await store.dispatch("user/getInfo");
+        const hasGetUserInfo = store.getters.name;
+        console.log('hasGetUserInfo', hasGetUserInfo);
+        if (hasGetUserInfo) {
           next();
-        } catch (error) {
-          // remove token and go to login page to re-login
-          await store.dispatch('user/resetToken');
-          Message.error(error || 'Has Error');
-          next(`/login?redirect=${to.path}`);
-          NProgress.done();
+        } else {
+          try {
+            // get user info
+            // await store.dispatch("user/getInfo");
+            next();
+          } catch (error) {
+            // remove token and go to login page to re-login
+            await store.dispatch('user/resetToken');
+            Message.error(error || 'Has Error');
+            next(`/login?redirect=${to.path}`);
+            NProgress.done();
+          }
         }
       }
     }

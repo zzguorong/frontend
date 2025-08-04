@@ -107,7 +107,7 @@ export const constantRoutes = [
         path: '',
         name: 'AIdialogue',
         component: () => import('@/views/AIdialogue/AIdialogue'),
-        meta: { title: 'AI对话', icon: 'AIdialogue' }
+        meta: { title: 'AI对话，研发中', icon: 'AIdialogue' }
       }
     ]
   },
@@ -119,7 +119,7 @@ export const constantRoutes = [
         path: '',
         name: 'imageToVideo',
         component: () => import('@/views/imageToVideo/imageToVideo'),
-        meta: { title: '图转视频', icon: 'imageToVideo' }
+        meta: { title: '图转视频，研发中', icon: 'imageToVideo' }
       }
     ]
   },
@@ -131,7 +131,7 @@ export const constantRoutes = [
         path: '',
         name: 'AImodeling',
         component: () => import('@/views/AImodeling/AImodeling'),
-        meta: { title: 'AI建模', icon: 'AImodeling' }
+        meta: { title: 'AI建模，研发中', icon: 'AImodeling' }
       }
     ]
   },
@@ -144,7 +144,7 @@ export const constantRoutes = [
         name: 'communityExploration',
         component: () =>
           import('@/views/communityExploration/communityExploration'),
-        meta: { title: '社区探索', icon: 'communityExploration' }
+        meta: { title: '社区探索，研发中', icon: 'communityExploration' }
       }
     ]
   },

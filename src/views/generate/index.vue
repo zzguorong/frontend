@@ -174,7 +174,7 @@
                         <!-- <i class="question-icon">?</i> -->
                       </el-tooltip>
                     </div>
-                    <el-input v-model="promptText" type="textarea" :rows="3" placeholder="输入英文提示词\r所输入的提示词越精准，生成结果越精准\r保持空白，预设提示词也会帮您得到好的效果图" />
+                    <el-input v-model="promptText" type="textarea" :rows="3" :placeholder="'输入英文提示词\n所输入的提示词越精准，生成结果越精准\n保持空白，预设提示词也会帮您得到好的效果图'" />
                   </div>
                   <div class="control-section">
                     <!-- 视角类型 -->
@@ -216,7 +216,7 @@
                       " :class="{ error: formErrors.basemapUrl }">
                       <div class="section-title">
                         <span>上传底图<span class="required-mark">*</span></span>
-                        <el-tooltip content="用于生成基础图像。建议上传底图像素<=2048px*2048px" placement="top">
+                        <el-tooltip content="用于生成基础图像，文件不超过50MB；建议上传底图像素<=2048px*2048px" placement="top">
                           <svg-icon icon-class="question" class="icon-style"></svg-icon>
                           <!-- <i class="question-icon">?</i> -->
                         </el-tooltip>
@@ -261,7 +261,7 @@
                       <div class="section-title transfer-title">
                         <div class="title-with-tooltip">
                           <span>风格迁移</span>
-                          <el-tooltip content="生成图与风格图的相似程度。非艺术展示，建议控制程度低于5" placement="top">
+                          <el-tooltip content="生成图与风格图的相似程度。非艺术展示，建议控制程度低于5；文件不超过50MB" placement="top">
                             <svg-icon icon-class="question" class="icon-style"></svg-icon>
                             <!-- <i class="question-icon">?</i> -->
                           </el-tooltip>
@@ -344,7 +344,7 @@
                   <div class="semantic-controls">
                     <!-- 上传语义分割图 -->
                     <div class="semantic-upload-section">
-                      <upload-file finalApi="/segment_image" :imgUrl.sync="semanticImgUrl" describeText="上传语义分割图"
+                      <upload-file finalApi="/segment_image" :imgUrl.sync="semanticImgUrl" :describeText="'上传语义分割图（文件不超过50MB）'"
                         @upload-success="onBasemapUpload($event, 3)" @update:imgUrl="onSemanticUrlUpdate"
                         @delete="onImageDelete(3)"></upload-file>
                     </div>
@@ -1283,6 +1283,8 @@ export default {
     downloadPSD() {
       if (this.psdDownloadEnabled) {
         this.psdDownloading = true;
+        // 提示：图像文件较大，请耐心等待。
+        this.$message.info("图像文件较大，请耐心等待下载完成。");
         // 调用后端接口下载 PSD 文件
         generatePSD(this.selectedThumbnailItem.id)
           .then((res) => {
