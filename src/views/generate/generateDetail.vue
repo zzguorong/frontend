@@ -707,6 +707,7 @@ export default {
     downloadPSD() {
       if (this.psdDownloadEnabled) {
         this.psdDownloading = true;
+        this.$message.info('图像文件较大，请耐心等待下载完成。');
         // 调用后端接口下载 PSD 文件
         generatePSD(this.generatedImageId)
           .then((res) => {

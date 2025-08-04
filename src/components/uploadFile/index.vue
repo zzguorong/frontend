@@ -112,13 +112,13 @@ export default {
         this.uploadData.base_image = file;
       }
       const isImage = file && file.type && file.type.startsWith('image/');
-      const isLt500M = file.size / 1024 / 1024 < 500;
+      const isLt500M = file.size / 1024 / 1024 < 50;
       if (!isImage) {
         this.$message.error('只能上传图片文件!');
         return false;
       }
       if (!isLt500M) {
-        this.$message.error('上传图片大小不能超过 500MB!');
+        this.$message.error('上传图片大小不能超过 50MB!');
         return false;
       }
       this.loading = true; // 开始上传时显示加载状态
