@@ -1,32 +1,36 @@
 <template>
   <div class="scroll-container">
     <!-- 第一屏 - Hero Section -->
-    <section class="fullscreen-section" role="banner">
-      <header class="hero-content">
-        <!-- SEO优化：使用h1作为主标题 -->
-        <h1 class="fullscreen-text title-main">GAIAHubs: Spatial AIGC</h1>
+    <!-- <section class="fullscreen-section" role="banner">
+      <header class="hero-content"> -->
+    <!-- SEO优化：使用h1作为主标题 -->
+    <!-- <h1 class="fullscreen-text title-main">GAIAHubs: Spatial AIGC</h1>
         <h2 class="fullscreen-text subtitle">空间的想象，AI来实现</h2>
         <p class="fullscreen-text description">
           草图，生图，语义分割一站式生成支持PSD分层
         </p>
         <p class="fullscreen-text description">
           覆盖鸟瞰、人视、平面、室内，重塑你的图像工作流
-        </p>
-        <!-- 按钮 -->
-        <nav class="generate-btn-wrapper" role="navigation" aria-label="主要操作">
-          <el-button size="large" class="generate-btn" aria-label="开始使用GAIAHubs创作空间设计"
-            @click.native.prevent="handleGenerate">
+        </p> -->
+    <!-- 按钮 -->
+    <!-- <nav class="generate-btn-wrapper" role="navigation" aria-label="主要操作">
+          <el-button
+            size="large"
+            class="generate-btn"
+            aria-label="开始使用GAIAHubs创作空间设计"
+            @click.native.prevent="handleGenerate"
+          >
             开始创作
           </el-button>
         </nav>
       </header>
-    </section>
+    </section> -->
 
     <!-- 第二屏 - 空间类型展示 -->
-    <section class="normal-section" role="main" aria-labelledby="spatial-types">
-      <div class="section-content no-gap">
-        <!-- 左侧导航 -->
-        <aside class="image-block-left" role="complementary">
+    <!-- <section class="normal-section" role="main" aria-labelledby="spatial-types">
+<div class="section-content no-gap"> -->
+    <!-- 左侧导航 -->
+    <!-- <aside class="image-block-left" role="complementary">
           <nav class="image-text" aria-label="空间类型选择">
             <h3 id="spatial-types" class="visually-hidden">空间设计类型</h3>
             <button type="button" class="title" :class="{ active: activeImage === 'birdview' }" role="tab" tabindex="0"
@@ -52,36 +56,23 @@
               室内图
             </button>
           </nav>
-        </aside>
+        </aside> -->
 
-        <!-- 右侧展示图片 -->
-        <!-- 替换原图展示区域为对比滑块区域 -->
-        <div class="compare-wrapper" @mousedown="startDrag" @touchstart="startDrag">
-          <!-- 下层图（原图） -->
-          <div class="image-block-base" :class="activeImage" />
-
-          <!-- 上层图（生成图） -->
-          <div class="image-block-overlay" :style="{ width: sliderX + '%' }">
-            <div class="image-block-top" :class="activeImage + '_generate'" />
-          </div>
-
-          <!-- 滑块 -->
-          <div class="slider-handle" :style="{ left: sliderX + '%' }">
-            <div class="slider-dot">
-              <i class="el-icon-arrow-left" style="color: #101010; font-size: 18px;"></i>
-              <i class="el-icon-arrow-right" style="color: #101010; font-size: 18px;"></i>
-            </div>
-          </div>
-        </div>
-
+    <!-- 右侧展示图片 -->
+    <!-- <div
+          class="image-block-right"
+          :class="activeImage"
+          role="img"
+          :aria-label="`GAIAHubs ${getImageTypeLabel(activeImage)}案例展示`"
+        />
       </div>
-    </section>
+    </section>  -->
 
     <!-- 第三屏 - 核心功能展示 -->
-    <section class="normal-section" role="main" aria-labelledby="core-functions">
-      <div class="section-content no-gap">
-        <!-- 左侧功能介绍 -->
-        <aside class="image-block-3-left" role="complementary">
+    <!-- <section class="normal-section" role="main" aria-labelledby="core-functions">
+      <div class="section-content no-gap"> -->
+    <!-- 左侧功能介绍 -->
+    <!-- <aside class="image-block-3-left" role="complementary">
           <div class="core-functions">
             <h2 id="core-functions" class="title">核心功能</h2>
             <ul class="function-list" role="tablist" aria-label="核心功能列表">
@@ -127,21 +118,25 @@
               </li>
             </ul>
           </div>
-        </aside>
+        </aside> -->
 
-        <!-- 右侧功能演示图 -->
-        <div class="image-block-3-right" :class="currentView" role="img"
-          :aria-label="`GAIAHubs ${getFunctionLabel(currentView)}功能演示`" />
+    <!-- 右侧功能演示图 -->
+    <!-- <div
+          class="image-block-3-right"
+          :class="currentView"
+          role="img"
+          :aria-label="`GAIAHubs ${getFunctionLabel(currentView)}功能演示`"
+        />
       </div>
-    </section>
+    </section> -->
+
 
     <!-- 第四屏 - 扩展功能与联系方式 -->
     <section class="normal-section">
       <div class="section-content no-gap full-section">
         <!-- 上半部分：扩展功能 -->
         <div class="image-block-4-left">
-          <h1 class="subtitle">未来功能/正在开发中</h1>
-          <div class="features-row">
+          <!-- <div class="features-row">
             <article class="feature-item">
               <div class="icon-wrapper" aria-hidden="true">
                 <svg-icon icon-class="imageToVideo" class="icon" />
@@ -163,9 +158,25 @@
               <h3 class="title">图转3D模型</h3>
               <p class="desc">一张图生成可编辑的3D模型，反向捕捉空间关系</p>
             </article>
+          </div> -->
+          <div class="features-row">
+            <h1 class="fullscreen-text title-main">GAIAHubs: Spatial AIGC</h1>
+            <h2 class="fullscreen-text subtitle">空间的想象，AI来实现</h2>
+            <p class="fullscreen-text description" style="color: #CECECE">
+              草图，生图，语义分割一站式生成支持PSD分层
+            </p>
+            <p class="fullscreen-text description" style="color: #CECECE">
+              覆盖鸟瞰、人视、平面、室内，重塑你的图像工作流
+            </p>
+            <!-- 按钮 -->
+            <nav class="generate-btn-wrapper" role="navigation" aria-label="主要操作">
+              <el-button size="large" class="generate-btn" aria-label="开始使用GAIAHubs创作空间设计"
+                @click.native.prevent="handleGenerate">
+                开始创作
+              </el-button>
+            </nav>
           </div>
         </div>
-
         <!-- 下半部分：页脚信息 -->
         <footer class="image-block-4-right" role="contentinfo">
           <div class="footer-info">
@@ -175,16 +186,59 @@
               GAIAHubs 是空间领域的AI工具平台，集成 AIGC 生成、语义分割与智能识别功能，助力高效完成设计草图、空间分析与图像处理，提升设计师与团队的创作效率。
             </p>
             <address class="contact-info">
-              <p class="contact">
-                电子邮箱：<a href="mailto:contact@gaiass.com" rel="noopener">contact@gaiass.com</a>
+              <p class="contact" style="color: #CECECE">
+                ©2025 深石（深圳）智能科技有限公司版权所有
               </p>
-              <p class="address">
+              <p class="contact" style="color: #CECECE">粤ICP备 2025438620号
+              </p>
+              <!-- <p class="address">
                 公司地址：深圳市南山区粤海街道高新区社区科技南八路2号豪威科技大厦15F
-              </p>
+              </p> -->
             </address>
+
           </div>
-          <p class="copyright"><span>©2025 深石（深圳）智能科技有限公司版权所有</span> <span style="margin-left: 40px;">粤ICP备
-              2025438620号</span></p>
+          <div class="footer-container">
+            <!-- 核心功能 -->
+            <div class="footer-column">
+              <h3>核心功能</h3>
+              <ul>
+                <li>PSD下载+语义分割</li>
+                <li>支持草图/关键词/模型图生成</li>
+                <li>多视角场景覆盖</li>
+                <li>快速响应云端生成</li>
+              </ul>
+            </div>
+
+            <!-- 未来功能 -->
+            <div class="footer-column">
+              <h3>逐步开放</h3>
+              <ul>
+                <li>图转视频</li>
+                <li>AI跨生态设计</li>
+                <li>图转3D模型</li>
+              </ul>
+            </div>
+
+            <!-- 安全 -->
+            <div class="footer-column">
+              <h3>安全</h3>
+              <ul>
+                <li>隐私政策</li>
+                <li>用户协议</li>
+              </ul>
+            </div>
+
+            <!-- 联系方式 -->
+            <div class="footer-column">
+              <h3>联系方式</h3>
+              <ul>
+                <li>contact@gaiass.com</li>
+              </ul>
+              <h3>公司地址</h3>
+              <p>深圳市南山区粤海街道海德社区科技南八路2号豪威科技大厦15B4</p>
+            </div>
+          </div>
+          <!-- <p class="copyright">©2025 深石（深圳）智能科技有限公司版权所有</p> -->
         </footer>
       </div>
     </section>
@@ -335,6 +389,9 @@ button.title {
 /* SEO优化：联系信息样式 */
 .contact-info {
   font-style: normal;
+  width: fit-content;
+
+
 }
 
 .contact-info a {
@@ -388,67 +445,66 @@ section {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  position: relative;
-  height: 100vh;
+}
 
-  .fullscreen-text {
-    color: #fff;
+.fullscreen-text {
+  color: #fff;
+}
+
+.title-main {
+  font-size: 72px;
+  color: #fff;
+  font-family: 'Lora', "Noto Serif SC", serif;
+  font-weight: bold;
+  line-height: 101px
+}
+
+.subtitle {
+  margin-top: 0;
+  margin-bottom: 22px;
+  font-size: 2.5vw;
+  ;
+  font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  line-height: 68px
+}
+
+.description {
+  font-size: 1.05vw;
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  line-height: 1.45vw
+}
+
+.generate-btn-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 3vw;
+
+  .generate-btn {
+    height: 60px;
+    line-height: 13px;
+    border-radius: 25px;
+    font-size: 1.45vw;
+    padding: 0 38px 0 38px;
+    cursor: pointer ! important;
   }
 
-  .title-main {
-    font-size: 72px;
-    color: #fff;
-    font-family: 'Lora', "Noto Serif SC", serif;
-    font-weight: bold;
-    line-height: 101px
-  }
-
-  .subtitle {
-    margin-top: 3vw;
-    margin-bottom: 22px;
-    font-size: 3.01vw;
-    ;
-    font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: bold;
-    line-height: 68px
-  }
-
-  .description {
-    font-size: 1.05vw;
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: bold;
-    line-height: 1.45vw
-  }
-
-  .generate-btn-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-top: 11vw;
-
-    .generate-btn {
-      height: 60px;
-      line-height: 13px;
-      border-radius: 25px;
-      font-size: 1.45vw;
-      padding: 0 38px 0 38px;
-      cursor: pointer ! important;
-    }
-
-    .generate-btn:hover {
-      background-color: #000 !important;
-      color: #fff !important;
-      border: none !important;
-    }
-  }
-
-  ::v-deep .el-button {
-    background: #fff !important;
-    width: 475px;
-    color: #000;
+  .generate-btn:hover {
+    background-color: #000 !important;
+    color: #fff !important;
+    border: none !important;
   }
 }
+
+::v-deep .el-button {
+  background: #fff !important;
+  width: 475px;
+  color: #000;
+}
+
 
 .normal-section {
   position: relative;
@@ -624,7 +680,6 @@ section {
 
   .title {
     font-size: 3.01vw;
-    ;
     font-weight: bold;
     margin-bottom: 56px;
     font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -714,6 +769,8 @@ img {
   flex-direction: column;
 
   .image-block-4-left {
+    /* height: 100%; */
+    width: 100%;
     width: 100%;
     height: 69vh;
     background: url('~@/assets/images/dashboard-1.jpg') no-repeat center center;
@@ -734,6 +791,10 @@ img {
 
 
     .features-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       display: flex;
       justify-content: space-around;
       width: 100%;
@@ -785,11 +846,13 @@ img {
   }
 
   .image-block-4-right {
+    display: flex;
     width: 100%;
     background: #1a1a1a;
-    padding: 3.5vh 4vw;
+    padding: 4.5vh 4vw;
     color: #fff;
     flex: 1;
+    /* gap: 7vw; */
 
     .footer-info {
       font-size: 14px;
@@ -797,11 +860,12 @@ img {
 
       .logo {
         margin-bottom: 18px;
-        width: 26vw;
+        width: 16.5vw;
         /* height: 7vh; */
       }
 
       .desc {
+        width: 20vw;
         margin-bottom: 22px;
         color: #ffff;
       }
@@ -818,6 +882,51 @@ img {
       text-align: center !important;
       color: #fff;
       margin-bottom: 4px;
+    }
+
+    .footer-container {
+      font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      display: flex;
+      justify-content: space-between;
+      flex: 1;
+      /* gap: 9vw; */
+      justify-content: center;
+      flex-wrap: wrap;
+      /* max-width: 1200px; */
+      margin: 0 auto;
+      /* margin-right: 7vw; */
+      white-space: nowrap;
+      margin-right: 2vw;
+      .footer-column {
+        flex: 1 ;
+    max-width: 14vw;
+    min-width: 10vw;
+
+      }
+
+      .footer-column h3 {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 12px;
+      }
+
+      .footer-column ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 12px 0;
+      }
+
+      .footer-column ul li {
+        margin-bottom: 8px;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .footer-column p {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
     }
   }
 

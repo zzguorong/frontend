@@ -16,11 +16,11 @@
 
     </div>
     <div class="header-actions-container">
-      <div class="header-action-wrapper">
+      <!-- <div class="header-action-wrapper">
         <el-button size="large" class="login-btn" @click.native.prevent="handleLogin">
           LOG IN
         </el-button>
-      </div>
+      </div> -->
       <div class="header-action-wrapper">
         <el-button type="primary" size="large" class="action-btn" @click.native.prevent="handleGenerate">TRY
           GAIA
