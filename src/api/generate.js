@@ -136,6 +136,8 @@ export function generatePSD(generatedImageId) {
     method: 'post',
     data: {
       generated_image_id: generatedImageId
-    }
+    },
+    // 覆盖全局的超时设置
+    timeout: 60000 * 5 // 设置为300秒
   });
 }
