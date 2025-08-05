@@ -41,7 +41,7 @@
               <div class="download-controls">
                 <el-button
                   v-loading="pngDownloading"
-                  :disabled="!pngDownloading"
+                  :disabled="!pngDownloadEnabled"
                   :style="{
                     height: '35px',
                     display: 'flex',
@@ -696,7 +696,7 @@ export default {
         generatePNG(this.generatedImageId)
           .then((res) => {
             const url = res.data.url;
-            const filename = res.data.name || `generated_image_${Date.now()}.psd`;
+            const filename = res.data.name || `generated_image_${Date.now()}.png`;
             downloadFile(url, filename)
               .then(() => {
                 this.pngDownloading = false;
@@ -1238,7 +1238,7 @@ export default {
 
     // 画廊标题图标交互方法
     toggleGalleryFavorite() {
-      if (!this.galleryItems.legnth) {
+      if (!this.galleryItems.length) {
         return;
       }
       this.showOnlyFavorites = !this.showOnlyFavorites;

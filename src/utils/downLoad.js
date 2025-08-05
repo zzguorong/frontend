@@ -3,6 +3,7 @@ export async function downloadFile(url, filename) {
     // Dev env: 把URL中的字符串https://api.gaiass.com字段去掉
     // 使用proxy解决跨域问题
     url = url.replace('https://api.gaiass.com', '');
+    url = url.replace('https://sd-files-storage-1324196168.cos.ap-nanjing.myqcloud.com', '');
   }
   const response = await fetch(url);
   const blob = await response.blob();
