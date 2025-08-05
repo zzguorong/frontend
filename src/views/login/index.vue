@@ -5,7 +5,7 @@
       <!-- 如有正式 LOGO 图片可将 src 替换为真实地址 -->
       <img
         class="logo"
-        src="@/assets/images/gaia.png"
+        src="@/assets/images/dashorard-logo.png"
         alt="GAIAHubs"
         width="300px"
         height="auto"
@@ -26,7 +26,11 @@
           <div v-if="activeTab === 'phone'" class="tab-content phone-login">
             <p class="sub-tip">如果您的手机号码未注册，将为您自动注册</p>
 
-            <el-form ref="phoneLoginForm" :model="phoneLoginForm" :rules="phoneLoginFormRules">
+            <el-form
+              ref="phoneLoginForm"
+              :model="phoneLoginForm"
+              :rules="phoneLoginFormRules"
+            >
               <!-- 手机号 + 区号输入 -->
               <div class="phone-input-line">
                 <el-form-item prop="phonePrefix">
@@ -105,7 +109,10 @@
             <!-- 协议勾选 -->
             <div class="agree-checkbox-wrapper">
               <el-checkbox v-model="agree" class="agree-checkbox" />
-              我已阅读并接受<span class="agree-word" @click="handleTermOfservice">服务条款</span>和<span
+              我已阅读并接受<span
+                class="agree-word"
+                @click="handleTermOfservice"
+              >服务条款</span>和<span
                 class="agree-word"
                 @click="handlePrivacyPolicy"
               >隐私政策</span>
@@ -113,10 +120,14 @@
           </div>
 
           <div v-else class="tab-content password-login">
-            <el-form ref="passwordLoginForm" :model="passwordLoginForm" :rules="passwordLoginFormRules">
+            <el-form
+              ref="passwordLoginForm"
+              :model="passwordLoginForm"
+              :rules="passwordLoginFormRules"
+            >
               <p class="code-label">仅支持手机号登录</p>
               <div class="phone-input-line">
-              <el-form-item prop="phonePrefix">
+                <el-form-item prop="phonePrefix">
                   <el-select
                     v-model="phoneLoginForm.phonePrefix"
                     class="phone-prefix"
@@ -127,16 +138,15 @@
                     <!-- 可扩展其他区号 -->
                   </el-select>
                 </el-form-item>
-              <!-- 手机号 + 区号输入 -->
-              <el-form-item prop="phone"       class="phone-input">
-                <el-input
-                  v-model="passwordLoginForm.phone"
-                  placeholder="请输入手机号"
-                  size="large"
-
-                />
-              </el-form-item>
-            </div>
+                <!-- 手机号 + 区号输入 -->
+                <el-form-item prop="phone" class="phone-input">
+                  <el-input
+                    v-model="passwordLoginForm.phone"
+                    placeholder="请输入手机号"
+                    size="large"
+                  />
+                </el-form-item>
+              </div>
               <p class="code-label">输入密码</p>
               <el-form-item prop="password">
                 <el-input
@@ -163,7 +173,13 @@
 
             <!-- 协议勾选 -->
             <div class="agree-checkbox-wrapper" style="margin-top: 15px">
-              注册登录即代表已阅读并同意<span class="agree-word" @click="handleTermOfservice">服务条款</span>和<span class="agree-word" @click="handlePrivacyPolicy">隐私政策</span>
+              注册登录即代表已阅读并同意<span
+                class="agree-word"
+                @click="handleTermOfservice"
+              >服务条款</span>和<span
+                class="agree-word"
+                @click="handlePrivacyPolicy"
+              >隐私政策</span>
             </div>
             <div class="forget-password">
               <span @click="handleForgetPassword">忘记密码</span>
@@ -207,11 +223,19 @@ export default {
         ],
         phone: [
           { required: true, message: '请输入手机号', trigger: 'blur' },
-          { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
+          {
+            pattern: /^1[3-9]\d{9}$/,
+            message: '手机号格式不正确',
+            trigger: 'blur'
+          }
         ],
         code: [
           { required: true, message: '请输入验证码', trigger: 'blur' },
-          { pattern: /^\d{6}$/, message: '验证码必须为6位数字', trigger: 'blur' }
+          {
+            pattern: /^\d{6}$/,
+            message: '验证码必须为6位数字',
+            trigger: 'blur'
+          }
         ]
       },
       passwordLoginForm: {
@@ -221,11 +245,13 @@ export default {
       passwordLoginFormRules: {
         phone: [
           { required: true, message: '请输入手机号', trigger: 'blur' },
-          { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
+          {
+            pattern: /^1[3-9]\d{9}$/,
+            message: '手机号格式不正确',
+            trigger: 'blur'
+          }
         ],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
-        ]
+        password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
       },
       countDown: 0,
       agree: false,
@@ -246,6 +272,7 @@ export default {
     // 保存state到会话存储，以便后续验证
     sessionStorage.setItem('wechatLoginState', state);
     // 初始化微信登录二维码
+    // eslint-disable-next-line no-undef
     new WxLogin({
       self_redirect: false, // 默认为false(保留当前二维码)  true(当前二维码所在的地方通过iframe 内跳转到 redirect_uri)
       id: 'wechat-login-container', // 容器的id
@@ -258,7 +285,7 @@ export default {
       state: state, // 用于保持请求和回调的状态，授权请求后原样带回给第三方。该参数可用于防止 csrf 攻击（跨站请求伪造攻击），建议第三方带上该参数，可设置为简单的随机数加 session 进行校验
       style: 'black', // 提供"black"、"white"可选，默认为黑色文字描述，
       // stylelite: 1,
-      href: "data:text/css;base64,LmltcG93ZXJCb3ggLnN0YXR1c190eHQge2ZvbnQtc2l6ZTogMjRweH0KLmltcG93ZXJCb3ggLnN0YXR1c190eHQgcCB7Zm9udC1zaXplOiAxOHB4fQouaW1wb3dlckJveCAuc3RhdHVzLnN0YXR1c19mYWlsIHAge2ZvbnQtc2l6ZTogMTZweCB9Ci5pbXBvd2VyQm94IC5zdGF0dXMuc3RhdHVzX2Jyb3dzZXIgcCB7Zm9udC1zaXplOiAyNHB4IH0KLmltcG93ZXJCb3ggLnN0YXR1cyB7cGFkZGluZzogN3B4IDB9Cmg0IHtmb250LXNpemU6IDIycHh9Ci5pbXBvd2VyQm94IHtwYWRkaW5nLXRvcDogNXB4fQo=",
+      href: 'data:text/css;base64,LmltcG93ZXJCb3ggLnN0YXR1c190eHQge2ZvbnQtc2l6ZTogMjRweH0KLmltcG93ZXJCb3ggLnN0YXR1c190eHQgcCB7Zm9udC1zaXplOiAxOHB4fQouaW1wb3dlckJveCAuc3RhdHVzLnN0YXR1c19mYWlsIHAge2ZvbnQtc2l6ZTogMTZweCB9Ci5pbXBvd2VyQm94IC5zdGF0dXMuc3RhdHVzX2Jyb3dzZXIgcCB7Zm9udC1zaXplOiAyNHB4IH0KLmltcG93ZXJCb3ggLnN0YXR1cyB7cGFkZGluZzogN3B4IDB9Cmg0IHtmb250LXNpemU6IDIycHh9Ci5pbXBvd2VyQm94IHtwYWRkaW5nLXRvcDogNXB4fQo='
     });
     // 渲染完二维码后缩放到 100×100
     this.$nextTick(() => {
@@ -334,7 +361,8 @@ export default {
           this.loading = true;
           this.$store
             .dispatch('user/phoneLogin', {
-              phone: this.phoneLoginForm.phonePrefix + this.phoneLoginForm.phone,
+              phone:
+                this.phoneLoginForm.phonePrefix + this.phoneLoginForm.phone,
               code: this.phoneLoginForm.code
             })
             .then(() => {

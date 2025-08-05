@@ -13,17 +13,20 @@
     <!-- 左侧 logo -->
     <div class="logo" @click="goHome">
       <img src="../../assets/images/dashorard-logo.png" alt="Logo">
-
     </div>
     <div class="header-actions-container">
-      <div class="header-action-wrapper">
+      <!-- <div class="header-action-wrapper">
         <el-button size="large" class="login-btn" @click.native.prevent="handleLogin">
           LOG IN
         </el-button>
-      </div>
+      </div> -->
       <div class="header-action-wrapper">
-        <el-button type="primary" size="large" class="action-btn" @click.native.prevent="handleGenerate">TRY
-          GAIA
+        <el-button
+          type="primary"
+          size="large"
+          class="action-btn"
+          @click.native.prevent="handleGenerate"
+        >TRY GAIA
         </el-button>
       </div>
     </div>
@@ -47,7 +50,6 @@ export default {
       this.$router.push('/generate');
     }
   }
-
 };
 </script>
 
@@ -100,16 +102,16 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  /* padding: 0 20px; */
   height: 60px;
 
   box-sizing: border-box;
   padding: 35px 65px 0 3vw;
 
-.header-actions-container{
-  display: flex;
-  gap: 20px;
-}
+  .header-actions-container {
+    display: flex;
+    gap: 20px;
+  }
 
   .header-action-wrapper {
     display: flex;
@@ -117,36 +119,35 @@ export default {
 
     .action-btn {
       width: fit-content;
-            height: 40px;
-            line-height: 13px;
-            border-radius: 25px;
-            font-size: 28px;
-            padding: 0 38px 0 38px;
-
+      height: 40px;
+      line-height: 13px;
+      border-radius: 25px;
+      font-size: 28px;
+      padding: 0 38px 0 38px;
     }
-.action-btn:hover{
-  background-color: #fff !important;
+    .action-btn:hover {
+      background-color: #fff !important;
       color: #000 !important;
-      border:none !important;
-}
-
-    .login-btn{
-      width: fit-content;
-            height: 40px;
-            line-height: 13px;
-            border-radius: 25px;
-            font-size: 28px;
-            padding: 0 38px 0 38px;
+      border: none !important;
     }
-    .login-btn:hover{
+
+    .login-btn {
+      width: fit-content;
+      height: 40px;
+      line-height: 13px;
+      border-radius: 25px;
+      font-size: 28px;
+      padding: 0 38px 0 38px;
+    }
+    .login-btn:hover {
       background-color: #000 !important;
       color: #fff !important;
-      border:none !important;
+      border: none !important;
     }
   }
 }
 ::v-deep .el-button {
-  background:unset;
+  background: unset;
   border: unset;
   width: 100px;
   color: #000;

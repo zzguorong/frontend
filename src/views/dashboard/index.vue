@@ -1,194 +1,144 @@
 <template>
-  <div class="scroll-container">
-    <!-- 第一屏 - Hero Section -->
-    <section class="fullscreen-section" role="banner">
-      <header class="hero-content">
-        <!-- SEO优化：使用h1作为主标题 -->
-        <h1 class="fullscreen-text title-main">GAIAHubs: Spatial AIGC</h1>
-        <h2 class="fullscreen-text subtitle">空间的想象，AI来实现</h2>
-        <p class="fullscreen-text description">
-          草图，生图，语义分割一站式生成支持PSD分层
-        </p>
-        <p class="fullscreen-text description">
-          覆盖鸟瞰、人视、平面、室内，重塑你的图像工作流
-        </p>
-        <!-- 按钮 -->
-        <nav class="generate-btn-wrapper" role="navigation" aria-label="主要操作">
-          <el-button size="large" class="generate-btn" aria-label="开始使用GAIAHubs创作空间设计"
-            @click.native.prevent="handleGenerate">
+  <div class="homepage-container">
+    <!-- Hero Section - 主要内容区域 -->
+    <section class="hero-section" role="banner">
+      <div class="hero-content">
+        <header class="hero-text">
+          <h1 class="main-title">GAIAHubs: Spatial AIGC</h1>
+          <h2 class="subtitle">空间的想象，AI来实现</h2>
+          <p class="description">草图，生图，语义分割一站式生成支持PSD分层</p>
+          <p class="description">
+            覆盖鸟瞰、人视、平面、室内，重塑你的图像工作流
+          </p>
+        </header>
+
+        <nav class="cta-section" role="navigation" aria-label="主要操作">
+          <el-button
+            type="primary"
+            size="large"
+            class="cta-button"
+            aria-label="开始使用GAIAHubs创作空间设计"
+            @click="handleStartCreate"
+          >
             开始创作
           </el-button>
         </nav>
-      </header>
-    </section>
-
-    <!-- 第二屏 - 空间类型展示 -->
-    <section class="normal-section" role="main" aria-labelledby="spatial-types">
-      <div class="section-content no-gap">
-        <!-- 左侧导航 -->
-        <aside class="image-block-left" role="complementary">
-          <nav class="image-text" aria-label="空间类型选择">
-            <h3 id="spatial-types" class="visually-hidden">空间设计类型</h3>
-            <button type="button" class="title" :class="{ active: activeImage === 'birdview' }" role="tab" tabindex="0"
-              :aria-selected="activeImage === 'birdview'" :aria-label="`选择鸟瞰图设计 - ${getImageTypeLabel('birdview')}`"
-              @mouseover="changeImage('birdview')" @focus="changeImage('birdview')"
-              @keydown.enter="changeImage('birdview')">
-              鸟瞰图
-            </button>
-            <button type="button" class="title" :class="{ active: activeImage === 'eyeview' }" role="tab" tabindex="0"
-              :aria-selected="activeImage === 'eyeview'" :aria-label="`选择人视图设计 - ${getImageTypeLabel('eyeview')}`"
-              @mouseover="changeImage('eyeview')" @focus="changeImage('eyeview')" @keydown.enter="changeImage('eyeview')">
-              人视图
-            </button>
-            <button type="button" class="title" :class="{ active: activeImage === 'planview' }" role="tab" tabindex="0"
-              :aria-selected="activeImage === 'planview'" :aria-label="`选择平面图设计 - ${getImageTypeLabel('planview')}`"
-              @mouseover="changeImage('planview')" @focus="changeImage('planview')"
-              @keydown.enter="changeImage('planview')">
-              平面图
-            </button>
-            <button type="button" class="title" :class="{ active: activeImage === 'indoor' }" role="tab" tabindex="0"
-              :aria-selected="activeImage === 'indoor'" :aria-label="`选择室内图设计 - ${getImageTypeLabel('indoor')}`"
-              @mouseover="changeImage('indoor')" @focus="changeImage('indoor')" @keydown.enter="changeImage('indoor')">
-              室内图
-            </button>
-          </nav>
-        </aside>
-
-        <!-- 右侧展示图片 -->
-        <!-- 替换原图展示区域为对比滑块区域 -->
-        <div class="compare-wrapper" @mousedown="startDrag" @touchstart="startDrag">
-          <!-- 下层图（原图） -->
-          <div class="image-block-base" :class="activeImage" />
-
-          <!-- 上层图（生成图） -->
-          <div class="image-block-overlay" :style="{ width: sliderX + '%' }">
-            <div class="image-block-top" :class="activeImage + '_generate'" />
-          </div>
-
-          <!-- 滑块 -->
-          <div class="slider-handle" :style="{ left: sliderX + '%' }">
-            <div class="slider-dot">
-              <i class="el-icon-arrow-left" style="color: #101010; font-size: 18px;"></i>
-              <i class="el-icon-arrow-right" style="color: #101010; font-size: 18px;"></i>
-            </div>
-          </div>
-        </div>
-
       </div>
     </section>
 
-    <!-- 第三屏 - 核心功能展示 -->
-    <section class="normal-section" role="main" aria-labelledby="core-functions">
-      <div class="section-content no-gap">
-        <!-- 左侧功能介绍 -->
-        <aside class="image-block-3-left" role="complementary">
-          <div class="core-functions">
-            <h2 id="core-functions" class="title">核心功能</h2>
-            <ul class="function-list" role="tablist" aria-label="核心功能列表">
-              <li class="function-item" role="presentation">
-                <button type="button" role="tab" tabindex="0" :aria-selected="currentView === 'psd_segmentation'"
-                  @mouseover="changeView('psd_segmentation')" @focus="changeView('psd_segmentation')"
-                  @keydown.enter="changeView('psd_segmentation')">
-                  <h3 class="item-title" :class="{ active: currentView === 'psd_segmentation' }">
-                    PSD下载 + 语义分割
-                  </h3>
-                  <p class="item-desc">可后期编辑，支持专业制图</p>
-                </button>
+    <!-- Footer Section - 页脚信息 -->
+    <footer class="footer-section" role="contentinfo">
+      <div class="footer-content">
+        <!-- 公司信息区域 -->
+        <div class="company-info">
+          <img
+            src="@/assets/images/dashorard-logo-white.png"
+            alt="GAIAHubs Logo - 专业空间AI工具平台"
+            class="company-logo"
+            width="501"
+            height="84"
+          >
+          <p class="company-description">
+            GAIAHubs 是空间领域的AI工具平台，集成 AIGC
+            生成、语义分割与智能识别功能，助力高效完成设计草图、空间分析与图像处理，提升设计师与团队的创作效率。
+          </p>
+          <address class="copyright-info">
+            <p>©2025 深石（深圳）智能科技有限公司版权所有</p>
+            <p>粤ICP备 2025438620号</p>
+          </address>
+        </div>
+
+        <!-- 功能链接区域 -->
+        <div class="footer-links">
+          <!-- 核心功能 -->
+          <div class="link-column">
+            <h3>核心功能</h3>
+            <ul>
+              <li>
+                <a
+                  href="#"
+                  aria-label="了解PSD下载和语义分割功能"
+                >PSD下载+语义分割</a>
               </li>
-              <li class="function-item" role="presentation">
-                <button type="button" role="tab" tabindex="0" :aria-selected="currentView === 'sketch_generate'"
-                  @mouseover="changeView('sketch_generate')" @focus="changeView('sketch_generate')"
-                  @keydown.enter="changeView('sketch_generate')">
-                  <h3 class="item-title" :class="{ active: currentView === 'sketch_generate' }">
-                    支持草图 / 关键词 / 模型图生成
-                  </h3>
-                  <p class="item-desc">多方式嵌入，适配不同工作流</p>
-                </button>
+              <li>
+                <a
+                  href="#"
+                  aria-label="了解多种输入方式生成功能"
+                >支持草图/关键词/模型图生成</a>
               </li>
-              <li class="function-item" role="presentation">
-                <button type="button" role="tab" tabindex="0" :aria-selected="currentView === 'multi_view_scene'"
-                  @mouseover="changeView('multi_view_scene')" @focus="changeView('multi_view_scene')"
-                  @keydown.enter="changeView('multi_view_scene')">
-                  <h3 class="item-title" :class="{ active: currentView === 'multi_view_scene' }">
-                    多视角场景覆盖
-                  </h3>
-                  <p class="item-desc">鸟瞰、人视、室内、平面一网打尽</p>
-                </button>
+              <li>
+                <a href="#" aria-label="了解多视角场景覆盖">多视角场景覆盖</a>
               </li>
-              <li class="function-item" role="presentation">
-                <button type="button" role="tab" tabindex="0" :aria-selected="currentView === 'cloud_generate'"
-                  @mouseover="changeView('cloud_generate')" @focus="changeView('cloud_generate')"
-                  @keydown.enter="changeView('cloud_generate')">
-                  <h3 class="item-title" :class="{ active: currentView === 'cloud_generate' }">
-                    快速响应云端生成
-                  </h3>
-                  <p class="item-desc">不限设备，无需安装</p>
-                </button>
+              <li>
+                <a href="#" aria-label="了解云端生成功能">快速响应云端生成</a>
               </li>
             </ul>
           </div>
-        </aside>
 
-        <!-- 右侧功能演示图 -->
-        <div class="image-block-3-right" :class="currentView" role="img"
-          :aria-label="`GAIAHubs ${getFunctionLabel(currentView)}功能演示`" />
-      </div>
-    </section>
-
-    <!-- 第四屏 - 扩展功能与联系方式 -->
-    <section class="normal-section">
-      <div class="section-content no-gap full-section">
-        <!-- 上半部分：扩展功能 -->
-        <div class="image-block-4-left">
-          <h1 class="subtitle">未来功能/正在开发中</h1>
-          <div class="features-row">
-            <article class="feature-item">
-              <div class="icon-wrapper" aria-hidden="true">
-                <svg-icon icon-class="imageToVideo" class="icon" />
-              </div>
-              <h3 class="title">图转视频</h3>
-              <p class="desc">一张图转换成动态视频效果，身临其境</p>
-            </article>
-            <article class="feature-item">
-              <div class="icon-wrapper" aria-hidden="true">
-                <svg-icon icon-class="AIdialogue" class="icon" />
-              </div>
-              <h3 class="title">AI对话式设计</h3>
-              <p class="desc">输入项目意图，和AI共同探索方案思路、风格方向</p>
-            </article>
-            <article class="feature-item">
-              <div class="icon-wrapper" aria-hidden="true">
-                <svg-icon icon-class="AImodeling" class="icon" />
-              </div>
-              <h3 class="title">图转3D模型</h3>
-              <p class="desc">一张图生成可编辑的3D模型，反向捕捉空间关系</p>
-            </article>
+          <!-- 逐步开放功能 -->
+          <div class="link-column">
+            <h3>逐步开放</h3>
+            <ul>
+              <li>
+                <a href="#" aria-label="即将推出的图转视频功能">图转视频</a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  aria-label="即将推出的AI跨生态设计功能"
+                >AI跨生态设计</a>
+              </li>
+              <li>
+                <a href="#" aria-label="即将推出的图转3D模型功能">图转3D模型</a>
+              </li>
+            </ul>
           </div>
-        </div>
 
-        <!-- 下半部分：页脚信息 -->
-        <footer class="image-block-4-right" role="contentinfo">
-          <div class="footer-info">
-            <img class="logo" src="@/assets/images/dashorard-logo-white.png" alt="GAIAHubs - 专业空间AI工具平台Logo" width="501"
-              height="84">
-            <p class="desc">
-              GAIAHubs 是空间领域的AI工具平台，集成 AIGC 生成、语义分割与智能识别功能，助力高效完成设计草图、空间分析与图像处理，提升设计师与团队的创作效率。
-            </p>
-            <address class="contact-info">
-              <p class="contact">
-                电子邮箱：<a href="mailto:contact@gaiass.com" rel="noopener">contact@gaiass.com</a>
-              </p>
-              <p class="address">
-                公司地址：深圳市南山区粤海街道高新区社区科技南八路2号豪威科技大厦15F
-              </p>
+          <!-- 关于我们 & 安全 -->
+          <div class="link-column">
+            <h3>关于我们 & 安全</h3>
+            <ul>
+              <li><a href="/aboutUs" aria-label="了解关于我们">关于我们</a></li>
+              <li>
+                <a href="/privacyPolicy" aria-label="查看隐私政策">隐私政策</a>
+              </li>
+              <li>
+                <a href="/termOfservice" aria-label="查看用户协议">用户协议</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- 联系方式与公司地址 -->
+          <div class="link-column">
+            <h3>联系方式</h3>
+            <ul>
+              <li>
+                <a
+                  href="mailto:contact@gaiass.com"
+                  aria-label="发送邮件到contact@gaiass.com"
+                >
+                  contact@gaiass.com
+                </a>
+              </li>
+            </ul>
+
+            <h4>联系电话</h4>
+            <ul>
+              <li>
+                <a href="tel:+8618680308101" aria-label="拨打联系电话">
+                  +86-186 8030 8101
+                </a>
+              </li>
+            </ul>
+
+            <h4>公司地址</h4>
+            <address>
+              深圳市南山区粤海街道海德社区科技南八路2号豪威科技大厦15B4
             </address>
           </div>
-          <p class="copyright"><span>©2025 深石（深圳）智能科技有限公司版权所有</span> <span style="margin-left: 40px;">粤ICP备
-              2025438620号</span></p>
-        </footer>
+        </div>
       </div>
-    </section>
-
+    </footer>
   </div>
 </template>
 
@@ -196,630 +146,467 @@
 import { mapGetters } from 'vuex';
 
 export default {
-  name: 'Dashboard',
-  data() {
-    return {
-      activeImage: 'birdview', // 默认图像，可以根据需要切换
-      currentView: 'psd_segmentation',
-      sliderX: 50, // 初始中间位置
-      dragging: false,
-    };
+  name: 'Homepage',
+  metaInfo: {
+    title: 'GAIAHubs - 空间AI工具平台 | Spatial AIGC生成平台',
+    titleTemplate: '%s',
+    meta: [
+      {
+        name: 'description',
+        content:
+          'GAIAHubs是专业的空间AI工具平台，提供草图生图、语义分割、PSD分层等AIGC功能，覆盖鸟瞰、人视、平面、室内多种视角，重塑您的图像工作流程。'
+      },
+      {
+        name: 'keywords',
+        content:
+          'GAIAHubs, 空间AI, AIGC, 图像生成, 语义分割, PSD分层, 草图生图, 建筑设计, 室内设计, 空间设计'
+      },
+      {
+        property: 'og:title',
+        content: 'GAIAHubs - 空间AI工具平台 | Spatial AIGC生成平台'
+      },
+      {
+        property: 'og:description',
+        content:
+          'GAIAHubs是专业的空间AI工具平台，提供草图生图、语义分割、PSD分层等AIGC功能，覆盖鸟瞰、人视、平面、室内多种视角，重塑您的图像工作流程。'
+      },
+      {
+        property: 'og:type',
+        content: 'website'
+      },
+      {
+        name: 'robots',
+        content: 'index, follow'
+      },
+      {
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1.0'
+      }
+    ],
+    link: [
+      {
+        rel: 'canonical',
+        href: 'https://gaiahubs.com'
+      }
+    ]
   },
   computed: {
     ...mapGetters(['name'])
   },
   methods: {
-    handleGenerate() {
+    handleStartCreate() {
       this.$router.push('/generate');
-    },
-    // 第二屏
-    changeImage(type) {
-      this.activeImage = type;
-    },
-    // 第三屏
-    changeView(type) {
-      this.currentView = type;
-    },
-
-    // SEO优化：为生成类型提供友好的标签
-    getImageTypeLabel(type) {
-      const typeMap = {
-        'sketch_generate': '草图生成',
-        'cloud_generate': '点云生成',
-        'psd_segmentation': '图像分割',
-        'indoor': '室内空间',
-        'outdoor': '室外场景',
-        'birdview': '俯视图',
-        'eyeview': '透视图',
-        'planview': '平面图'
-      };
-      return typeMap[type] || '智能设计';
-    },
-
-    // SEO优化：为功能视图提供友好的标签
-    getFunctionLabel(view) {
-      const functionMap = {
-        'indoor': '室内设计',
-        'birdview': '鸟瞰设计',
-        'eyeview': '透视设计',
-        'planview': '平面设计',
-        'psd_segmentation': 'PSD分层',
-        'sketch_generate': '草图生成',
-        'multi_view_scene': '多视角场景',
-        'cloud_generate': '云端生成'
-      };
-      return functionMap[view] || '空间设计';
-    },
-    startDrag(e) {
-      this.dragging = true;
-      document.addEventListener('mousemove', this.onDrag);
-      document.addEventListener('mouseup', this.stopDrag);
-      document.addEventListener('touchmove', this.onDrag, { passive: false });
-      document.addEventListener('touchend', this.stopDrag);
-    },
-    onDrag(e) {
-      if (!this.dragging) return;
-      const wrapper = this.$el.querySelector('.compare-wrapper');
-      const rect = wrapper.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const x = clientX - rect.left;
-      this.sliderX = Math.max(0, Math.min((x / rect.width) * 100, 100));
-    },
-    stopDrag() {
-      this.dragging = false;
-      document.removeEventListener('mousemove', this.onDrag);
-      document.removeEventListener('mouseup', this.stopDrag);
-      document.removeEventListener('touchmove', this.onDrag);
-      document.removeEventListener('touchend', this.stopDrag);
-    },
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+// 字体定义
 @font-face {
-  font-family: 'Lora';
-  src: url('~@/assets/fonts/Lora-Bold.woff2') format('woff2'),
-    url('~@/assets/fonts/Lora-Bold.woff') format('woff'),
-    url('~@/assets/fonts/Lora-Bold.ttf') format('truetype');
-  font-weight: bold;
+  font-family: "Lora";
+  src: url("~@/assets/fonts/Lora-Bold.woff2") format("woff2"),
+    url("~@/assets/fonts/Lora-Bold.woff") format("woff"),
+    url("~@/assets/fonts/Lora-Bold.ttf") format("truetype");
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
-/* SEO优化：隐藏视觉元素但保持可访问性 */
-.visually-hidden {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0, 0, 0, 0) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
+// 全局容器
+.homepage-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* 禁止页面所有文字选中，鼠标光标显示普通箭头 */
-* {
-  /* user-select: none !important; */
-  /* 禁止选中 */
-  /* cursor: default !important; */
-  /* 光标为默认箭头 */
+// Hero Section 样式
+.hero-section {
+  flex: 1;
+  min-height: 70vh;
+  background: url("~@/assets/images/dashboard-1.jpg") no-repeat center center;
+  background-size: cover;
+  background-attachment: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  // 添加遮罩层提高文本可读性
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+  }
 }
 
-/* SEO优化：确保按钮元素正常显示 */
-button.title {
-  background: none;
-  border: none;
-  color: inherit;
-  font: inherit;
-  text-align: inherit;
-  cursor: pointer !important;
-  display: block;
-}
-
-/* SEO优化：功能按钮样式 */
-.function-item button {
-  background: none;
-  border: none;
-  color: inherit;
-  font: inherit;
-  text-align: inherit;
-  cursor: pointer !important;
-  width: 100%;
-  display: block;
-  padding: 0;
-}
-
-/* SEO优化：联系信息样式 */
-.contact-info {
-  font-style: normal;
-}
-
-.contact-info a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.contact-info a:hover {
-  text-decoration: underline;
-}
-
-/* 第一屏优化 */
 .hero-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
-}
-
-.scroll-container {
-  height: auto;
-  overflow-y: visible;
-  /* 不再需要强制 scroll */
-
-  -ms-overflow-style: none;
-  /* IE/Edge */
-  scrollbar-width: none;
-  /* Firefox */
-}
-
-.scroll-container::-webkit-scrollbar {
-  display: none;
-  /* Chrome Safari */
-}
-
-section {
-  /* padding: 80px 0; 或根据需要设置间距 */
   position: relative;
-  height: auto;
-  /* 取消强制占满视口 */
+  z-index: 2;
+  text-align: center;
+  max-width: 900px;
+  padding: 0 20px;
 }
 
-/* 第一屏 */
+.hero-text {
+  margin-bottom: 40px;
+}
 
-.fullscreen-section {
-  background: url('~@/assets/images/dashboard-1.jpg') no-repeat center center;
-  background-size: cover;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  height: 100vh;
+.main-title {
+  font-family: "Lora", "Noto Serif SC", serif;
+  font-size: clamp(36px, 5vw, 72px);
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 20px 0;
+  line-height: 1.2;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  letter-spacing: -0.02em;
+}
 
-  .fullscreen-text {
-    color: #fff;
+.subtitle {
+  font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: clamp(24px, 3vw, 48px);
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 24px 0;
+  line-height: 1.3;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.description {
+  font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: clamp(16px, 1.5vw, 20px);
+  font-weight: 400;
+  color: #e0e0e0;
+  margin: 0 0 12px 0;
+  line-height: 1.6;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.cta-section {
+  margin-top: 60px;
+}
+
+.cta-button {
+  font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1.5vw;
+  font-weight: 500;
+  height: 50px;
+  padding: 0 100px;
+  border-radius: 25px;
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-width: 320px;
+
+  &:hover {
+    background: #f5f5f5;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
-  .title-main {
-    font-size: 72px;
-    color: #fff;
-    font-family: 'Lora', "Noto Serif SC", serif;
-    font-weight: bold;
-    line-height: 101px
-  }
-
-  .subtitle {
-    margin-top: 3vw;
-    margin-bottom: 22px;
-    font-size: 3.01vw;
-    ;
-    font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: bold;
-    line-height: 68px
-  }
-
-  .description {
-    font-size: 1.05vw;
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: bold;
-    line-height: 1.45vw
-  }
-
-  .generate-btn-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-top: 11vw;
-
-    .generate-btn {
-      height: 60px;
-      line-height: 13px;
-      border-radius: 25px;
-      font-size: 1.45vw;
-      padding: 0 38px 0 38px;
-      cursor: pointer ! important;
-    }
-
-    .generate-btn:hover {
-      background-color: #000 !important;
-      color: #fff !important;
-      border: none !important;
-    }
-  }
-
-  ::v-deep .el-button {
-    background: #fff !important;
-    width: 475px;
-    color: #000;
+  &:active {
+    transform: translateY(0);
   }
 }
 
-.normal-section {
-  position: relative;
-  height: 100vh;
-  /* background: #000; */
+// Footer Section 样式
+.footer-section {
+  background: #1a1a1a;
+  color: #ffffff;
+  padding: 60px 0 40px;
 }
 
-.section-content.no-gap {
-  height: 100vh;
-  display: flex;
+.footer-content {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 60px;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 120px;
+  align-items: start;
   justify-content: space-between;
-  align-items: center;
-  padding: 8.5vh 4vw 4vh 2.5vw;
-  box-sizing: border-box;
 }
 
-/* 第二屏 */
-.image-block-left {
-  height: 100%;
-  background: url('~@/assets/images/002.jpg') no-repeat center center;
-  background-size: cover;
-  width: 130px;
-
-  .image-text {
-    color: #fff;
-    font-size: 1.45vw;
-    writing-mode: vertical-rl;
-    /* 从上到下，从右到左 */
-    text-orientation: upright;
-    /* 每个字符直立显示（推荐） */
-    display: flex;
-    padding-bottom: 80px;
-    height: 100%;
-    justify-content: space-evenly;
-    width: 100%;
-    align-items: anchor-center;
-    font-family: 'Lora', "Noto Serif SC", serif;
-    font-weight: bold;
-
-    .title {
-      padding: 10px;
-      border-right: 5px solid transparent;
-      /* 初始透明 */
-      transition: border-right 0.3s ease;
-      /* 平滑过渡 */
-    }
-
-    /* 悬停样式 */
-    .title:hover,
-    .title.active {
-      border-right: 5px solid #fff;
-    }
-  }
-}
-
-.compare-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  user-select: none;
-  overflow: hidden;
-}
-
-.image-block-base,
-.image-block-top {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.image-block-overlay {
-  height: 100%;
-  overflow: hidden;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.image-block-top{
-}
-
-.slider-handle {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  width: 2px;
-  background: #fff;
-  z-index: 20;
-  cursor: ew-resize;
-}
-
-/* 滑块小球 */
-.slider-dot {
-  position: relative;
-  top: 50%;
-  left: -1.1vw;
-  /* 调整滑块位置，可根据需要改 */
-  transform: translateY(-50%);
-  width: 2.2vw;
-  height: 2.2vw;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 50%;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-  cursor: ew-resize;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  /* padding: 0 8px; */
-  font-size: 22px;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: bold;
-  user-select: none;
-}
-
-.slider-dot:hover {
-  background: rgba(255, 255, 255, 0.5);
-  box-shadow: 0 0 14px rgba(255, 255, 255, 0.7);
-}
-
-/* 四张图 */
-.image-block-base.birdview {
-  background-image: url('~@/assets/images/birdview.jpg');
-}
-
-.image-block-top.birdview_generate {
-  background-image: url('~@/assets/images/birdview_generate.jpg');
-}
-
-.image-block-base.eyeview {
-  background-image: url('~@/assets/images/eyeview.jpg');
-}
-
-.image-block-top.eyeview_generate {
-  background-image: url('~@/assets/images/eyeview_generate.jpg');
-}
-
-.image-block-base.planview {
-  background-image: url('~@/assets/images/planview.jpg');
-}
-
-.image-block-top.planview_generate {
-  background-image: url('~@/assets/images/planview_generate.jpg');
-}
-
-.image-block-base.indoor {
-  background-image: url('~@/assets/images/indoor.jpg');
-}
-
-.image-block-top.indoor_generate {
-  background-image: url('~@/assets/images/indoor_generate.jpg');
-}
-
-.image-block-3-left {
-  height: 100%;
-  background: url('~@/assets/images/003.jpg') no-repeat center center;
-  background-size: cover;
-  width: 30.5vw;
-
-  .core-functions {
-    color: #fff;
-    text-align: center;
-    padding: 0 4.5;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+.company-info {
+  .company-logo {
+    width: clamp(200px, 20vw, 300px);
+    height: auto;
+    margin-bottom: 24px;
   }
 
-  .title {
-    font-size: 3.01vw;
-    ;
-    font-weight: bold;
-    margin-bottom: 56px;
+  .company-description {
     font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: bold;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #cccccc;
+    margin-bottom: 32px;
+    max-width: 400px;
   }
 
-  .function-list {
+  .copyright-info {
+    font-style: normal;
+
+    p {
+      font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 12px;
+      color: #999999;
+      margin: 0 0 8px 0;
+      line-height: 1.5;
+    }
+  }
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 60px;
+  justify-content: space-between;
+}
+
+.link-column {
+  h3 {
+    font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 16px 0;
+    line-height: 1.4;
+  }
+
+  h4 {
+    font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 24px 0 12px 0;
+    line-height: 1.4;
+  }
+
+  ul {
     list-style: none;
     padding: 0;
     margin: 0;
+
+    li {
+      margin-bottom: 12px;
+
+      a {
+        font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial,
+          sans-serif;
+        font-size: 14px;
+        color: #cccccc;
+        text-decoration: none;
+        line-height: 1.5;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: #ffffff;
+          text-decoration: underline;
+        }
+
+        &:focus {
+          outline: 2px solid #ffffff;
+          outline-offset: 2px;
+        }
+      }
+    }
   }
 
-  .function-item {
-    margin-bottom: 3vh;
-    padding-top: 3vh;
-    border-top: 2px solid #ccc;
-    /* padding: 40px 87px; */
-  }
-
-  .function-item:first-child {
-    border-top: none;
-  }
-
-  .item-title {
-    font-size: 1.45vw;
-    margin-bottom: 5px;
+  address {
     font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: 500;
-    color: rgba(239, 239, 239, 1);
-    width: fit-content;
+    font-size: 14px;
+    font-style: normal;
+    color: #cccccc;
+    line-height: 1.6;
+    margin-top: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// 响应式设计
+@media (max-width: 1024px) {
+  .hero-section {
+    min-height: 60vh;
+    background-attachment: scroll;
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
     text-align: center;
-    margin: 0 auto;
-    /* 初始透明 */
-    border-bottom: 5px solid transparent;
-    /* 平滑过渡 */
-    transition: border-bottom 0.3s ease;
   }
 
-  .item-title.active,
-  .item-title:hover {
-    border-bottom: 5px solid rgba(255, 255, 255, 1);
-  }
-}
-
-.item-title:first-child {
-  border-top: none;
-}
-
-.item-desc {
-  font-size: 1.05vw;
-  color: rgba(206, 206, 206, 1);
-}
-
-.image-block-3-right {
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  transition: background-image 0.5s ease-in-out;
-  flex: 1;
-}
-
-.image-block-3-right.psd_segmentation {
-  background-image: url('~@/assets/images/psd_segmentation.jpg');
-}
-
-.image-block-3-right.sketch_generate {
-  background-image: url('~@/assets/images/sketch_generate.jpg');
-}
-
-.image-block-3-right.multi_view_scene {
-  background-image: url('~@/assets/images/multi_view_scene.jpg');
-}
-
-.image-block-3-right.cloud_generate {
-  background-image: url('~@/assets/images/cloud_generate.jpg');
-}
-
-img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-}
-
-/* 第四屏 */
-.full-section {
-  padding: 0 !important;
-  flex-direction: column;
-
-  .image-block-4-left {
-    width: 100%;
-    height: 69vh;
-    background: url('~@/assets/images/dashboard-1.jpg') no-repeat center center;
-    background-size: cover;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding-top: 5vw;
-    justify-content: space-evenly;
-
-    .subtitle {
-      font-size: 2.5vw;
-      color: #fff;
-      font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    }
-
-
-
-    .features-row {
-      display: flex;
-      justify-content: space-around;
-      width: 100%;
-      padding: 0 40px;
-
-      .feature-item {
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-
-        .icon-wrapper {
-          width: 5.3vw;
-          height: 9vh;
-          background-color: #fff;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          border-radius: 1.05vw;
-
-        }
-
-        .icon {
-          width: 4vw;
-          height: 6vh;
-
-        }
-
-        .title {
-          font-size: 22px;
-          font-weight: bold;
-          color: #fff;
-          height: 53px;
-          line-height: 50px;
-          margin-top: 1.05vw;
-          margin-bottom: 0
-        }
-
-        .desc {
-          font-size: 16px;
-          line-height: 24px;
-          color: rgba(255, 255, 255, 0.85);
-          margin-top: 0;
-          margin-bottom: 0
-        }
-      }
+  .company-info {
+    .company-description {
+      max-width: 100%;
     }
   }
 
-  .image-block-4-right {
-    width: 100%;
-    background: #1a1a1a;
-    padding: 3.5vh 4vw;
-    color: #fff;
-    flex: 1;
+  .footer-links {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+}
 
-    .footer-info {
-      font-size: 14px;
-      line-height: 22px;
+@media (max-width: 768px) {
+  .hero-section {
+    min-height: 50vh;
+    padding: 40px 0;
+  }
 
-      .logo {
-        margin-bottom: 18px;
-        width: 26vw;
-        /* height: 7vh; */
-      }
+  .hero-content {
+    padding: 0 16px;
+  }
 
-      .desc {
-        margin-bottom: 22px;
-        color: #ffff;
-      }
+  .hero-text {
+    margin-bottom: 32px;
+  }
 
-      .contact,
-      .address {
-        color: #fff;
-        margin-bottom: 4px;
-      }
+  .cta-section {
+    margin-top: 32px;
+  }
 
+  .cta-button {
+    height: 48px;
+    padding: 0 32px;
+    font-size: 16px;
+  }
+
+  .footer-section {
+    padding: 40px 0 30px;
+  }
+
+  .footer-content {
+    padding: 0 16px;
+    gap: 32px;
+  }
+
+  .footer-links {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    text-align: left;
+  }
+
+  .link-column {
+    h3 {
+      font-size: 15px;
+      margin-bottom: 12px;
     }
 
-    .copyright {
-      text-align: center !important;
-      color: #fff;
-      margin-bottom: 4px;
+    ul li {
+      margin-bottom: 10px;
+
+      a {
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    min-height: 40vh;
+    padding: 30px 0;
+  }
+
+  .hero-text {
+    margin-bottom: 24px;
+  }
+
+  .cta-section {
+    margin-top: 24px;
+  }
+
+  .cta-button {
+    height: 44px;
+    padding: 0 28px;
+    font-size: 15px;
+    border-radius: 22px;
+  }
+
+  .footer-section {
+    padding: 32px 0 24px;
+  }
+
+  .company-info {
+    .company-logo {
+      margin-bottom: 20px;
+    }
+
+    .company-description {
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+
+    .copyright-info p {
+      font-size: 11px;
+    }
+  }
+}
+
+// 打印样式优化
+@media print {
+  .hero-section {
+    background: none;
+    color: #000000;
+    min-height: auto;
+
+    &::before {
+      display: none;
     }
   }
 
+  .main-title,
+  .subtitle,
+  .description {
+    color: #000000;
+    text-shadow: none;
+  }
+
+  .cta-button {
+    display: none;
+  }
+
+  .footer-section {
+    background: none;
+    color: #000000;
+  }
+}
+
+// 高对比度模式支持
+@media (prefers-contrast: high) {
+  .hero-section::before {
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  .description {
+    color: #ffffff;
+  }
+
+  .cta-button {
+    border: 2px solid #333333;
+  }
+}
+
+// 减少动画模式支持
+@media (prefers-reduced-motion: reduce) {
+  .cta-button,
+  .link-column a {
+    transition: none;
+  }
+
+  .hero-section {
+    background-attachment: scroll;
+  }
 }
 </style>

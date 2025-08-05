@@ -5,7 +5,7 @@
       <!-- 如有正式 LOGO 图片可将 src 替换为真实地址 -->
       <img
         class="logo"
-        src="@/assets/images/gaia.png"
+        src="@/assets/images/dashorard-logo.png"
         alt="GAIAHubs"
         width="300px"
         height="auto"
@@ -20,7 +20,12 @@
             所在地区仅支持手机号注册，拥有GIAI HUB账号，即可使用GAIA
             HUB进行创作。
           </div>
-          <el-form ref="registerForm" :model="form" class="phone-input-line" :rules="rules">
+          <el-form
+            ref="registerForm"
+            :model="form"
+            class="phone-input-line"
+            :rules="rules"
+          >
             <div class="phone-input">
               <el-form-item prop="phonePrefix" class="phone-prefix">
                 <el-select
@@ -34,10 +39,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item prop="phone" class="phone">
-                <el-input
-                  v-model="form.phone"
-                  placeholder="请输入手机号"
-                />
+                <el-input v-model="form.phone" placeholder="请输入手机号" />
               </el-form-item>
             </div>
             <el-form-item prop="password" class="password">
@@ -79,7 +81,13 @@
             </el-form-item>
           </el-form>
           <div class="register-desc">
-            注册即代表已阅读并同意<span class="agree-word" @click="handleTermOfservice">服务条款</span>和<span class="agree-word" @click="handlePrivacyPolicy">隐私政策</span>
+            注册即代表已阅读并同意<span
+              class="agree-word"
+              @click="handleTermOfservice"
+            >服务条款</span>和<span
+              class="agree-word"
+              @click="handlePrivacyPolicy"
+            >隐私政策</span>
           </div>
           <!-- 注册按钮 -->
           <el-button
@@ -117,25 +125,48 @@ export default {
       rules: {
         phone: [
           { required: true, message: '请输入手机号', trigger: 'blur' },
-          { pattern: /^1[3-9]\d{9}$/, message: '请输入有效的手机号', trigger: 'blur' }
+          {
+            pattern: /^1[3-9]\d{9}$/,
+            message: '请输入有效的手机号',
+            trigger: 'blur'
+          }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
           // 密码长度不少于8个字符，最多不超过20个字符。
           // 密码必须包含至少三类字符类型：大写字母、小写字母、数字、特殊符号: !@#$%^&*+-_=/?。
-          { min: 8, max: 20, message: '密码长度必须在8-20位之间', trigger: 'blur' },
-          { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*+-_=/?])[A-Za-z\d!@#$%^&*+-_=/?]{8,20}$/, message: '密码必须包含至少三类字符类型：大写字母、小写字母、数字、特殊符号: !@#$%^&*+-_=/?', trigger: 'blur' }
+          {
+            min: 8,
+            max: 20,
+            message: '密码长度必须在8-20位之间',
+            trigger: 'blur'
+          },
+          {
+            pattern:
+              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*+-_=/?])[A-Za-z\d!@#$%^&*+-_=/?]{8,20}$/,
+            message:
+              '密码必须包含至少三类字符类型：大写字母、小写字母、数字、特殊符号: !@#$%^&*+-_=/?',
+            trigger: 'blur'
+          }
         ],
         confirmPassword: [
           { required: true, message: '请再次输入密码', trigger: 'blur' },
-          { min: 8, max: 20, message: '密码长度必须在8-20位之间', trigger: 'blur' },
-          { validator: (rule, value, callback) => {
-            if (value !== this.form.password) {
-              callback(new Error('两次输入的密码不一致'));
-            } else {
-              callback();
-            }
-          }, trigger: 'blur' }
+          {
+            min: 8,
+            max: 20,
+            message: '密码长度必须在8-20位之间',
+            trigger: 'blur'
+          },
+          {
+            validator: (rule, value, callback) => {
+              if (value !== this.form.password) {
+                callback(new Error('两次输入的密码不一致'));
+              } else {
+                callback();
+              }
+            },
+            trigger: 'blur'
+          }
         ],
         code: [
           { required: true, message: '请输入验证码', trigger: 'blur' },
@@ -280,19 +311,19 @@ export default {
 .phone-input-line {
   width: 320px;
 
-  .phone-input{
+  .phone-input {
     display: flex;
 
-    .phone-prefix{
+    .phone-prefix {
       flex: 1;
     }
-    .phone{
+    .phone {
       flex: 3;
     }
   }
-  .password{
-      margin-bottom:33px;
-    }
+  .password {
+    margin-bottom: 33px;
+  }
 }
 .tab-content {
   width: 100%;
