@@ -65,6 +65,10 @@ module.exports = {
     // ],
     proxy: {
       // 配置跨域
+      '/generated_images': {
+        target: 'https://sd-files-storage-1324196168.cos.ap-nanjing.myqcloud.com',
+        changeOrigin: true
+      },
       '/storage': {
         target: 'http://47.112.1.202',
         changeOrigin: true

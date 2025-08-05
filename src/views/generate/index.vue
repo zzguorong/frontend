@@ -1382,7 +1382,7 @@ export default {
         generatePNG(this.selectedThumbnailItem.id)
           .then((res) => {
             const url = res.data.url;
-            const filename = res.data.name || `generated_image_${Date.now()}.psd`;
+            const filename = res.data.name || `generated_image_${Date.now()}.png`;
             downloadFile(url, filename)
               .then(() => {
                 this.pngDownloading = false;
