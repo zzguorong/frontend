@@ -5,7 +5,7 @@
       <!-- 如有正式 LOGO 图片可将 src 替换为真实地址 -->
       <img
         class="logo"
-        src="@/assets/images/gaia.png"
+        src="@/assets/images/dashorard-logo.png"
         alt="GAIAHubs"
         width="300px"
         height="auto"

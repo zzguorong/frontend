@@ -182,6 +182,7 @@ html {
 .page-container {
   overflow-x: hidden;
   scroll-behavior: smooth;
+  background-color: #FFFFFF;
 }
 
 .section {
@@ -243,7 +244,7 @@ html {
   p {
     font-size: 1.5vw;
     line-height: 1.6;
-    color: #666;
+    color: #000;
     margin-bottom: 16px;
 
     // 响应式字体
@@ -293,11 +294,11 @@ html {
 
 // 各部分样式
 .about-gaiaihubs {
-  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  /* background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); */
 }
 
 .tech-empower {
-  background: linear-gradient(135deg, #ffffff 0%, #f1f3f4 100%);
+  /* background: linear-gradient(135deg, #ffffff 0%, #f1f3f4 100%); */
 
   .card-container {
     display: flex;
@@ -363,7 +364,7 @@ html {
 }
 
 .core-values {
-  background: linear-gradient(135deg, #f1f3f4 0%, #ffffff 100%);
+  /* background: linear-gradient(135deg, #f1f3f4 0%, #ffffff 100%); */
 
   .content {
     @media (max-width: 768px) {
@@ -375,11 +376,10 @@ html {
 }
 
 .vision-promise {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  /* background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); */
 }
 
 .join-us {
-  background: #000;
 
   .join-us-img {
     width: 100%;

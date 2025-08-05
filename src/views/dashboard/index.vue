@@ -5,9 +5,11 @@
       <div class="hero-content">
         <header class="hero-text">
           <h1 class="main-title">GAIAHubs: Spatial AIGC</h1>
-          <h2 class="subtitle">空间的想象 | AI来实现</h2>
+          <h2 class="subtitle">空间的想象，AI来实现</h2>
           <p class="description">草图，生图，语义分割一站式生成支持PSD分层</p>
-          <p class="description">覆盖鸟瞰、人视、平面、室内，重塑你的图像工作流</p>
+          <p class="description">
+            覆盖鸟瞰、人视、平面、室内，重塑你的图像工作流
+          </p>
         </header>
 
         <nav class="cta-section" role="navigation" aria-label="主要操作">
@@ -37,7 +39,8 @@
             height="84"
           >
           <p class="company-description">
-            GAIAHubs 是空间领域的AI工具平台，集成 AIGC 生成、语义分割与智能识别功能，助力高效完成设计草图、空间分析与图像处理，提升设计师与团队的创作效率。
+            GAIAHubs 是空间领域的AI工具平台，集成 AIGC
+            生成、语义分割与智能识别功能，助力高效完成设计草图、空间分析与图像处理，提升设计师与团队的创作效率。
           </p>
           <address class="copyright-info">
             <p>©2025 深石（深圳）智能科技有限公司版权所有</p>
@@ -51,10 +54,24 @@
           <div class="link-column">
             <h3>核心功能</h3>
             <ul>
-              <li><a href="#" aria-label="了解PSD下载和语义分割功能">PSD下载+语义分割</a></li>
-              <li><a href="#" aria-label="了解多种输入方式生成功能">支持草图/关键词/模型图生成</a></li>
-              <li><a href="#" aria-label="了解多视角场景覆盖">多视角场景覆盖</a></li>
-              <li><a href="#" aria-label="了解云端生成功能">快速响应云端生成</a></li>
+              <li>
+                <a
+                  href="#"
+                  aria-label="了解PSD下载和语义分割功能"
+                >PSD下载+语义分割</a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  aria-label="了解多种输入方式生成功能"
+                >支持草图/关键词/模型图生成</a>
+              </li>
+              <li>
+                <a href="#" aria-label="了解多视角场景覆盖">多视角场景覆盖</a>
+              </li>
+              <li>
+                <a href="#" aria-label="了解云端生成功能">快速响应云端生成</a>
+              </li>
             </ul>
           </div>
 
@@ -62,9 +79,18 @@
           <div class="link-column">
             <h3>逐步开放</h3>
             <ul>
-              <li><a href="#" aria-label="即将推出的图转视频功能">图转视频</a></li>
-              <li><a href="#" aria-label="即将推出的AI跨生态设计功能">AI跨生态设计</a></li>
-              <li><a href="#" aria-label="即将推出的图转3D模型功能">图转3D模型</a></li>
+              <li>
+                <a href="#" aria-label="即将推出的图转视频功能">图转视频</a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  aria-label="即将推出的AI跨生态设计功能"
+                >AI跨生态设计</a>
+              </li>
+              <li>
+                <a href="#" aria-label="即将推出的图转3D模型功能">图转3D模型</a>
+              </li>
             </ul>
           </div>
 
@@ -73,8 +99,12 @@
             <h3>关于我们 & 安全</h3>
             <ul>
               <li><a href="/aboutUs" aria-label="了解关于我们">关于我们</a></li>
-              <li><a href="/privacyPolicy" aria-label="查看隐私政策">隐私政策</a></li>
-              <li><a href="/termOfservice" aria-label="查看用户协议">用户协议</a></li>
+              <li>
+                <a href="/privacyPolicy" aria-label="查看隐私政策">隐私政策</a>
+              </li>
+              <li>
+                <a href="/termOfservice" aria-label="查看用户协议">用户协议</a>
+              </li>
             </ul>
           </div>
 
@@ -83,7 +113,10 @@
             <h3>联系方式</h3>
             <ul>
               <li>
-                <a href="mailto:contact@gaiass.com" aria-label="发送邮件到contact@gaiass.com">
+                <a
+                  href="mailto:contact@gaiass.com"
+                  aria-label="发送邮件到contact@gaiass.com"
+                >
                   contact@gaiass.com
                 </a>
               </li>
@@ -99,7 +132,9 @@
             </ul>
 
             <h4>公司地址</h4>
-            <address>深圳市南山区粤海街道海德社区科技南八路2号豪威科技大厦15B4</address>
+            <address>
+              深圳市南山区粤海街道海德社区科技南八路2号豪威科技大厦15B4
+            </address>
           </div>
         </div>
       </div>
@@ -118,11 +153,13 @@ export default {
     meta: [
       {
         name: 'description',
-        content: 'GAIAHubs是专业的空间AI工具平台，提供草图生图、语义分割、PSD分层等AIGC功能，覆盖鸟瞰、人视、平面、室内多种视角，重塑您的图像工作流程。'
+        content:
+          'GAIAHubs是专业的空间AI工具平台，提供草图生图、语义分割、PSD分层等AIGC功能，覆盖鸟瞰、人视、平面、室内多种视角，重塑您的图像工作流程。'
       },
       {
         name: 'keywords',
-        content: 'GAIAHubs, 空间AI, AIGC, 图像生成, 语义分割, PSD分层, 草图生图, 建筑设计, 室内设计, 空间设计'
+        content:
+          'GAIAHubs, 空间AI, AIGC, 图像生成, 语义分割, PSD分层, 草图生图, 建筑设计, 室内设计, 空间设计'
       },
       {
         property: 'og:title',
@@ -130,7 +167,8 @@ export default {
       },
       {
         property: 'og:description',
-        content: 'GAIAHubs是专业的空间AI工具平台，提供草图生图、语义分割、PSD分层等AIGC功能，覆盖鸟瞰、人视、平面、室内多种视角，重塑您的图像工作流程。'
+        content:
+          'GAIAHubs是专业的空间AI工具平台，提供草图生图、语义分割、PSD分层等AIGC功能，覆盖鸟瞰、人视、平面、室内多种视角，重塑您的图像工作流程。'
       },
       {
         property: 'og:type',
@@ -166,10 +204,10 @@ export default {
 <style lang="scss" scoped>
 // 字体定义
 @font-face {
-  font-family: 'Lora';
-  src: url('~@/assets/fonts/Lora-Bold.woff2') format('woff2'),
-       url('~@/assets/fonts/Lora-Bold.woff') format('woff'),
-       url('~@/assets/fonts/Lora-Bold.ttf') format('truetype');
+  font-family: "Lora";
+  src: url("~@/assets/fonts/Lora-Bold.woff2") format("woff2"),
+    url("~@/assets/fonts/Lora-Bold.woff") format("woff"),
+    url("~@/assets/fonts/Lora-Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -186,7 +224,7 @@ export default {
 .hero-section {
   flex: 1;
   min-height: 70vh;
-  background: url('~@/assets/images/dashboard-1.jpg') no-repeat center center;
+  background: url("~@/assets/images/dashboard-1.jpg") no-repeat center center;
   background-size: cover;
   background-attachment: fixed;
   display: flex;
@@ -196,7 +234,7 @@ export default {
 
   // 添加遮罩层提高文本可读性
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -220,7 +258,7 @@ export default {
 }
 
 .main-title {
-  font-family: 'Lora', 'Noto Serif SC', serif;
+  font-family: "Lora", "Noto Serif SC", serif;
   font-size: clamp(36px, 5vw, 72px);
   font-weight: 700;
   color: #ffffff;
@@ -231,7 +269,7 @@ export default {
 }
 
 .subtitle {
-  font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: clamp(24px, 3vw, 48px);
   font-weight: 600;
   color: #ffffff;
@@ -241,7 +279,7 @@ export default {
 }
 
 .description {
-  font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: clamp(16px, 1.5vw, 20px);
   font-weight: 400;
   color: #e0e0e0;
@@ -255,8 +293,8 @@ export default {
 }
 
 .cta-button {
-  font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: clamp(16px, 1.2vw, 18px);
+  font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1.5vw;
   font-weight: 500;
   height: 50px;
   padding: 0 100px;
@@ -305,7 +343,7 @@ export default {
   }
 
   .company-description {
-    font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 1.7;
     color: #cccccc;
@@ -317,7 +355,7 @@ export default {
     font-style: normal;
 
     p {
-      font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
       font-size: 12px;
       color: #999999;
       margin: 0 0 8px 0;
@@ -335,7 +373,7 @@ export default {
 
 .link-column {
   h3 {
-    font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 16px;
     font-weight: 600;
     color: #ffffff;
@@ -344,7 +382,7 @@ export default {
   }
 
   h4 {
-    font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
     font-weight: 600;
     color: #ffffff;
@@ -361,7 +399,8 @@ export default {
       margin-bottom: 12px;
 
       a {
-        font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial,
+          sans-serif;
         font-size: 14px;
         color: #cccccc;
         text-decoration: none;
@@ -382,7 +421,7 @@ export default {
   }
 
   address {
-    font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
     font-style: normal;
     color: #cccccc;
