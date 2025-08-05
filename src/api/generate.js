@@ -141,3 +141,29 @@ export function generatePSD(generatedImageId) {
     timeout: 60000 * 5 // 设置为300秒
   });
 }
+
+// 下载PSD文件
+export function downloadPSD(psdId) {
+  return request({
+    url: '/psd/download',
+    method: 'post',
+    data: {
+      psd_id: psdId
+    },
+    // 覆盖全局的超时设置
+    timeout: 60000 * 5 // 设置为300秒
+  });
+}
+
+// 生成PNG
+export function generatePNG(generatedImageId) {
+  return request({
+    url: '/generated_image/download',
+    method: 'post',
+    data: {
+      generated_image_id: generatedImageId
+    },
+    // 覆盖全局的超时设置
+    timeout: 60000 * 5 // 设置为300秒
+  });
+}

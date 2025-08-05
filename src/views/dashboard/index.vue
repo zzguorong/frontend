@@ -339,7 +339,7 @@ export default {
   .company-logo {
     width: clamp(200px, 20vw, 300px);
     height: auto;
-    margin-bottom: 24px;
+    margin-bottom: 9px;
   }
 
   .company-description {
@@ -347,7 +347,7 @@ export default {
     font-size: 14px;
     line-height: 1.7;
     color: #cccccc;
-    margin-bottom: 32px;
+    margin-bottom: 20px;
     max-width: 400px;
   }
 

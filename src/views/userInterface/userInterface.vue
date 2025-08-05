@@ -24,8 +24,12 @@
             <div class="account-form">
               微信绑定
               <template v-if="!userInfo.wechat_openid">
-                <el-button class="btn-wx-check" type="primary" style="width:fit-content"
-                  @click="wechatBindingDialogVisible = true">
+                <el-button
+                  class="btn-wx-check"
+                  type="primary"
+                  style="width:fit-content"
+                  @click="wechatBindingDialogVisible = true"
+                >
                   <span>微信验证</span>
                 </el-button>
               </template>
@@ -40,8 +44,13 @@
         <div class="main-card">
           <div class="password-section">
             <div class="main-card-title">密码管理
-              <el-button class="pwd-btn" type="primary" style="width: fit-content" :loading="loading"
-                @click="handlePasswordValidation">密码验证</el-button>
+              <el-button
+                class="pwd-btn"
+                type="primary"
+                style="width: fit-content"
+                :loading="loading"
+                @click="handlePasswordValidation"
+              >密码验证</el-button>
             </div>
 
             <el-form ref="resetPasswordForm" :model="resetPasswordForm" :rules="resetPasswordFormRules">
@@ -60,8 +69,12 @@
               <div class="account-form">
                 重复输入新密码
                 <el-form-item prop="confirmNewPassword">
-                  <el-input v-model="resetPasswordForm.confirmNewPassword" type="password" show-password
-                    placeholder="请再次输入密码" />
+                  <el-input
+                    v-model="resetPasswordForm.confirmNewPassword"
+                    type="password"
+                    show-password
+                    placeholder="请再次输入密码"
+                  />
                 </el-form-item>
               </div>
             </el-form>
@@ -84,8 +97,11 @@
             <span>我的订阅计划</span>
           </div>
           <div class="plan-info">
-            <div class="plan-title">当前计划 <el-button class="buy-btn" type="text"
-                @click="purchaseVisible = true">购买记录</el-button></div>
+            <div class="plan-title">当前计划 <el-button
+              class="buy-btn"
+              type="text"
+              @click="purchaseVisible = true"
+            >购买记录</el-button></div>
             <div class="plan-name">
               <div class="plan-name-title">订阅计划名称 <span>xxxxx</span></div>
               <div class="plan-name-title">到期时间 <span>xxxxx</span></div>
@@ -145,9 +161,16 @@
       <span class="agree-word footer-link" @click="handlePrivacyPolicy">隐私政策</span>
     </div>
 
-    <el-dialog :visible.sync="wechatBindingDialogVisible" title="微信验证" width="400px"
-      :before-close="handleWechatBindingDialogClose" :show-close="true" :lock-scroll="false" :destroy-on-close="true"
-      @opened="generateWechatLoginQRCode">
+    <el-dialog
+      :visible.sync="wechatBindingDialogVisible"
+      title="微信验证"
+      width="400px"
+      :before-close="handleWechatBindingDialogClose"
+      :show-close="true"
+      :lock-scroll="false"
+      :destroy-on-close="true"
+      @opened="generateWechatLoginQRCode"
+    >
       <div class="wechat-binding-dialog-content">
         <div class="wechat-binding-dialog-body">
           <div id="wechat-login-container" />
@@ -162,20 +185,31 @@
           <span class="purchase-dialog-back" @click="purchaseVisible = false">返回</span>
         </div>
       </template>
-      <el-table :data="tableData" style="width: 100%;  color: #000" height="500" :header-cell-style="{
-        color: '#000',
-        fontWeight: 'normal',
-        background: '#f6f6f6',
-      }" :row-style="setRowStyle" class="custom-row-height">
-        <el-table-column prop="order_no" label="订单号"> </el-table-column>
-        <el-table-column prop="subscriptionName" label="订阅计划名称" width="180">
-        </el-table-column>
-        <el-table-column prop="moneyAmount" label="金额"> </el-table-column>
-        <el-table-column prop="amount" label="数量"> </el-table-column>
-        <el-table-column prop="payment_status" label="支付状态"> </el-table-column>
-        <el-table-column prop="payment_channel.name" label="支付方式"> </el-table-column>
+      <el-table
+        :data="tableData"
+        style="width: 100%;  color: #000"
+        height="500"
+        :header-cell-style="{
+          color: '#000',
+          fontWeight: 'normal',
+          background: '#f6f6f6',
+        }"
+        :row-style="setRowStyle"
+        class="custom-row-height"
+      >
+        <el-table-column prop="order_no" label="订单号" />
+        <el-table-column prop="subscriptionName" label="订阅计划名称" width="180" />
+        <el-table-column prop="moneyAmount" label="金额" />
+        <el-table-column prop="amount" label="数量" />
+        <el-table-column prop="payment_status" label="支付状态" />
+        <el-table-column prop="payment_channel.name" label="支付方式" />
       </el-table>
     </el-dialog>
+
+    <div class="floating-qr">
+      <img src="@/assets/images/yearly-group-qr.png" alt="社群二维码">
+      <div class="floating-qr-text">扫码进入社群</div>
+    </div>
   </div>
 </template>
 
@@ -185,10 +219,11 @@ import {
   getUserInfo
 } from '@/api/generate';
 import { updatePassword } from '@/api/index';
-import { generateRandomString } from '@/utils/index';
 import {
-  getAllOrders, getAllMembershipPlans
+  getAllMembershipPlans,
+  getAllOrders
 } from '@/api/subscription';
+import { generateRandomString } from '@/utils/index';
 export default {
   name: 'UserInterface',
   data() {
@@ -241,7 +276,7 @@ export default {
   methods: {
     // 处理密码验证
     handlePasswordValidation() {
-      this.$refs.resetPasswordForm.validate(async (valid) => {
+      this.$refs.resetPasswordForm.validate(async(valid) => {
         if (valid) {
           try {
             this.loading = true;
@@ -284,6 +319,7 @@ export default {
       // 保存state到会话存储，以便后续验证
       sessionStorage.setItem('wechatLoginState', state);
       // 初始化微信登录二维码
+      // eslint-disable-next-line no-undef
       new WxLogin({
         self_redirect: false, // 默认为false(保留当前二维码)  true(当前二维码所在的地方通过iframe 内跳转到 redirect_uri)
         id: 'wechat-login-container', // 容器的id
@@ -301,7 +337,7 @@ export default {
     },
     setRowStyle({ row, rowIndex }) {
       return {
-        height: "20px", // 设置行高为20px
+        height: '20px' // 设置行高为20px
       };
     },
     // “弹窗打开 -> 表格显示”
@@ -313,7 +349,7 @@ export default {
       const modifiedData = res.data.map(item => {
         return {
           ...item,
-          payment_status: item.payment_status === 'paid' ? '已支付' : (item.payment_status === 'pending'?'未支付':'支付失败')
+          payment_status: item.payment_status === 'paid' ? '已支付' : (item.payment_status === 'pending' ? '未支付' : '支付失败')
         };
       });
 
@@ -641,7 +677,6 @@ export default {
   }
 }
 
-
 ::v-deep .custom-row-height .el-table__row {
   height: 20px !important;
 }
@@ -664,5 +699,32 @@ export default {
 
 ::v-deep .custom-row-height .el-table__header-wrapper thead th .cell {
   line-height: 30px !important;
+}
+
+.floating-qr {
+  position: fixed;
+right: 1vw;
+    top: 41vh;
+  z-index: 9999;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  padding: 16px 16px 8px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  img {
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    margin-bottom: 8px;
+  }
+  .floating-qr-text {
+    font-size: 14px;
+    color: #333;
+    text-align: center;
+  }
 }
 </style>

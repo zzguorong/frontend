@@ -3,7 +3,7 @@
   <header v-if="!$route.meta.hideHeader" class="top-nav-bar">
     <!-- 左侧 logo -->
     <div class="logo" @click="goHome">
-      <img src="../../assets/images/logo.png" alt="Logo">
+      <img src="../../assets/images/dashorard-logo.png" alt="Logo">
     </div>
     <!-- 右侧订阅计划按钮 -->
     <button class="subscribe-btn" @click="goSubscribe">订阅计划</button>
