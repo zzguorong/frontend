@@ -83,9 +83,6 @@
               <div class="about-us-title">
                 <img src="@/assets/images/weixin.jpg" alt="">
               </div>
-              <div class="about-us-title">
-                <img src="@/assets/images/weixin.jpg" alt="">
-              </div>
             </div>
             <p style="color: #fff;">地址：深圳市南山区粤海街道高新区社区科技南八路2号豪威科技大厦1564
             </p>
@@ -445,7 +442,7 @@ html {
     }
 
     .about-us-title {
-      border: 1px solid #ccc;
+      /* border: 1px solid #ccc; */
 
       img {
         width: 150px;

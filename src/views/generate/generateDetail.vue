@@ -41,6 +41,7 @@
               <div class="download-controls">
                 <el-button
                   v-loading="pngDownloading"
+                  :disabled="!pngDownloading"
                   :style="{
                     height: '35px',
                     display: 'flex',
@@ -421,11 +422,13 @@
 <script>
 import {
   deleteGeneratedImage,
+  downloadPSD,
   favoriteGeneratedImage,
+  generatePNG,
+  generatePSD,
   getGalleryImages,
   getUserFavoriteImages,
-  unfavoriteGeneratedImage,
-  generatePSD
+  unfavoriteGeneratedImage
 } from '@/api/generate';
 // import 'simplebar/dist/simplebar.min.css';
 import { downloadFile } from '@/utils/downLoad';
@@ -687,14 +690,24 @@ export default {
     downloadPNG() {
       if (this.pngDownloadEnabled) {
         this.pngDownloading = true;
-        // 调用下载方法
-        const url = this.currentPreviewImage;
-        const filename = `image_${Date.now()}.png`;
-        downloadFile(url, filename)
-          .then(() => {
-            this.pngDownloading = false;
-            // 下载成功后提示
-            this.$message.success('PNG 下载成功！');
+        // 提示：图像文件较大，请耐心等待。
+        this.$message.info('图像文件较大，请耐心等待下载完成。');
+        // 调用后端接口下载 PSD 文件
+        generatePNG(this.generatedImageId)
+          .then((res) => {
+            const url = res.data.url;
+            const filename = res.data.name || `generated_image_${Date.now()}.psd`;
+            downloadFile(url, filename)
+              .then(() => {
+                this.pngDownloading = false;
+                // 下载成功后提示
+                this.$message.success('PNG 下载成功！');
+              })
+              .catch((err) => {
+                this.pngDownloading = false;
+                console.error('下载PNG失败', err);
+                this.$message.error('下载PNG失败，请重试');
+              });
           })
           .catch((err) => {
             this.pngDownloading = false;
@@ -704,12 +717,15 @@ export default {
       }
     },
 
-    downloadPSD() {
+    async downloadPSD() {
       if (this.psdDownloadEnabled) {
         this.psdDownloading = true;
         this.$message.info('图像文件较大，请耐心等待下载完成。');
-        // 调用后端接口下载 PSD 文件
-        generatePSD(this.generatedImageId)
+        // 调用后端接口生成 PSD 文件
+        const { data } = await generatePSD(this.generatedImageId);
+        const psdId = data.id;
+
+        downloadPSD(psdId)
           .then((res) => {
             const url = res.data.url;
             const filename = res.data.name || `generated_image_${Date.now()}.psd`;
