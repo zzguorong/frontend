@@ -196,8 +196,9 @@ export default {
           // reset code
           this.form.code = '';
           // 调用发送验证码 API
+          console.log('发送验证码', this.form.phonePrefix + this.form.phone);
           sendSmsCode({
-            phone: this.form.phone
+            phone: this.form.phonePrefix + this.form.phone
           })
             .then((res) => {
               this.$message.success(res.message || '验证码已发送，请注意查收');
@@ -216,7 +217,7 @@ export default {
         if (valid) {
           this.loading = true;
           userRegister({
-            phone: this.form.phone,
+            phone: this.form.phonePrefix + this.form.phone,
             password: this.form.password,
             password_confirm: this.form.confirmPassword,
             code: this.form.code

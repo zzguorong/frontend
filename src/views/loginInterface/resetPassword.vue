@@ -202,7 +202,7 @@ export default {
             }
           }, 1000);
           sendSmsCode({
-            phone: this.phoneCodeForm.phone
+            phone: this.phoneCodeForm.phonePrefix + this.phoneCodeForm.phone
           }).then(() => {
             this.$message.success('验证码已发送');
             this.$refs.codeInput.focus();
@@ -219,7 +219,7 @@ export default {
           // 调用重置密码 API
           // 假设有一个 resetPassword API
           resetPassword({
-            phone: this.phoneCodeForm.phone,
+            phone: this.phoneCodeForm.phonePrefix + this.phoneCodeForm.phone,
             new_password: this.resetPasswordForm.newPassword,
             new_password_confirm: this.resetPasswordForm.confirmNewPassword,
             code: this.phoneCodeForm.code

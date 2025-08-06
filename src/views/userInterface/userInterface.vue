@@ -103,9 +103,11 @@
               @click="purchaseVisible = true"
             >购买记录</el-button></div>
             <div class="plan-name">
-              <div class="plan-name-title">订阅计划名称 <span>xxxxx</span></div>
-              <div class="plan-name-title">到期时间 <span>xxxxx</span></div>
+              <div class="plan-name-title">订阅计划名称 <span>{{ membershipPlan.name }}</span></div>
+              <div class="plan-name-title">到期时间 <span>{{ membershipPlan.expired_at }}</span></div>
             </div>
+            <!-- 最终到期⽇期 -->
+            <div class="plan-title" style="margin-bottom: 20px;">最终到期⽇期 <span style="font-weight: 100;">{{ endDate }}</span></div>
             <!-- 权益 -->
             <div class="plan-title">权益</div>
             <div class="plan-rights">
@@ -140,17 +142,17 @@
 
           </div>
           <!-- 使用情况 -->
-          <div class="main-card-title">
+          <!-- <div class="main-card-title">
             <span>使用情况</span>
-          </div>
-          <div class="plan-info">
+          </div> -->
+          <!-- <div class="plan-info">
             <div class="usage-list">
               <div class="usage-item">总生成图纸数量/张 <span>xx</span></div>
               <div class="usage-item">画廊保存数量/张 <span>xx</span></div>
               <div class="usage-item">画廊收藏数量/张 <span>xx</span></div>
               <div class="usage-item">已注册天数/天 <span>xx</span></div>
             </div>
-          </div>
+          </div> -->
         </div>
 
       </div>
@@ -199,14 +201,18 @@
       >
         <el-table-column prop="order_no" label="订单号" />
         <el-table-column prop="subscriptionName" label="订阅计划名称" width="180" />
-        <el-table-column prop="moneyAmount" label="金额" />
-        <el-table-column prop="amount" label="数量" />
+        <el-table-column label="金额">
+          <template slot-scope="scope">
+            {{ scope.row.currency.code }}&nbsp;{{ scope.row.price }}
+          </template>
+        </el-table-column>
         <el-table-column prop="payment_status" label="支付状态" />
         <el-table-column prop="payment_channel.name" label="支付方式" />
+        <el-table-column prop="paid_at" label="支付时间" />
       </el-table>
     </el-dialog>
 
-    <div class="floating-qr">
+    <div v-if="membershipLevel" class="floating-qr">
       <img src="@/assets/images/yearly-group-qr.png" alt="社群二维码">
       <div class="floating-qr-text">扫码进入社群</div>
     </div>
@@ -221,7 +227,9 @@ import {
 import { updatePassword } from '@/api/index';
 import {
   getAllMembershipPlans,
-  getAllOrders
+  getAllOrders,
+  getCurrentMembershipPlan,
+  getUserMembershipPlanEndDate
 } from '@/api/subscription';
 import { generateRandomString } from '@/utils/index';
 export default {
@@ -262,7 +270,11 @@ export default {
       loading: false,
       wechatBindingDialogVisible: false,
       purchaseVisible: false,
-      tableData: []
+      tableData: [],
+      membershipLevel: 0, // 会员等级
+      endDate: '', // 最终到期日期
+      membershipPlan: {}, // 当前订阅计划
+
     };
   },
   async created() {
@@ -272,6 +284,20 @@ export default {
     } catch (error) {
       console.log();
     }
+  },
+  async activated() {
+    try {
+      const { data } = await getCurrentMembershipPlan();
+      this.membershipPlan = data; // 获取当前订阅计划
+    } catch (error) {
+      console.log();
+    }
+
+    await getUserMembershipPlanEndDate().then((res) => {
+      this.endDate = res.data; // 获取最终到期日期
+    }).catch((error) => {
+      console.error('获取用户订阅计划失败:', error);
+    });
   },
   methods: {
     // 处理密码验证
@@ -498,7 +524,7 @@ export default {
 }
 
 .plan-info {
-  padding: 24px 24px 0 24px;
+  padding: 24px 24px 24px 24px;
   font-size: 15px;
   color: #222;
 
@@ -511,6 +537,7 @@ export default {
     align-items: center;
     font-size: 18px;
     font-weight: 600;
+    margin-top: 13px;
 
     .buy-btn {
       color: #000;

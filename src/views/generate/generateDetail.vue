@@ -39,62 +39,75 @@
                 </el-tooltip>
               </div>
               <div class="download-controls">
-                <el-button
-                  v-loading="pngDownloading"
-                  :disabled="!pngDownloadEnabled"
-                  :style="{
-                    height: '35px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: '1px solid #dcdfe6',
-                    borderRadius: '5px',
-                    width: '120px',
-                    fontSize: '12px',
-                    marginLeft: '5px',
-                    cursor: pngDownloadEnabled ? 'pointer' : 'not-allowed',
-                    backgroundColor: pngDownloadEnabled ? '#fff' : '#ccc',
-                    color: '#000',
-                  }"
-                  @click="downloadPNG"
-                >
-                  PNG下载
-                </el-button>
+                <div class="flex-center">
+                  <el-button
+                    v-loading="pngDownloading"
+                    :disabled="!pngDownloadEnabled"
+                    :style="{
+                      height: '35px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      border: '1px solid #dcdfe6',
+                      borderRadius: '5px',
+                      width: '120px',
+                      fontSize: '12px',
+                      margin: '0 0 5px 0',
+                      cursor: pngDownloadEnabled ? 'pointer' : 'not-allowed',
+                      backgroundColor: pngDownloadEnabled ? '#fff' : '#ccc',
+                      color: '#000',
+                    }"
+                    @click="downloadPNG"
+                  >
+                    PNG下载
+                  </el-button>
+                  <span
+                    style="
+    font-size: 12px;
+    color: rgb(102, 102, 102);
+   "
+                  >   剩余次数:{{ userRemainingDownloads === -1?'无限次':(userRemainingDownloads == 0?'0':userRemainingDownloads) }}</span>
+                </div>
+                <di class="flex-center">
+                  <el-button
+                    v-loading="psdDownloading"
+                    :disabled="!psdDownloadEnabled"
+                    :style="{
+                      display: 'flex', // ✅ 关键：用 flex 让内容垂直居中
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      height: '35px',
+                      border: '1px solid #dcdfe6',
+                      borderRadius: '5px',
+                      width: '120px',
+                      fontSize: '12px',
+                      textAlign: 'center',
+                      margin: '0 0 5px 0',
+                      cursor: psdDownloadEnabled ? 'pointer' : 'not-allowed',
+                      backgroundColor: psdDownloadEnabled ? '#fff' : '#ccc',
+                      color: '#000',
+                      position: 'relative',
+                      paddingRight: '25px'
+                    }"
+                    @click="downloadPSD"
+                  >
+                    PSD下载
 
-                <el-button
-                  v-loading="psdDownloading"
-                  :disabled="!psdDownloadEnabled"
-                  :style="{
-                    display: 'flex', // ✅ 关键：用 flex 让内容垂直居中
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '35px',
-                    border: '1px solid #dcdfe6',
-                    borderRadius: '5px',
-                    width: '120px',
-                    fontSize: '12px',
-                    textAlign: 'center',
-                    marginLeft: '5px',
-                    cursor: psdDownloadEnabled ? 'pointer' : 'not-allowed',
-                    backgroundColor: psdDownloadEnabled ? '#fff' : '#ccc',
-                    color: '#000',
-                    position: 'relative',
-                    paddingRight: '25px'
-                  }"
-                  @click="downloadPSD"
-                >
-                  PSD下载
-
-                  <el-tooltip content="PSD下载功能" placement="top">
-                    <svg-icon
-                      icon-class="question"
-                      class="icon-style"
-                      style="position: absolute; right: 15px; top: 10px; pointer-events: auto; cursor: help;"
-                    />
-                  </el-tooltip>
-                </el-button>
-
-              </div>
+                    <el-tooltip content="PSD下载功能" placement="top">
+                      <svg-icon
+                        icon-class="question"
+                        class="icon-style"
+                        style="position: absolute; right: 15px; top: 10px; pointer-events: auto; cursor: help;"
+                      />
+                    </el-tooltip>
+                  </el-button>
+                  <span
+                    style="
+    font-size: 12px;
+    color: rgb(102, 102, 102);
+   "
+                  >   剩余次数:{{ userRemainingDownloads === -1?'无限次':(userRemainingPSDDownloads === 0?'0':userRemainingPSDDownloads) }}</span>
+                </di></div>
             </div>
           </div>
         </el-col>
@@ -326,7 +339,7 @@
                             </span>
                           </div>
                         </div>
-                      <!-- <div class="base-style">
+                        <!-- <div class="base-style">
                         <label>底图材质固定</label>
                         <div class="button-group">
                           <span>
@@ -385,11 +398,11 @@
                       </el-tooltip>
                     </div>
 
-                  <!-- 语义分割元素 -->
-                  <!-- <div class="params-section"> -->
-                  <!-- <div class="section-title">语义分割元素</div> -->
-                  <!-- 线稿图 -->
-                  <!-- <div class="param-item">
+                    <!-- 语义分割元素 -->
+                    <!-- <div class="params-section"> -->
+                    <!-- <div class="section-title">语义分割元素</div> -->
+                    <!-- 线稿图 -->
+                    <!-- <div class="param-item">
                       <div class="base-style">
                         <label>线稿图</label>
                         <div class="segmentation-image">
@@ -397,8 +410,8 @@
                         </div>
                       </div>
                     </div> -->
-                  <!-- 语义分割图 -->
-                  <!-- <div class="param-item" style="margin-top: 15px">
+                    <!-- 语义分割图 -->
+                    <!-- <div class="param-item" style="margin-top: 15px">
                       <div class="base-style">
                         <label>语义分割图</label>
                         <div class="segmentation-image">
@@ -406,7 +419,7 @@
                         </div>
                       </div>
                     </div> -->
-                  <!-- </div> -->
+                    <!-- </div> -->
 
                   </div>      </div>
 
@@ -428,6 +441,8 @@ import {
   generatePSD,
   getGalleryImages,
   getUserFavoriteImages,
+  getUserRemainingDownloads,
+  getUserRemainingPSDDownloads,
   unfavoriteGeneratedImage
 } from '@/api/generate';
 // import 'simplebar/dist/simplebar.min.css';
@@ -570,6 +585,8 @@ export default {
   // 生命周期钩子
   activated() {
     this.$nextTick(() => {
+      this.getUserRemainingDownloads();
+      this.getUserRemainingPSDDownloads();
       // 组件被激活时，重新加载画廊图片
       this.loadGalleryImages().then(() => {
         if (this.currentImageIndex >= 0) {
@@ -1534,6 +1551,24 @@ export default {
       };
       this.$store.commit('generation/setGenerationParams', params);
       this.$router.push('/generate');
+    },
+    // 获取用户剩余图片下载次数
+    async  getUserRemainingDownloads() {
+      try {
+        const { data } = await getUserRemainingDownloads();
+        this.userRemainingDownloads = data;
+      } catch (error) {
+        console.log('error', error);
+      }
+    },
+    // 获取用户剩余PSD下载次数
+    async  getUserRemainingPSDDownloads() {
+      try {
+        const { data } = await getUserRemainingPSDDownloads();
+        this.userRemainingPSDDownloads = data;
+      } catch (error) {
+        console.log('error', error);
+      }
     }
   }
 };
@@ -2055,6 +2090,13 @@ export default {
   gap: 14px;
   flex: 1;
   z-index: 10;
+
+    .flex-center{
+   display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .transfer-btn:hover {

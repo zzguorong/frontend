@@ -124,9 +124,9 @@
                     type="primary"
                     size="large"
                     class="generate-btn"
-                    :class="{ 'disabled-btn': isGenerating }"
-                    :style="{ backgroundColor: isGenerating ? '#bbb' : '#fff' }"
-                    @click="!isGenerating && handleGenerate()"
+                    :class="{ 'disabled-btn': isGenerating || !userRemainingGenerations }"
+                    :style="{ backgroundColor: isGenerating || !userRemainingGenerations ? '#bbb' : '#fff' }"
+                    @click="!isGenerating && !userRemainingGenerations && handleGenerate()"
                   >
                     {{ isGenerating ? "正在生成中" : "点击生成" }}
                   </div>
@@ -138,60 +138,76 @@
                   />
                 </div>
                 <div class="download-controls">
-                  <el-button
-                    v-loading="pngDownloading"
-                    :disabled="!pngDownloadEnabled"
-                    :style="{
-                      height: '35px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      border: '1px solid #dcdfe6',
-                      borderRadius: '5px',
-                      width: '120px',
-                      fontSize: '12px',
-                      marginLeft: '5px',
-                      cursor: pngDownloadEnabled ? 'pointer' : 'not-allowed',
-                      backgroundColor: pngDownloadEnabled ? '#fff' : '#ccc',
-                      color: '#000',
-                    }"
-                    @click="downloadPNG"
-                  >
-                    PNG下载
-                  </el-button>
+                  <div class="flex-center">
+                    <el-button
+                      v-loading="pngDownloading"
+                      :disabled="!pngDownloadEnabled"
+                      :style="{
+                        height: '35px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: '1px solid #dcdfe6',
+                        borderRadius: '5px',
+                        width: '120px',
+                        fontSize: '12px',
+                        margin: '0 0 5px 0',
+                        cursor: pngDownloadEnabled ? 'pointer' : 'not-allowed',
+                        backgroundColor: pngDownloadEnabled ? '#fff' : '#ccc',
+                        color: '#000',
+                      }"
+                      @click="downloadPNG"
+                    >
+                      PNG下载
+                    </el-button>
+                    <span
+                      style="
+    font-size: 12px;
+    color: rgb(102, 102, 102);
+   "
+                    >   剩余次数:{{ userRemainingDownloads === -1?'无限次':(userRemainingDownloads == 0?'0':userRemainingDownloads) }}</span>
+                  </div>
 
-                  <el-button
-                    v-loading="psdDownloading"
-                    :disabled="!psdDownloadEnabled"
-                    :style="{
-                      display: 'flex', // ✅ 关键：用 flex 让内容垂直居中
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      height: '35px',
-                      border: '1px solid #dcdfe6',
-                      borderRadius: '5px',
-                      width: '120px',
-                      fontSize: '12px',
-                      textAlign: 'center',
-                      marginLeft: '5px',
-                      cursor: psdDownloadEnabled ? 'pointer' : 'not-allowed',
-                      backgroundColor: psdDownloadEnabled ? '#fff' : '#ccc',
-                      color: '#000',
-                      position: 'relative',
-                      paddingRight: '25px'
-                    }"
-                    @click="downloadPSD"
-                  >
-                    PSD下载
+                  <div class="flex-center">
+                    <el-button
+                      v-loading="psdDownloading"
+                      :disabled="!psdDownloadEnabled "
+                      :style="{
+                        display: 'flex', // ✅ 关键：用 flex 让内容垂直居中
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        height: '35px',
+                        border: '1px solid #dcdfe6',
+                        borderRadius: '5px',
+                        width: '120px',
+                        fontSize: '12px',
+                        textAlign: 'center',
+                        margin: '0 0 5px 0',
+                        cursor: psdDownloadEnabled ? 'pointer' : 'not-allowed',
+                        backgroundColor: psdDownloadEnabled ? '#fff' : '#ccc',
+                        color: '#000',
+                        position: 'relative',
+                        paddingRight: '25px'
+                      }"
+                      @click="downloadPSD"
+                    >
+                      PSD下载
 
-                    <el-tooltip content="PSD下载功能" placement="top">
-                      <svg-icon
-                        icon-class="question"
-                        class="icon-style"
-                        style="position: absolute; right: 15px; top: 10px; pointer-events: auto; cursor: help;"
-                      />
-                    </el-tooltip>
-                  </el-button>
+                      <el-tooltip content="PSD下载功能" placement="top">
+                        <svg-icon
+                          icon-class="question"
+                          class="icon-style"
+                          style="position: absolute; right: 15px; top: 10px; pointer-events: auto; cursor: help;"
+                        />
+                      </el-tooltip>
+                    </el-button>
+                    <span
+                      style="
+    font-size: 12px;
+    color: rgb(102, 102, 102);
+   "
+                    >   剩余次数:{{ userRemainingPSDDownloads ===1?'无限次':(userRemainingPSDDownloads === 0?'0':userRemainingPSDDownloads) }}</span>
+                  </div>
                 </div>
               </div>
               <div
@@ -205,7 +221,7 @@
                   justify-content: space-between;
                 "
               >
-                <span>总可执行任务数量</span><span>3</span>
+                <span>总可执行任务数量</span><span>{{ userRemainingGenerations === -1?'无限次':(userRemainingGenerations === 0?'0':userRemainingGenerations ) }}</span>
               </div>
             </div>
 
@@ -638,6 +654,9 @@ import {
   generatePSD,
   getImageDetail,
   getPerspectiveStyle,
+  getUserRemainingDownloads,
+  getUserRemainingGenerations,
+  getUserRemainingPSDDownloads,
   preprocessSegment,
   unfavoriteGeneratedImage
 } from '@/api/generate';
@@ -790,7 +809,11 @@ export default {
       isDraggingThumb: false,
       activeName: 'left',
 
-      historyStack: [] // 保存绘图历史
+      historyStack: [], // 保存绘图历史
+      userRemainingGenerations: 0, // 用户剩余生成次数
+      userRemainingDownloads: 0, // 用户剩余下载次数
+      userRemainingPSDDownloads: -1// 用户剩余PSD下载次数
+
     };
   },
   computed: {
@@ -799,7 +822,8 @@ export default {
     pngDownloadEnabled() {
       // 只有选择了生图，且该生图存在预览图的情况下，才可以点击PNG下载
       return this.selectedThumbnailItem && this.selectedThumbnailItem.url && this.selectedThumbnailItem.url !== '' && this.selectedThumbnailItem.generatedImageId !== undefined &&
-        this.selectedThumbnailItem.generatedImageId !== null;
+        this.selectedThumbnailItem.generatedImageId !== null &&
+              this.userRemainingDownloads !== 0; // 确保用户还有下载次数
     },
     psdDownloadEnabled() {
       // 只有选择了生图，且该生图存在语义分割图的情况下，才可以点击PSD下载
@@ -809,7 +833,8 @@ export default {
         this.selectedThumbnailItem.generatedImageId !== undefined &&
         this.selectedThumbnailItem.generatedImageId !== null &&
         this.selectedThumbnailItem.semanticImgUrlId !== undefined &&
-        this.selectedThumbnailItem.semanticImgUrlId !== null;
+        this.selectedThumbnailItem.semanticImgUrlId !== null &&
+        this.userRemainingPSDDownloads !== 0; // 确保用户还有下载次数
     }
   },
   watch: {
@@ -916,6 +941,9 @@ export default {
   // 如果组件用了 <keep-alive>，需要在再次激活时同步一次
   activated() {
     // keep-alive 场景下返回页面再次同步
+    this.getUserRemainingGenerations();
+    this.getUserRemainingDownloads();
+    this.getUserRemainingPSDDownloads();
 
     this.$nextTick(() => {
       // 等 DOM 渲染完成后再操作滚动条
@@ -3099,8 +3127,35 @@ export default {
         const trackWidth = track.clientWidth - thumbWidth;
         this.thumbScrollLeft = ratio * trackWidth;
       });
+    },
+    // 获取用户剩余生成次数
+    async getUserRemainingGenerations() {
+      try {
+        const { data } = await getUserRemainingGenerations();
+        this.userRemainingGenerations = data;
+        console.log(data === 0);
+      } catch (error) {
+        console.log('error', error);
+      }
+    },
+    // 获取用户剩余图片下载次数
+    async  getUserRemainingDownloads() {
+      try {
+        const { data } = await getUserRemainingDownloads();
+        this.userRemainingDownloads = data;
+      } catch (error) {
+        console.log('error', error);
+      }
+    },
+    // 获取用户剩余PSD下载次数
+    async  getUserRemainingPSDDownloads() {
+      try {
+        const { data } = await getUserRemainingPSDDownloads();
+        this.userRemainingPSDDownloads = data;
+      } catch (error) {
+        console.log('error', error);
+      }
     }
-
     // startThumbDrag(e) {
     //   const track = this.$refs.thumbTrack;
     //   if (!track) return;
@@ -3738,6 +3793,12 @@ export default {
   gap: 14px;
   flex: 1;
   z-index: 10;
+  .flex-center{
+   display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .control-label {

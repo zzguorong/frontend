@@ -32,7 +32,7 @@
                     <svg-icon icon-class="check" class="check-icon" />当日3次语义分割功能使用次数
                   </li>
                   <li>
-                    <svg-icon icon-class="check" class="check-icon" />当日3次语义分割工具包使用次数
+                    <svg-icon icon-class="check" class="check-icon" />服务期内无限语义分割工具包使用次数
                   </li>
                   <li>
                     <svg-icon icon-class="check" class="check-icon" />当日3次PNG下载次数
@@ -240,9 +240,9 @@
           </div>
           <div class="item-word">
             <span class="item-word-title">语义分割工具包</span>
-            <span class="item-word-item">3次</span><span class="item-word-item">当周无限</span><span
+            <span class="item-word-item">无限</span><span class="item-word-item">无限</span><span
               class="item-word-item"
-            >当月无限</span><span class="item-word-item">当年无限</span><span
+            >无限</span><span class="item-word-item">无限</span><span
               class="item-word-item last"
             >无限</span>
           </div>
@@ -381,8 +381,10 @@
 import {
   createOrder,
   getAllMembershipPlans,
+  getAllOrders,
   getAllPaymentChannels,
-  getOrderDetail
+  getOrderDetail,
+  getUserOrderInfo
 } from '@/api/subscription';
 import QRCode from 'qrcode';
 
@@ -525,6 +527,8 @@ export default {
             this.handlePaymentSuccess();
           } else if (data.payment_status === 'failed') {
             this.$message.error('支付失败');
+            clearInterval(this.remainingTimeTimer);
+            clearInterval(this.monitorOrderInterval);
           }
         } catch (error) {
           if (this.remainingTimeTimer) {
@@ -534,25 +538,24 @@ export default {
             clearInterval(this.monitorOrderInterval);
           }
         }
-
-        // console.log('Checking order status for order ID:', this.orderNo);
-        // 假设支付成功后调用handlePaymentSuccess
-        // 这里可以添加实际的订单状态检查逻辑
-        // 如果支付成功，调用handlePaymentSuccess
-        // this.handlePaymentSuccess();
-        // 订单号关掉的时候轮询应该停掉
       }, 1000);
     },
     // 假设支付成功后调用
-    handlePaymentSuccess() {
+    async handlePaymentSuccess() {
       clearInterval(this.remainingTimeTimer);
       clearInterval(this.monitorOrderInterval);
       this.qrcodePayVisible = false;
       this.$message.success('支付成功！');
       this.currentPayAmount = 0;
       this.currentPayCurrency = '';
+      const { data } = await getAllOrders();
+      // 遍历data，找到与orderNo相同的订单
+      const order = data.find((o) => o.order_no === this.orderNo);
+
+      const orderInfo = await getUserOrderInfo(order.id); // 获取用户订单信息
+      console.log('orderInfo', orderInfo);
       // 年费会员弹群二维码
-      if (this.plusPriceDisplay.duration_type === 'yearly') {
+      if (orderInfo.data.membership_plan.duration_type === 'yearly') {
         this.yearlyGroupQrVisible = true;
       } else {
         // 跳转到用户界面

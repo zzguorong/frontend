@@ -129,7 +129,7 @@
               <div class="phone-input-line">
                 <el-form-item prop="phonePrefix">
                   <el-select
-                    v-model="phoneLoginForm.phonePrefix"
+                    v-model="passwordLoginForm.phonePrefix"
                     class="phone-prefix"
                     size="large"
                     popper-class="phone-prefix-select"
@@ -239,6 +239,7 @@ export default {
         ]
       },
       passwordLoginForm: {
+        phonePrefix: '+86',
         phone: '',
         password: ''
       },
@@ -383,7 +384,7 @@ export default {
 
       this.$store
         .dispatch('user/passwordLogin', {
-          phone: this.passwordLoginForm.phone,
+          phone: this.passwordLoginForm.phonePrefix + this.passwordLoginForm.phone,
           password: this.passwordLoginForm.password
         })
         .then(() => {
