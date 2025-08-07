@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 
-// 获取用户所有会员计划信息
+// 获取所有会员计划信息
 export function getAllMembershipPlans() {
   return request({
     url: '/membership/plans',
@@ -62,6 +62,14 @@ export function getCurrentMembershipPlan() {
 export function getUserMembershipPlanEndDate() {
   return request({
     url: '/user/memberships/status/end_date',
+    method: 'get'
+  });
+}
+
+// 获取用户所有会员计划信息
+export function getAllUserMembershipPlans() {
+  return request({
+    url: '/user/memberships',
     method: 'get'
   });
 }

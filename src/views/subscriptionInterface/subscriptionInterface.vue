@@ -381,7 +381,6 @@
 import {
   createOrder,
   getAllMembershipPlans,
-  getAllOrders,
   getAllPaymentChannels,
   getOrderDetail,
   getUserOrderInfo
@@ -406,7 +405,8 @@ export default {
       currentPayCurrency: '',
       paymentChannelId: '', // 支付方式
       showContactQr: false, // 新增：控制二维码弹窗显示
-      yearlyGroupQrVisible: false // 年费会员群二维码弹窗
+      yearlyGroupQrVisible: false, // 年费会员群二维码弹窗
+      orderId: '' // 订单ID
     };
   },
   async created() {
@@ -416,10 +416,9 @@ export default {
       const paymentChannelsData = await getAllPaymentChannels();// 获取所有支付渠道列表
       // 筛选出来code = "wechatNative"的数据
       const filteredPaymentData = paymentChannelsData.data.filter(item => item.code === 'wechatNative');
-      console.log('filteredPaymentData', filteredPaymentData);
       this.paymentChannelId = filteredPaymentData[0].id;
-      // 过滤data里面duration_type等于0的数据
-      const filteredData = data.filter(item => item.duration_type !== 'lifetime');
+      // 过滤data里面免费会员的数据
+      const filteredData = data.filter(item => item.level.id !== 1);
       this.plusPriceOptions = filteredData;
       this.plusPriceDisplay = filteredData[0];
     } catch (error) {
@@ -459,10 +458,11 @@ export default {
       });
 
       // TODO 提交订单获取code_url
-      this.orderNo = data.order_no; // 订单ID
+      this.orderNo = data.order_no; // 订单No
       this.codeUrl = data.payment_url; // 支付链接
+      this.orderId = data.order_id; // 订单ID
       // 设置支付金额和币种
-      this.currentPayAmount = data.amount;
+      this.currentPayAmount = data.price;
       this.currentPayCurrency = data.currency;
 
       // 这里可以添加支付逻辑
@@ -548,14 +548,11 @@ export default {
       this.$message.success('支付成功！');
       this.currentPayAmount = 0;
       this.currentPayCurrency = '';
-      const { data } = await getAllOrders();
-      // 遍历data，找到与orderNo相同的订单
-      const order = data.find((o) => o.order_no === this.orderNo);
-
-      const orderInfo = await getUserOrderInfo(order.id); // 获取用户订单信息
+      // 获取用户订单信息
+      const orderInfo = await getUserOrderInfo(this.orderId); // 获取用户订单信息
       console.log('orderInfo', orderInfo);
       // 年费会员弹群二维码
-      if (orderInfo.data.membership_plan.duration_type === 'yearly') {
+      if (orderInfo.data.membership_plan.membership_level.id === 4) {
         this.yearlyGroupQrVisible = true;
       } else {
         // 跳转到用户界面

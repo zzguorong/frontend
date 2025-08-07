@@ -103,39 +103,23 @@
               @click="purchaseVisible = true"
             >购买记录</el-button></div>
             <div class="plan-name">
-              <div class="plan-name-title">订阅计划名称 <span>{{ membershipPlan.name }}</span></div>
-              <div class="plan-name-title">到期时间 <span>{{ membershipPlan.expired_at }}</span></div>
+              <div class="plan-name-title">订阅计划名称 <span>{{ membershipPlan.membership_plan }}</span></div>
+              <div class="plan-name-title">到期时间 <span>{{ membershipPlan.expired_at ? membershipPlan.expired_at.slice(0, 10) : '' }}</span></div>
             </div>
             <!-- 最终到期⽇期 -->
-            <div class="plan-title" style="margin-bottom: 20px;">最终到期⽇期 <span style="font-weight: 100;">{{ endDate }}</span></div>
+            <div class="plan-title" style="margin-bottom: 20px;">最终到期⽇期 <span style="font-weight: 100;">{{ endDate?endDate.slice(0, 10):endDate }}</span></div>
             <!-- 权益 -->
             <div class="plan-title">权益</div>
             <div class="plan-rights">
 
               <div class="plan-rights-list">
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" /> <span>专人提供技术支持</span>
-                </div>
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" /> <span>本地化部署专用服务器</span>
-                </div>
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" /> <span>GAIA模型支持</span>
-                </div>
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
-                  <span>服务期内无限图像生成次数</span>
-                </div>
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
-                  <span>服务期内无限语义分割功能使用次数</span>
-                </div>
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
-                  <span>服务期内无限语义分割工具包使用次数</span>
-                </div>
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
-                  <span>服务期内无限PNG下载次数</span>
-                </div>
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
-                  <span>服务期内无限PSD下载次数</span>
-                </div>
-                <div class="plan-rights-item"><i class="el-icon-check" style="color: #9A9A9A" />
-                  <span>服务器内生图排队优先权</span>
+                <div
+                  v-for="(item, index) in selectedFeatures"
+                  :key="index"
+                  class="plan-rights-item"
+                >
+                  <i class="el-icon-check" style="color: #9A9A9A" />
+                  <span>{{ item }}</span>
                 </div>
               </div>
             </div>
@@ -200,7 +184,11 @@
         class="custom-row-height"
       >
         <el-table-column prop="order_no" label="订单号" />
-        <el-table-column prop="subscriptionName" label="订阅计划名称" width="180" />
+        <el-table-column label="订阅计划名称" width="180">
+          <template slot-scope="scope">
+            {{ scope.row.membership_plan.membership_level. name }}
+          </template>
+        </el-table-column>
         <el-table-column label="金额">
           <template slot-scope="scope">
             {{ scope.row.currency.code }}&nbsp;{{ scope.row.price }}
@@ -212,9 +200,9 @@
       </el-table>
     </el-dialog>
 
-    <div v-if="membershipLevel" class="floating-qr">
+    <div v-if="hasActiveYearlyPlan" class="floating-qr">
       <img src="@/assets/images/yearly-group-qr.png" alt="社群二维码">
-      <div class="floating-qr-text">扫码进入社群</div>
+      <div class="floating-qr-text">年费会员专属群</div>
     </div>
   </div>
 </template>
@@ -226,12 +214,14 @@ import {
 } from '@/api/generate';
 import { updatePassword } from '@/api/index';
 import {
-  getAllMembershipPlans,
   getAllOrders,
+  getAllUserMembershipPlans,
   getCurrentMembershipPlan,
   getUserMembershipPlanEndDate
 } from '@/api/subscription';
 import { generateRandomString } from '@/utils/index';
+import membershipRights from '@/views/userInterface/membership-rights';
+console.log('导入的 membershipRights:', membershipRights);
 export default {
   name: 'UserInterface',
   data() {
@@ -271,11 +261,21 @@ export default {
       wechatBindingDialogVisible: false,
       purchaseVisible: false,
       tableData: [],
-      membershipLevel: 0, // 会员等级
       endDate: '', // 最终到期日期
       membershipPlan: {}, // 当前订阅计划
-
+      allPlans: [], // 所有会员计划信息
+      hasActiveYearlyPlan: false // 是否有未到期的年会员订阅计划
     };
+  },
+  computed: {
+    selectedFeatures() {
+      if (this.membershipPlan.membership_level_id === 1) {
+        return membershipRights['1'];
+      } else if ([2, 3, 4].includes(this.membershipPlan.membership_level_id)) {
+        return membershipRights['2-4'];
+      }
+      return [];
+    }
   },
   async created() {
     try {
@@ -287,17 +287,21 @@ export default {
   },
   async activated() {
     try {
-      const { data } = await getCurrentMembershipPlan();
-      this.membershipPlan = data; // 获取当前订阅计划
-    } catch (error) {
-      console.log();
-    }
+    // 并行发起两个请求
+      const [planRes, endDateRes, allPlansRes] = await Promise.all([
+        getCurrentMembershipPlan(),
+        getUserMembershipPlanEndDate(),
+        getAllUserMembershipPlans()
+      ]);
 
-    await getUserMembershipPlanEndDate().then((res) => {
-      this.endDate = res.data; // 获取最终到期日期
-    }).catch((error) => {
-      console.error('获取用户订阅计划失败:', error);
-    });
+      this.membershipPlan = planRes.data;
+      this.endDate = endDateRes.data;
+      this.allPlans = allPlansRes.data;
+      // 检查是否有未到期的年会员订阅计划
+      this.hasActiveYearlyPlan = this.allPlans.some(plan => plan.membership_level_id === 4 && new Date(plan.expired_at) > new Date());
+    } catch (error) {
+      console.error('获取订阅计划或到期时间失败:', error);
+    }
   },
   methods: {
     // 处理密码验证
@@ -369,8 +373,7 @@ export default {
     // “弹窗打开 -> 表格显示”
     async onDialogOpen() {
       const res = await getAllOrders();
-      // 获取订阅计划
-      const { data } = await getAllMembershipPlans();
+
       // 遍历res.data改数据
       const modifiedData = res.data.map(item => {
         return {

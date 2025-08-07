@@ -126,7 +126,7 @@
                     class="generate-btn"
                     :class="{ 'disabled-btn': isGenerating || !userRemainingGenerations }"
                     :style="{ backgroundColor: isGenerating || !userRemainingGenerations ? '#bbb' : '#fff' }"
-                    @click="!isGenerating && !userRemainingGenerations && handleGenerate()"
+                    @click="!isGenerating && handleGenerate()"
                   >
                     {{ isGenerating ? "正在生成中" : "点击生成" }}
                   </div>
@@ -206,7 +206,7 @@
     font-size: 12px;
     color: rgb(102, 102, 102);
    "
-                    >   剩余次数:{{ userRemainingPSDDownloads ===1?'无限次':(userRemainingPSDDownloads === 0?'0':userRemainingPSDDownloads) }}</span>
+                    >   剩余次数:{{ userRemainingPSDDownloads ===-1?'无限次':(userRemainingPSDDownloads === 0?'0':userRemainingPSDDownloads) }}</span>
                   </div>
                 </div>
               </div>
@@ -823,7 +823,7 @@ export default {
       // 只有选择了生图，且该生图存在预览图的情况下，才可以点击PNG下载
       return this.selectedThumbnailItem && this.selectedThumbnailItem.url && this.selectedThumbnailItem.url !== '' && this.selectedThumbnailItem.generatedImageId !== undefined &&
         this.selectedThumbnailItem.generatedImageId !== null &&
-              this.userRemainingDownloads !== 0; // 确保用户还有下载次数
+        this.userRemainingDownloads !== 0; // 确保用户还有下载次数
     },
     psdDownloadEnabled() {
       // 只有选择了生图，且该生图存在语义分割图的情况下，才可以点击PSD下载
@@ -1198,6 +1198,12 @@ export default {
 
     // 主生成方法
     async handleGenerate() {
+      //  检查用户剩余生成次数`
+      if (this.userRemainingGenerations === 0) {
+        this.$message.warning('您的生成次数已用完');
+        return;
+      }
+
       // 1. 重置错误状态
       this.formErrors = {
         viewType: false,
@@ -1359,6 +1365,9 @@ export default {
             this.isGenerating = false;
             // 删除第三个位置，同时也就清除了loading状态
             this.thumbnails.splice(2, 1);
+          })
+          .finally(() => {
+            this.getUserRemainingGenerations();
           });
       }, 4000); // 每4秒轮询一次
     },
@@ -1402,6 +1411,11 @@ export default {
     },
 
     downloadPNG() {
+      //  检查用户剩余下载次数
+      if (this.userRemainingDownloads === 0) {
+        this.$message.warning('您的下载次数已用完');
+        return;
+      }
       if (this.pngDownloadEnabled) {
         this.pngDownloading = true;
         // 提示：图像文件较大，请耐心等待。
@@ -1427,39 +1441,41 @@ export default {
             this.pngDownloading = false;
             console.error('下载PNG失败', err);
             this.$message.error('下载PNG失败，请重试');
+          })
+          .finally(() => {
+            this.getUserRemainingDownloads();
           });
       }
     },
-
     async downloadPSD() {
+      //  检查用户剩余下载次数
+      if (this.userRemainingPSDDownloads === 0) {
+        this.$message.warning('您的下载次数已用完');
+        return;
+      }
       if (this.psdDownloadEnabled) {
         this.psdDownloading = true;
         // 提示：图像文件较大，请耐心等待。
         this.$message.info('图像文件较大，请耐心等待下载完成。');
-        const { data } = await generatePSD(this.selectedThumbnailItem.id);
-        const psdId = data.id;
-        // 调用后端接口下载 PSD 文件
-        downloadPSD(psdId)
-          .then((res) => {
-            const url = res.data.url;
-            const filename = res.data.name || `generated_image_${Date.now()}.psd`;
-            downloadFile(url, filename)
-              .then(() => {
-                this.psdDownloading = false;
-                // 下载成功后提示
-                this.$message.success('PSD 下载成功！');
-              })
-              .catch((err) => {
-                this.psdDownloading = false;
-                console.error('下载PSD失败', err);
-                this.$message.error('下载PSD失败，请重试');
-              });
-          })
-          .catch((err) => {
-            this.psdDownloading = false;
-            console.error('下载PSD失败', err);
-            this.$message.error('下载PSD失败，请重试');
-          });
+        try {
+          const { data } = await generatePSD(this.selectedThumbnailItem.id);
+          const psdId = data.id;
+          // 调用后端接口下载 PSD 文件
+
+          const res = await downloadPSD(psdId);
+          const url = res.data.url;
+          const filename = res.data.name || `generated_image_${Date.now()}.psd`;
+          downloadFile(url, filename);
+          this.psdDownloading = false;
+          // 下载成功后提示
+          this.$message.success('PSD 下载成功！');
+        } catch (error) {
+          this.psdDownloading = false;
+          console.error('下载PSD失败', error);
+          this.$message.error('下载PSD失败，请重试');
+        } finally {
+          this.getUserRemainingPSDDownloads();
+        }
       }
     },
 
@@ -3132,7 +3148,12 @@ export default {
     async getUserRemainingGenerations() {
       try {
         const { data } = await getUserRemainingGenerations();
-        this.userRemainingGenerations = data;
+        if (data === 'unlimited') {
+          this.userRemainingGenerations = -1;
+        } else {
+          this.userRemainingGenerations = data;
+        }
+
         console.log(data === 0);
       } catch (error) {
         console.log('error', error);
@@ -3142,7 +3163,11 @@ export default {
     async  getUserRemainingDownloads() {
       try {
         const { data } = await getUserRemainingDownloads();
-        this.userRemainingDownloads = data;
+        if (data === 'unlimited') {
+          this.userRemainingDownloads = -1;
+        } else {
+          this.userRemainingDownloads = data;
+        }
       } catch (error) {
         console.log('error', error);
       }
@@ -3151,7 +3176,11 @@ export default {
     async  getUserRemainingPSDDownloads() {
       try {
         const { data } = await getUserRemainingPSDDownloads();
-        this.userRemainingPSDDownloads = data;
+        if (data === 'unlimited') {
+          this.userRemainingPSDDownloads = -1;
+        } else {
+          this.userRemainingPSDDownloads = data;
+        }
       } catch (error) {
         console.log('error', error);
       }

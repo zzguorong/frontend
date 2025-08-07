@@ -575,11 +575,13 @@ export default {
 
     pngDownloadEnabled() {
       // 只有当预览图存在且可以点击时才允许下载PNG
-      return this.currentPreviewImage !== null && this.currentPreviewImage !== '';
+      return this.currentPreviewImage !== null && this.currentPreviewImage !== '' &&
+        this.userRemainingDownloads !== 0; // 确保用户还有下载次数
     },
     psdDownloadEnabled() {
       // 只有选择了生图，且该生图存在语义分割图的情况下，才可以点击PSD下载
-      return this.generatedImageId !== null && this.semanticImgUrlId !== null;
+      return this.generatedImageId !== null && this.semanticImgUrlId !== null &&
+        this.userRemainingPSDDownloads !== 0; // 确保用户还有下载次数
     }
   },
   // 生命周期钩子
@@ -705,6 +707,11 @@ export default {
 
   methods: {
     downloadPNG() {
+      //  检查用户剩余下载次数
+      if (this.userRemainingDownloads === 0) {
+        this.$message.warning('您的下载次数已用完');
+        return;
+      }
       if (this.pngDownloadEnabled) {
         this.pngDownloading = true;
         // 提示：图像文件较大，请耐心等待。
@@ -730,11 +737,18 @@ export default {
             this.pngDownloading = false;
             console.error('下载PNG失败', err);
             this.$message.error('下载PNG失败，请重试');
+          }).finally(() => {
+            this.getUserRemainingDownloads();
           });
       }
     },
 
     async downloadPSD() {
+      //  检查用户剩余下载次数
+      if (this.userRemainingPSDDownloads === 0) {
+        this.$message.warning('您的下载次数已用完');
+        return;
+      }
       if (this.psdDownloadEnabled) {
         this.psdDownloading = true;
         this.$message.info('图像文件较大，请耐心等待下载完成。');
@@ -762,6 +776,9 @@ export default {
             this.psdDownloading = false;
             console.error('下载PSD失败', err);
             this.$message.error('下载PSD失败，请重试');
+          })
+          .finally(() => {
+            this.getUserRemainingPSDDownloads();
           });
       }
     },
@@ -1556,7 +1573,11 @@ export default {
     async  getUserRemainingDownloads() {
       try {
         const { data } = await getUserRemainingDownloads();
-        this.userRemainingDownloads = data;
+        if (data === 'unlimited') {
+          this.userRemainingDownloads = -1;
+        } else {
+          this.userRemainingDownloads = data;
+        }
       } catch (error) {
         console.log('error', error);
       }
@@ -1565,7 +1586,11 @@ export default {
     async  getUserRemainingPSDDownloads() {
       try {
         const { data } = await getUserRemainingPSDDownloads();
-        this.userRemainingPSDDownloads = data;
+        if (data === 'unlimited') {
+          this.userRemainingPSDDownloads = -1;
+        } else {
+          this.userRemainingPSDDownloads = data;
+        }
       } catch (error) {
         console.log('error', error);
       }
