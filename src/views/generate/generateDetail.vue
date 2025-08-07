@@ -68,7 +68,7 @@
    "
                   >   剩余次数:{{ userRemainingDownloads === -1?'无限次':(userRemainingDownloads == 0?'0':userRemainingDownloads) }}</span>
                 </div>
-                <di class="flex-center">
+                <div class="flex-center">
                   <el-button
                     v-loading="psdDownloading"
                     :disabled="!psdDownloadEnabled"
@@ -107,7 +107,8 @@
     color: rgb(102, 102, 102);
    "
                   >   剩余次数:{{ userRemainingDownloads === -1?'无限次':(userRemainingPSDDownloads === 0?'0':userRemainingPSDDownloads) }}</span>
-                </di></div>
+                </div>
+              </div>
             </div>
           </div>
         </el-col>
@@ -498,7 +499,10 @@ export default {
       projectParameters: {},
       previewImageLoading: false,
       pngDownloading: false,
-      psdDownloading: false
+      psdDownloading: false,
+      userRemainingGenerations: 0, // 用户剩余生成次数
+      userRemainingDownloads: 0, // 用户剩余下载次数
+      userRemainingPSDDownloads: -1 // 用户剩余PSD下载次数
     };
   },
   computed: {
@@ -1504,7 +1508,6 @@ export default {
         }
         this.currentPreviewImage = selectedItem.images[0].src;
         this.projectParameters = { ...selectedItem.projectParameters };
-        console.log('selectedItem', selectedItem);
         this.baseImgUrl = selectedItem.baseImgUrl;
         this.baseImgUrlId = selectedItem.baseImgUrlId;
         this.generatedImageId = selectedItem.images[0].generatedImageId;
@@ -1573,26 +1576,20 @@ export default {
     async  getUserRemainingDownloads() {
       try {
         const { data } = await getUserRemainingDownloads();
-        if (data === 'unlimited') {
-          this.userRemainingDownloads = -1;
-        } else {
-          this.userRemainingDownloads = data;
-        }
+        this.userRemainingDownloads = data;
       } catch (error) {
-        console.log('error', error);
+        console.error('error', error);
+        this.userRemainingDownloads = 0;
       }
     },
     // 获取用户剩余PSD下载次数
     async  getUserRemainingPSDDownloads() {
       try {
         const { data } = await getUserRemainingPSDDownloads();
-        if (data === 'unlimited') {
-          this.userRemainingPSDDownloads = -1;
-        } else {
-          this.userRemainingPSDDownloads = data;
-        }
+        this.userRemainingPSDDownloads = data;
       } catch (error) {
-        console.log('error', error);
+        console.error('error', error);
+        this.userRemainingPSDDownloads = 0;
       }
     }
   }
@@ -2115,13 +2112,13 @@ export default {
   gap: 14px;
   flex: 1;
   z-index: 10;
+}
 
-    .flex-center{
-   display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
+.download-controls .flex-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .transfer-btn:hover {

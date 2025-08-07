@@ -1345,6 +1345,7 @@ export default {
               this.selectedThumbnailItem = this.thumbnails[2]; // 更新选中项为第三个位置
               this.selectedThumbnail = 2; // 更新选中缩略图索引
               this.$message.success('图片生成完成！');
+              this.getUserRemainingGenerations();
             } else if (status === 'failed') {
               clearInterval(this.pollingTimer);
               this.pollingTimer = null;
@@ -1353,6 +1354,7 @@ export default {
               this.isGenerating = false;
               // 删除第三个位置，同时也就清除了loading状态
               this.thumbnails.splice(2, 1);
+              this.getUserRemainingGenerations();
             }
             // 如果是其他状态（比如 "pending"），继续轮询
           })
@@ -1365,9 +1367,6 @@ export default {
             this.isGenerating = false;
             // 删除第三个位置，同时也就清除了loading状态
             this.thumbnails.splice(2, 1);
-          })
-          .finally(() => {
-            this.getUserRemainingGenerations();
           });
       }, 4000); // 每4秒轮询一次
     },
@@ -3148,41 +3147,30 @@ export default {
     async getUserRemainingGenerations() {
       try {
         const { data } = await getUserRemainingGenerations();
-        if (data === 'unlimited') {
-          this.userRemainingGenerations = -1;
-        } else {
-          this.userRemainingGenerations = data;
-        }
-
-        console.log(data === 0);
+        this.userRemainingGenerations = data;
       } catch (error) {
-        console.log('error', error);
+        console.error('error', error);
+        this.userRemainingGenerations = 0; // 出错时默认设置为0
       }
     },
     // 获取用户剩余图片下载次数
     async  getUserRemainingDownloads() {
       try {
         const { data } = await getUserRemainingDownloads();
-        if (data === 'unlimited') {
-          this.userRemainingDownloads = -1;
-        } else {
-          this.userRemainingDownloads = data;
-        }
+        this.userRemainingDownloads = data;
       } catch (error) {
-        console.log('error', error);
+        console.error('error', error);
+        this.userRemainingDownloads = 0; // 出错时默认设置为0
       }
     },
     // 获取用户剩余PSD下载次数
     async  getUserRemainingPSDDownloads() {
       try {
         const { data } = await getUserRemainingPSDDownloads();
-        if (data === 'unlimited') {
-          this.userRemainingPSDDownloads = -1;
-        } else {
-          this.userRemainingPSDDownloads = data;
-        }
+        this.userRemainingPSDDownloads = data;
       } catch (error) {
-        console.log('error', error);
+        console.error('error', error);
+        this.userRemainingPSDDownloads = 0; // 出错时默认设置为0
       }
     }
     // startThumbDrag(e) {
