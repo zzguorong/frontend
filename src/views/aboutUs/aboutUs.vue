@@ -73,10 +73,10 @@
         </div>
         <div class="join-us-img">
           <div class="join-us-text">
-            <p style="font-size: 3.77vw;color: #fff;">
+            <p style="font-size: 1.5vw;color: #fff;">
               联系我们
             </p>
-            <p style="color: #fff;">
+            <p style="color: #fff;font-size: 1vw;">
               邮箱：contact@gaiass.com
             </p>
             <div class="about-us-code">
@@ -84,7 +84,7 @@
                 <img src="@/assets/images/weixin.jpg" alt="">
               </div>
             </div>
-            <p style="color: #fff;">地址：深圳市南山区粤海街道高新区社区科技南八路2号豪威科技大厦1564
+            <p style="color: #fff;font-size: 1vw;">地址：深圳市南山区粤海街道高新区社区科技南八路2号豪威科技大厦1564
             </p>
           </div>
           <img src="../../assets/images/aboutus-footer.jpg" alt="加入我们">
@@ -380,7 +380,7 @@ html {
 
   .join-us-img {
     width: 100%;
-    height: 46vh;
+    height: 40vh;
     position: absolute;
     bottom: 0;
     left: 0;

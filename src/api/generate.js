@@ -167,3 +167,26 @@ export function generatePNG(generatedImageId) {
     timeout: 60000 * 5 // 设置为300秒
   });
 }
+
+// 获取用户剩余生成次数
+export function getUserRemainingGenerations() {
+  return request({
+    url: '/user/memberships/quota/generation',
+    method: 'get'
+  });
+}
+
+// 获取用户剩余图片下载次数
+export function getUserRemainingDownloads() {
+  return request({
+    url: '/user/memberships/quota/image_download',
+    method: 'get'
+  });
+}
+// 获取用户剩余PSD下载次数
+export function getUserRemainingPSDDownloads() {
+  return request({
+    url: '/user/memberships/quota/psd_download',
+    method: 'get'
+  });
+}
