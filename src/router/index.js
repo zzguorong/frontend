@@ -162,7 +162,7 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/subscriptionInterface',
+    path: '/subscription',
     component: Layout,
     meta: { fixedBottom: true },
     children: [

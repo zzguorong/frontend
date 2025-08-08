@@ -66,7 +66,7 @@
     font-size: 12px;
     color: rgb(102, 102, 102);
    "
-                  >   剩余次数:{{ userRemainingDownloads === -1?'无限次':(userRemainingDownloads == 0?'0':userRemainingDownloads) }}</span>
+                  >   剩余次数: {{ userRemainingDownloads === -1?'无限次':(userRemainingDownloads == 0?'0':userRemainingDownloads) }}</span>
                 </div>
                 <div class="flex-center">
                   <el-button
@@ -106,7 +106,7 @@
     font-size: 12px;
     color: rgb(102, 102, 102);
    "
-                  >   剩余次数:{{ userRemainingDownloads === -1?'无限次':(userRemainingPSDDownloads === 0?'0':userRemainingPSDDownloads) }}</span>
+                  >   剩余次数: {{ userRemainingDownloads === -1?'无限次':(userRemainingPSDDownloads === 0?'0':userRemainingPSDDownloads) }}</span>
                 </div>
               </div>
             </div>
@@ -579,13 +579,11 @@ export default {
 
     pngDownloadEnabled() {
       // 只有当预览图存在且可以点击时才允许下载PNG
-      return this.currentPreviewImage !== null && this.currentPreviewImage !== '' &&
-        this.userRemainingDownloads !== 0; // 确保用户还有下载次数
+      return this.currentPreviewImage !== null && this.currentPreviewImage !== '';
     },
     psdDownloadEnabled() {
       // 只有选择了生图，且该生图存在语义分割图的情况下，才可以点击PSD下载
-      return this.generatedImageId !== null && this.semanticImgUrlId !== null &&
-        this.userRemainingPSDDownloads !== 0; // 确保用户还有下载次数
+      return this.generatedImageId !== null && this.semanticImgUrlId !== null;
     }
   },
   // 生命周期钩子
@@ -711,12 +709,14 @@ export default {
 
   methods: {
     async downloadPNG() {
-      //  检查用户剩余下载次数
-      if (this.userRemainingDownloads === 0) {
-        this.$message.warning('您的下载次数已用完');
-        return;
-      }
       if (this.pngDownloadEnabled && !this.pngDownloading) {
+        //  检查用户剩余下载次数
+        if (this.userRemainingDownloads === 0) {
+          // 跳转到订阅界面
+          this.$message.warning('请订阅会员计划获取下载权益');
+          this.$router.push('/subscription');
+          return;
+        }
         this.pngDownloading = true;
         // 提示：图像文件较大，请耐心等待。
         this.$message.info('图像文件较大，请耐心等待下载完成。');
@@ -739,12 +739,14 @@ export default {
     },
 
     async downloadPSD() {
-      //  检查用户剩余下载次数
-      if (this.userRemainingPSDDownloads === 0) {
-        this.$message.warning('您的下载次数已用完');
-        return;
-      }
       if (this.psdDownloadEnabled && !this.psdDownloading) {
+        //  检查用户剩余下载次数
+        if (this.userRemainingPSDDownloads === 0) {
+          // 跳转到订阅界面
+          this.$message.warning('请订阅会员计划获取下载权益');
+          this.$router.push('/subscription');
+          return;
+        }
         this.psdDownloading = true;
         this.$message.info('图像文件较大，请耐心等待下载完成。');
         try {
