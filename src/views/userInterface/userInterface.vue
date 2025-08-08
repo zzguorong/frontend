@@ -200,10 +200,16 @@
       </el-table>
     </el-dialog>
 
-    <div v-if="hasActiveYearlyPlan" class="floating-qr">
+    <div
+      v-if="true"
+      class="floating-qr"
+      :style="{ cursor: 'move' }"
+      @mousedown="startDrag"
+    >
       <img src="@/assets/images/yearly-group-qr.png" alt="社群二维码">
       <div class="floating-qr-text">年费会员专属群</div>
     </div>
+
   </div>
 </template>
 
@@ -264,7 +270,9 @@ export default {
       endDate: '', // 最终到期日期
       membershipPlan: {}, // 当前订阅计划
       allPlans: [], // 所有会员计划信息
-      hasActiveYearlyPlan: false // 是否有未到期的年会员订阅计划
+      hasActiveYearlyPlan: false, // 是否有未到期的年会员订阅计划
+      isDragging: false, // 是否正在拖拽
+      dragOffset: { x: 0, y: 0 } // 拖拽偏移量
     };
   },
   computed: {
@@ -383,7 +391,44 @@ export default {
       });
 
       this.tableData = modifiedData;
+    },
+    startDrag(event) {
+      this.isDragging = true;
+      this.dragOffset = {
+        x: event.clientX - event.currentTarget.offsetLeft,
+        y: event.clientY - event.currentTarget.offsetTop
+      };
+      // 绑定全局监听
+      window.addEventListener('mousemove', this.drag);
+      window.addEventListener('mouseup', this.stopDrag);
+    },
+    stopDrag() {
+      this.isDragging = false;
+      // 移除监听
+      window.removeEventListener('mousemove', this.drag);
+      window.removeEventListener('mouseup', this.stopDrag);
+    },
+    drag(event) {
+      if (!this.isDragging) return;
+      const floatingQr = document.querySelector('.floating-qr');
+
+      const parent = floatingQr.parentElement;
+      const parentWidth = parent.clientWidth;
+      const parentHeight = parent.clientHeight;
+      const qrWidth = floatingQr.offsetWidth;
+      const qrHeight = floatingQr.offsetHeight;
+
+      let newLeft = event.clientX - this.dragOffset.x;
+      let newTop = event.clientY - this.dragOffset.y;
+
+      // 边界限制
+      newLeft = Math.max(0, Math.min(newLeft, parentWidth - qrWidth));
+      newTop = Math.max(0, Math.min(newTop, parentHeight - qrHeight));
+
+      floatingQr.style.left = `${newLeft}px`;
+      floatingQr.style.top = `${newTop}px`;
     }
+
   }
 };
 </script>
@@ -732,29 +777,32 @@ export default {
 }
 
 .floating-qr {
-  position: fixed;
-right: 1vw;
-    top: 41vh;
+  position: absolute; /* 改为 absolute 以支持拖拽 */
+      left: calc(100vw - 258px);
+  top: 41vh;
   z-index: 9999;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
   padding: 16px 16px 8px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor: grab; /* 鼠标样式 */
+}
 
-  img {
-    width: 120px;
-    height: 120px;
-    border-radius: 8px;
-    border: 1px solid #eee;
-    margin-bottom: 8px;
-  }
-  .floating-qr-text {
-    font-size: 14px;
-    color: #333;
-    text-align: center;
-  }
+.floating-qr img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #eee;
+}
+
+.floating-qr-text {
+  text-align: center;
+  color: #333;
+  font-size: 14px;
 }
 </style>

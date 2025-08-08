@@ -74,7 +74,7 @@
                 专为中小团队项目周期优化，服务期内畅享稳定服务、高清输出与参数保留功能。适配方案迭代、阶段呈现与成果整合等全流程，助力团队高效推进设计进度。
               </div>
 
-              <div class="subscription-btn" @click="payVisible = true">
+              <div class="subscription-btn" @click="openPayDialog">
                 订阅计划
               </div>
               <div class="subscription-detail-list">
@@ -302,22 +302,22 @@
           <div class="pay-dialog-plan">
             <div>购买计划</div>
             <div class="plan-content">
-              <div><span>订阅计划名称</span><span>优惠计划</span></div>
-              <div><span>到期时间</span><span>2025.06.04</span></div>
+              <div><span>订阅计划名称</span><span>{{ payData.membership_name }}</span></div>
+              <div><span>到期时间</span><span>{{ payData.membership_end_date }}</span></div>
             </div>
           </div>
         </div>
         <div class="pay-content">
-          <div class="pay-content-item">
+          <!-- <div class="pay-content-item">
             <span class="pay-content-item-title">数量</span><span class="pay-content-item-value">1</span>
-          </div>
+          </div> -->
           <div class="pay-content-item">
             <span class="pay-content-item-title">生效时间</span><span
               class="pay-content-item-value"
             >2025-06-01-2025-06-01</span>
           </div>
           <div class="pay-content-item">
-            <span class="pay-content-item-title">付款方式</span><span class="pay-content-item-value">微信支付</span>
+            <span class="pay-content-item-title">付款方式</span><span class="pay-content-item-value">{{ payData.payment_method }}</span>
           </div>
         </div>
         <div class="pay-content" style="margin-top: 25px">
@@ -325,7 +325,7 @@
             <span class="pay-content-item-title">应付款</span><span
               class="pay-content-item-value"
               style="color: #000; font-size: 20px"
-            >￥570</span>
+            >{{ payData.currency }} {{ payData.price }}</span>
           </div>
         </div>
         <div class="pay-btn-container">
@@ -383,7 +383,8 @@ import {
   getAllMembershipPlans,
   getAllPaymentChannels,
   getOrderDetail,
-  getUserOrderInfo
+  getUserOrderInfo,
+  previewOrder
 } from '@/api/subscription';
 import QRCode from 'qrcode';
 
@@ -406,7 +407,8 @@ export default {
       paymentChannelId: '', // 支付方式
       showContactQr: false, // 新增：控制二维码弹窗显示
       yearlyGroupQrVisible: false, // 年费会员群二维码弹窗
-      orderId: '' // 订单ID
+      orderId: '', // 订单ID
+      payData: {} // 预览订单数据
     };
   },
   async created() {
@@ -449,6 +451,7 @@ export default {
         this.plusPriceDisplay = found;
       }
     },
+    // 点击扫码支付
     async handleQRCodePayAction() {
       this.payVisible = false;
       const { data } = await createOrder({
@@ -557,6 +560,23 @@ export default {
       } else {
         // 跳转到用户界面
         this.$router.push('/userInterface/userInterface');
+      }
+    },
+    // 打开弹窗时拉取数据
+    async openPayDialog() {
+      try {
+        const { data } = await previewOrder({
+          membership_plan_id: this.plusPriceDisplay.id,
+          payment_channel_id: this.paymentChannelId, // 微信支付
+          currency_id: this.plusPriceDisplay.currency_id
+        });
+
+        this.payData = data;
+
+        this.payVisible = true;
+      } catch (err) {
+        this.$message.error('获取支付信息失败');
+        console.error(err);
       }
     }
   }
