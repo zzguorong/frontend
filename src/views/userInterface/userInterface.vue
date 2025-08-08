@@ -51,7 +51,7 @@
         </div>
 
         <!-- 密码管理 -->
-        <div v-if="Object.keys(userInfo).length > 0" class="main-card">
+        <div v-if="Object.keys(userInfo).length > 0 && userInfo.phone" class="main-card">
           <div v-if="userInfo.password_reset_required" class="password-section">
             <div class="main-card-title" style="border-bottom: none;">密码管理
               <el-button
