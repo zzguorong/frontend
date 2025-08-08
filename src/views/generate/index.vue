@@ -124,8 +124,8 @@
                     type="primary"
                     size="large"
                     class="generate-btn"
-                    :class="{ 'disabled-btn': isGenerating || !userRemainingGenerations }"
-                    :style="{ backgroundColor: isGenerating || !userRemainingGenerations ? '#bbb' : '#fff' }"
+                    :class="{ 'disabled-btn': isGenerating }"
+                    :style="{ backgroundColor: isGenerating ? '#bbb' : '#fff' }"
                     @click="!isGenerating && handleGenerate()"
                   >
                     {{ isGenerating ? "正在生成中" : "点击生成" }}
@@ -165,7 +165,7 @@
     font-size: 12px;
     color: rgb(102, 102, 102);
    "
-                    >   剩余次数:{{ userRemainingDownloads === -1?'无限次':(userRemainingDownloads == 0?'0':userRemainingDownloads) }}</span>
+                    >   剩余次数: {{ userRemainingDownloads === -1?'无限次':(userRemainingDownloads == 0?'0':userRemainingDownloads) }}</span>
                   </div>
 
                   <div class="flex-center">
@@ -206,7 +206,7 @@
     font-size: 12px;
     color: rgb(102, 102, 102);
    "
-                    >   剩余次数:{{ userRemainingPSDDownloads ===-1?'无限次':(userRemainingPSDDownloads === 0?'0':userRemainingPSDDownloads) }}</span>
+                    >   剩余次数: {{ userRemainingPSDDownloads ===-1?'无限次':(userRemainingPSDDownloads === 0?'0':userRemainingPSDDownloads) }}</span>
                   </div>
                 </div>
               </div>
@@ -610,7 +610,7 @@
                       <span class="category-label select"> 当前选择：{{ selectLabel }}</span>
                     </div>
                     <!-- 颜色选择 -->
-                    <div v-for="items in aerialviewGroups" class="color-palette">
+                    <div v-for="(items, index) in aerialviewGroups" :key="index" class="color-palette">
                       <!-- <div>{{ categoryName }}</div> -->
                       <div class="color-palette-group">
                         <div
@@ -812,7 +812,7 @@ export default {
       historyStack: [], // 保存绘图历史
       userRemainingGenerations: 0, // 用户剩余生成次数
       userRemainingDownloads: 0, // 用户剩余下载次数
-      userRemainingPSDDownloads: -1// 用户剩余PSD下载次数
+      userRemainingPSDDownloads: 0// 用户剩余PSD下载次数
 
     };
   },
@@ -822,8 +822,7 @@ export default {
     pngDownloadEnabled() {
       // 只有选择了生图，且该生图存在预览图的情况下，才可以点击PNG下载
       return this.selectedThumbnailItem && this.selectedThumbnailItem.url && this.selectedThumbnailItem.url !== '' && this.selectedThumbnailItem.generatedImageId !== undefined &&
-        this.selectedThumbnailItem.generatedImageId !== null &&
-        this.userRemainingDownloads !== 0; // 确保用户还有下载次数
+        this.selectedThumbnailItem.generatedImageId !== null;
     },
     psdDownloadEnabled() {
       // 只有选择了生图，且该生图存在语义分割图的情况下，才可以点击PSD下载
@@ -833,8 +832,7 @@ export default {
         this.selectedThumbnailItem.generatedImageId !== undefined &&
         this.selectedThumbnailItem.generatedImageId !== null &&
         this.selectedThumbnailItem.semanticImgUrlId !== undefined &&
-        this.selectedThumbnailItem.semanticImgUrlId !== null &&
-        this.userRemainingPSDDownloads !== 0; // 确保用户还有下载次数
+        this.selectedThumbnailItem.semanticImgUrlId !== null;
     }
   },
   watch: {
@@ -1198,9 +1196,11 @@ export default {
 
     // 主生成方法
     async handleGenerate() {
-      //  检查用户剩余生成次数`
+      //  检查用户剩余生成次数
       if (this.userRemainingGenerations === 0) {
-        this.$message.warning('您的生成次数已用完');
+        // 跳转到订阅计划界面
+        this.$message.warning('请订阅会员计划获取生成权益');
+        this.$router.push('/subscription');
         return;
       }
 
@@ -1221,15 +1221,7 @@ export default {
         hasError = true;
       }
       if (hasError) {
-        this.$msgbox({
-          title: '请进行有效操作',
-          message: '请输入视角类型和上传底图生成图片。',
-          confirmButtonText: '返回',
-          type: 'warning',
-          showCancelButton: false,
-          closeOnClickModal: false,
-          closeOnPressEscape: false
-        });
+        this.$message.error('请输入视角类型和上传底图生成图片。');
         return;
       }
 
@@ -1410,12 +1402,14 @@ export default {
     },
 
     async downloadPNG() {
-      //  检查用户剩余下载次数
-      if (this.userRemainingDownloads === 0) {
-        this.$message.warning('您的下载次数已用完');
-        return;
-      }
       if (this.pngDownloadEnabled && !this.pngDownloading) {
+        //  检查用户剩余下载次数
+        if (this.userRemainingDownloads === 0) {
+          // 跳转到订阅界面
+          this.$message.warning('请订阅会员计划获取下载权益');
+          this.$router.push('/subscription');
+          return;
+        }
         this.pngDownloading = true;
         // 提示：图像文件较大，请耐心等待。
         this.$message.info('图像文件较大，请耐心等待下载完成。');
@@ -1437,12 +1431,14 @@ export default {
       }
     },
     async downloadPSD() {
-      //  检查用户剩余下载次数
-      if (this.userRemainingPSDDownloads === 0) {
-        this.$message.warning('您的下载次数已用完');
-        return;
-      }
       if (this.psdDownloadEnabled && !this.psdDownloading) {
+        //  检查用户剩余下载次数
+        if (this.userRemainingPSDDownloads === 0) {
+          // 跳转到订阅界面
+          this.$message.warning('请订阅会员计划获取下载权益');
+          this.$router.push('/subscription');
+          return;
+        }
         this.psdDownloading = true;
         // 提示：图像文件较大，请耐心等待。
         this.$message.info('图像文件较大，请耐心等待下载完成。');
@@ -1505,9 +1501,8 @@ export default {
         }
 
         this.$message.success('智能选区已激活！点击选择区域');
-      }
-      // 如果选择套索工具，检查是否有预览图片
-      else if (tool === 'line') {
+      } else if (tool === 'line') {
+        // 如果选择套索工具，检查是否有预览图片
         // 如果当前已经处于套索模式，再次点击表示"重新开始一次新的套索"
         if (this.currentTool === 'line') {
           // 清空之前的套索路径并重置画布
@@ -1745,7 +1740,7 @@ export default {
 
       // 若重复点击相同颜色，直接返回，避免再次着色导致视觉加深
       if (item.color === this.selectedWaterColor) {
-        this.selectedWaterColor = '#87CEEB',
+        this.selectedWaterColor = '#87CEEB';
         this.selectLabel = '';
         return;
       }
@@ -2084,7 +2079,7 @@ export default {
       // 重置当前工具，让用户显式再次选择
       this.currentTool = '';
       // 清空选择的元素类别
-      this.selectedWaterColor = '#87CEEB',
+      this.selectedWaterColor = '#87CEEB';
       this.selectLabel = '';
     },
 
