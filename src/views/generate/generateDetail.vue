@@ -710,40 +710,31 @@ export default {
   // },
 
   methods: {
-    downloadPNG() {
+    async downloadPNG() {
       //  检查用户剩余下载次数
       if (this.userRemainingDownloads === 0) {
         this.$message.warning('您的下载次数已用完');
         return;
       }
-      if (this.pngDownloadEnabled) {
+      if (this.pngDownloadEnabled && !this.pngDownloading) {
         this.pngDownloading = true;
         // 提示：图像文件较大，请耐心等待。
         this.$message.info('图像文件较大，请耐心等待下载完成。');
-        // 调用后端接口下载 PSD 文件
-        generatePNG(this.generatedImageId)
-          .then((res) => {
-            const url = res.data.url;
-            const filename = res.data.name || `generated_image_${Date.now()}.png`;
-            downloadFile(url, filename)
-              .then(() => {
-                this.pngDownloading = false;
-                // 下载成功后提示
-                this.$message.success('PNG 下载成功！');
-              })
-              .catch((err) => {
-                this.pngDownloading = false;
-                console.error('下载PNG失败', err);
-                this.$message.error('下载PNG失败，请重试');
-              });
-          })
-          .catch((err) => {
-            this.pngDownloading = false;
-            console.error('下载PNG失败', err);
-            this.$message.error('下载PNG失败，请重试');
-          }).finally(() => {
-            this.getUserRemainingDownloads();
-          });
+        try {
+          // 调用后端接口生成 PNG 文件
+          const { data } = await generatePNG(this.generatedImageId);
+          const url = data.url;
+          const filename = data.name || `generated_image_${Date.now()}.png`;
+          await downloadFile(url, filename);
+          // 下载成功后提示
+          this.$message.success('PNG 下载成功！');
+        } catch (error) {
+          console.error('下载PNG失败', error);
+          this.$message.error('下载PNG失败，请重试');
+        } finally {
+          this.pngDownloading = false;
+          this.getUserRemainingDownloads();
+        }
       }
     },
 
@@ -753,37 +744,27 @@ export default {
         this.$message.warning('您的下载次数已用完');
         return;
       }
-      if (this.psdDownloadEnabled) {
+      if (this.psdDownloadEnabled && !this.psdDownloading) {
         this.psdDownloading = true;
         this.$message.info('图像文件较大，请耐心等待下载完成。');
-        // 调用后端接口生成 PSD 文件
-        const { data } = await generatePSD(this.generatedImageId);
-        const psdId = data.id;
-
-        downloadPSD(psdId)
-          .then((res) => {
-            const url = res.data.url;
-            const filename = res.data.name || `generated_image_${Date.now()}.psd`;
-            downloadFile(url, filename)
-              .then(() => {
-                this.psdDownloading = false;
-                // 下载成功后提示
-                this.$message.success('PSD 下载成功！');
-              })
-              .catch((err) => {
-                this.psdDownloading = false;
-                console.error('下载PSD失败', err);
-                this.$message.error('下载PSD失败，请重试');
-              });
-          })
-          .catch((err) => {
-            this.psdDownloading = false;
-            console.error('下载PSD失败', err);
-            this.$message.error('下载PSD失败，请重试');
-          })
-          .finally(() => {
-            this.getUserRemainingPSDDownloads();
-          });
+        try {
+          // 调用后端接口生成 PSD 文件
+          const { data } = await generatePSD(this.generatedImageId);
+          const psdId = data.id;
+          // 调用后端接口下载 PSD 文件
+          const res = await downloadPSD(psdId);
+          const url = res.data.url;
+          const filename = res.data.name || `generated_image_${Date.now()}.psd`;
+          await downloadFile(url, filename);
+          // 下载成功后提示
+          this.$message.success('PSD 下载成功！');
+        } catch (error) {
+          console.error('下载PSD失败', error);
+          this.$message.error('下载PSD失败，请重试');
+        } finally {
+          this.psdDownloading = false;
+          this.getUserRemainingPSDDownloads();
+        }
       }
     },
     /**

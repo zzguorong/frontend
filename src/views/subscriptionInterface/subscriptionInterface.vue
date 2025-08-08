@@ -314,7 +314,7 @@
           <div class="pay-content-item">
             <span class="pay-content-item-title">生效时间</span><span
               class="pay-content-item-value"
-            >2025-06-01-2025-06-01</span>
+            >{{ payData.membership_starting_date }}</span>
           </div>
           <div class="pay-content-item">
             <span class="pay-content-item-title">付款方式</span><span class="pay-content-item-value">{{ payData.payment_method }}</span>
@@ -325,7 +325,7 @@
             <span class="pay-content-item-title">应付款</span><span
               class="pay-content-item-value"
               style="color: #000; font-size: 20px"
-            >{{ payData.currency }} {{ payData.price }}</span>
+            >{{ payData.currency_symbol }} {{ payData.price }}</span>
           </div>
         </div>
         <div class="pay-btn-container">
@@ -444,6 +444,7 @@ export default {
     },
     handlePayClose() {
       this.payVisible = false;
+      this.payData = {};
     },
     handlePlusPriceChange(id) {
       const found = this.plusPriceOptions.find((o) => o.id === id);
@@ -571,7 +572,12 @@ export default {
           currency_id: this.plusPriceDisplay.currency_id
         });
 
-        this.payData = data;
+        this.payData = {
+          ...data,
+          membership_starting_date: data.membership_starting_date.slice(0, 10),
+          membership_end_date: data.membership_end_date.slice(0, 10),
+          currency_symbol: data.currency.symbol
+        };
 
         this.payVisible = true;
       } catch (err) {

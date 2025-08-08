@@ -107,7 +107,7 @@
               <div class="plan-name-title">到期时间 <span>{{ membershipPlan.expired_at ? membershipPlan.expired_at.slice(0, 10) : '' }}</span></div>
             </div>
             <!-- 最终到期⽇期 -->
-            <div class="plan-title" style="margin-bottom: 20px;">最终到期⽇期 <span style="font-weight: 100;">{{ endDate?endDate.slice(0, 10):endDate }}</span></div>
+            <div class="plan-title" style="margin-bottom: 20px;">最终到期⽇期 <span style="font-weight: 600;">{{ endDate ? endDate.slice(0, 10) : endDate }}</span></div>
             <!-- 权益 -->
             <div class="plan-title">权益</div>
             <div class="plan-rights">

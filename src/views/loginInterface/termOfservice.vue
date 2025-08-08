@@ -2,7 +2,7 @@
   <div class="service-container">
 
     <div class="service-title">GAIA 服务协议
-       <i class="el-icon-close close-icon" @click="close" />
+      <i class="el-icon-close close-icon" @click="close" />
     </div>
     <div class="service-date">生效日期：2025年6月22日星期日</div>
     <div class="service-intro">介绍</div>
