@@ -123,6 +123,7 @@
 
 <script>
 import { resetPassword, sendSmsCode } from '@/api/index';
+import { getToken } from '@/utils/auth'; // get token from cookie
 
 export default {
   name: 'ResetPassword',
@@ -226,7 +227,17 @@ export default {
           }).then(() => {
             this.$message.success('密码重置成功');
             this.loading = false;
-            this.$router.push('/login'); // 跳转到登录页面
+            const hasToken = getToken();
+            if (hasToken) {
+              // 清除存在的登录状态后，再跳转到登录页面
+              this.$store.dispatch('user/logout').then(() => {
+                // 跳转到登录页面
+                this.$router.push('/login');
+              });
+            } else {
+              this.$router.push('/login');
+              return;
+            }
           }).catch(() => {
             this.loading = false;
             console.error('重置密码失败');
@@ -308,8 +319,8 @@ export default {
       flex: 1;
     }
     .phone{
-  flex: 3;
-}
+      flex: 3;
+    }
   }
 }
 

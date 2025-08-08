@@ -53,6 +53,15 @@ export function bindWechat(data) {
   });
 }
 
+// 绑定手机号
+export function bindPhone(data) {
+  return request({
+    url: '/bind_phone',
+    method: 'post',
+    data
+  });
+}
+
 // 登出
 export function userLogout() {
   return request({
@@ -88,12 +97,11 @@ export function updatePassword(data) {
   });
 }
 
-// 获取用户详情
-export function getUserInfo(params) {
+// 获取用户信息
+export function getUserInfo() {
   return request({
-    url: '/sc/auth/auth/user/info',
-    method: 'get',
-    params
+    url: '/profile',
+    method: 'get'
   });
 }
 
