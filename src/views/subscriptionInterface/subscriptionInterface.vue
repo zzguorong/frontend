@@ -560,7 +560,7 @@ export default {
         this.yearlyGroupQrVisible = true;
       } else {
         // 跳转到用户界面
-        this.$router.push('/userInterface/userInterface');
+        this.$router.push('/userInterface');
       }
     },
     // 打开弹窗时拉取数据
