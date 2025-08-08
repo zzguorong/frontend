@@ -152,7 +152,6 @@ export const constantRoutes = [
     path: '/aboutUs',
     component: Layout,
     meta: { fixedBottom: true },
-    redirect: '/aboutUs',
     children: [
       {
         path: '',
@@ -166,10 +165,9 @@ export const constantRoutes = [
     path: '/subscriptionInterface',
     component: Layout,
     meta: { fixedBottom: true },
-    redirect: '/subscriptionInterface',
     children: [
       {
-        path: 'subscriptionInterface',
+        path: '',
         name: 'SubscriptionInterface',
         component: () =>
           import('@/views/subscriptionInterface/subscriptionInterface'),
@@ -181,10 +179,9 @@ export const constantRoutes = [
     path: '/userInterface',
     component: Layout,
     meta: { fixedBottom: true },
-    redirect: '/userInterface',
     children: [
       {
-        path: 'userInterface',
+        path: '',
         name: 'UserInterface',
         component: () => import('@/views/userInterface/userInterface'),
         meta: { title: '用户界面', icon: 'user', fixedBottom: true }

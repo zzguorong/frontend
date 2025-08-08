@@ -74,3 +74,12 @@ export function getAllUserMembershipPlans() {
   });
 }
 
+// 预览订单信息
+export function previewOrder(data) {
+  return request({
+    url: '/orders/create_order/preview',
+    method: 'post',
+    data
+  });
+}
+

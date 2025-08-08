@@ -23,7 +23,7 @@ export default {
       this.$message.error('微信登录失败，状态验证失败');
       setTimeout(() => {
         if (wechat_binding) {
-          this.$router.replace('/userInterface/userInterface');
+          this.$router.replace('/userInterface');
         } else {
           this.$router.replace('/login');
         }
@@ -39,7 +39,7 @@ export default {
       this.$message.error('微信登录失败，未获取到授权码');
       setTimeout(() => {
         if (wechat_binding) {
-          this.$router.replace('/userInterface/userInterface');
+          this.$router.replace('/userInterface');
         } else {
           this.$router.replace('/login');
         }
@@ -53,14 +53,14 @@ export default {
         .then(() => {
           this.$message.success('微信绑定成功');
           setTimeout(() => {
-            this.$router.replace('/userInterface/userInterface');
+            this.$router.replace('/userInterface');
           }, 1000);
         })
         .catch((error) => {
           console.error('微信绑定失败:', error);
           this.$message.error('微信绑定失败，请稍后重试');
           setTimeout(() => {
-            this.$router.replace('/userInterface/userInterface');
+            this.$router.replace('/userInterface');
           }, 1000);
         });
     } else {
