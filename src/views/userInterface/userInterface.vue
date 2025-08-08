@@ -17,9 +17,19 @@
           <el-form>
             <div class="account-form">
               手机号码
-              <el-form-item>
-                <el-input v-model="userInfo.phone" disabled />
-              </el-form-item>
+              <template v-if="!userInfo.phone && userInfo.wechat_openid">
+                <el-button
+                  class="btn-wx-check"
+                  type="primary"
+                  style="width:fit-content"
+                  @click="mobileBindingDialogVisible = true"
+                >
+                  <span>绑定手机</span>
+                </el-button>
+              </template>
+              <template v-else>
+                <span>{{ userInfo.phone }}</span>
+              </template>
             </div>
             <div class="account-form">
               微信绑定
@@ -41,8 +51,18 @@
         </div>
 
         <!-- 密码管理 -->
-        <div class="main-card">
-          <div class="password-section">
+        <div v-if="Object.keys(userInfo).length > 0" class="main-card">
+          <div v-if="userInfo.password_reset_required" class="password-section">
+            <div class="main-card-title" style="border-bottom: none;">密码管理
+              <el-button
+                class="pwd-btn"
+                type="primary"
+                style="width: fit-content"
+                @click="handleResetPassword"
+              >重置密码</el-button>
+            </div>
+          </div>
+          <div v-else class="password-section">
             <div class="main-card-title">密码管理
               <el-button
                 class="pwd-btn"
@@ -53,7 +73,7 @@
               >密码验证</el-button>
             </div>
 
-            <el-form ref="resetPasswordForm" :model="resetPasswordForm" :rules="resetPasswordFormRules">
+            <el-form ref="resetPasswordForm" class="reset-password-form" :model="resetPasswordForm" :rules="resetPasswordFormRules">
               <div class="account-form">
                 当前密码
                 <el-form-item prop="password">
@@ -164,6 +184,65 @@
       </div>
     </el-dialog>
 
+    <!-- 绑定手机号Dialog -->
+    <el-dialog
+      :visible.sync="mobileBindingDialogVisible"
+      :before-close="handleMobileBindingDialogClose"
+      title="绑定手机号"
+      width="400px"
+      :show-close="true"
+      :lock-scroll="false"
+      :destroy-on-close="true"
+    >
+      <el-form ref="phoneCodeForm" class="phone-code-form" :model="phoneCodeForm" :rules="phoneCodeFormRules">
+        <el-form-item prop="phonePrefix" class="phone-prefix">
+          <el-select
+            v-model="phoneCodeForm.phonePrefix"
+            class="phone-prefix"
+            size="large"
+            popper-class="phone-prefix-select"
+          >
+            <el-option label="+86" value="+86" />
+            <!-- 可扩展其他区号 -->
+          </el-select>
+        </el-form-item>
+        <!-- 手机号-->
+        <el-form-item prop="phone" class="phone">
+          <el-input
+            v-model="phoneCodeForm.phone"
+            placeholder="请输入手机号"
+            size="large"
+          />
+        </el-form-item>
+        <!-- 验证码输入 -->
+        <el-form-item prop="code">
+          <el-input
+            ref="codeInput"
+            v-model="phoneCodeForm.code"
+            maxlength="6"
+            placeholder="请输入验证码"
+            size="large"
+          />
+          <div
+            type="text"
+            class="resend-btn"
+            :disabled="countDown > 0"
+            @click="handleSend"
+          >
+            <template v-if="countDown > 0">重新发送({{ countDown }})</template>
+            <template v-else>发送验证码</template>
+          </div>
+        </el-form-item>
+        <!-- 下一步按钮 -->
+        <el-button
+          type="primary"
+          size="large"
+          class="login-btn-wrapper"
+          @click.native.prevent="handleBindingPhone"
+        >绑定</el-button>
+      </el-form>
+    </el-dialog>
+
     <el-dialog :visible.sync="purchaseVisible" width="70%" :show-close="false" @open="onDialogOpen">
       <template slot="title">
         <div class="purchase-dialog-header">
@@ -215,10 +294,7 @@
 
 <script>
 
-import {
-  getUserInfo
-} from '@/api/generate';
-import { updatePassword } from '@/api/index';
+import { getUserInfo, updatePassword, sendSmsCode, bindPhone } from '@/api/index';
 import {
   getAllOrders,
   getAllUserMembershipPlans,
@@ -227,12 +303,26 @@ import {
 } from '@/api/subscription';
 import { generateRandomString } from '@/utils/index';
 import membershipRights from '@/views/userInterface/membership-rights';
-console.log('导入的 membershipRights:', membershipRights);
 export default {
   name: 'UserInterface',
   data() {
     return {
       userInfo: {},
+      phoneCodeForm: {
+        phonePrefix: '+86',
+        phone: '',
+        code: ''
+      },
+      phoneCodeFormRules: {
+        phone: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { pattern: /^1[3-9]\d{9}$/, message: '请输入有效的手机号', trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '请输入验证码', trigger: 'blur' },
+          { pattern: /^\d{6}$/, message: '验证码必须为6位数字', trigger: 'blur' }
+        ]
+      },
       resetPasswordForm: {
         password: '',
         newPassword: '',
@@ -265,6 +355,7 @@ export default {
       },
       loading: false,
       wechatBindingDialogVisible: false,
+      mobileBindingDialogVisible: false,
       purchaseVisible: false,
       tableData: [],
       endDate: '', // 最终到期日期
@@ -272,7 +363,9 @@ export default {
       allPlans: [], // 所有会员计划信息
       hasActiveYearlyPlan: false, // 是否有未到期的年会员订阅计划
       isDragging: false, // 是否正在拖拽
-      dragOffset: { x: 0, y: 0 } // 拖拽偏移量
+      dragOffset: { x: 0, y: 0 }, // 拖拽偏移量
+      countDown: 0, // 验证码倒计时
+      timer: null // 定时器
     };
   },
   computed: {
@@ -287,10 +380,10 @@ export default {
   },
   async created() {
     try {
-      const data = await getUserInfo();
+      const { data } = await getUserInfo();
       this.userInfo = data;
     } catch (error) {
-      console.log();
+      console.log('获取用户信息失败:', error);
     }
   },
   async activated() {
@@ -311,7 +404,71 @@ export default {
       console.error('获取订阅计划或到期时间失败:', error);
     }
   },
+  beforeDestroy() {
+    this.timer && clearInterval(this.timer);
+  },
   methods: {
+    handleSend() {
+      if (this.countDown > 0) return;
+      // 发送验证码逻辑
+      this.$refs.phoneCodeForm.validateField('phone', (errorMessage) => {
+        if (!errorMessage) {
+          this.countDown = 60;
+          this.timer = setInterval(() => {
+            if (this.countDown > 0) {
+              this.countDown--;
+            } else {
+              clearInterval(this.timer);
+            }
+          }, 1000);
+          sendSmsCode({
+            phone: this.phoneCodeForm.phonePrefix + this.phoneCodeForm.phone
+          }).then(() => {
+            this.$message.success('验证码已发送');
+            this.$refs.codeInput.focus();
+          }).catch(() => {
+            console.error('发送验证码失败');
+          });
+        }
+      });
+    },
+    // 处理绑定手机号
+    handleBindingPhone() {
+      this.$refs.phoneCodeForm.validate(async(valid) => {
+        if (valid) {
+          try {
+            await bindPhone({
+              phone: this.phoneCodeForm.phonePrefix + this.phoneCodeForm.phone,
+              code: this.phoneCodeForm.code
+            });
+            this.$message.success('手机号绑定成功');
+            this.mobileBindingDialogVisible = false;
+            // 重新获取用户信息
+            const { data } = await getUserInfo();
+            this.userInfo = data;
+          } catch (error) {
+            console.error('手机号绑定失败:', error);
+          }
+        } else {
+          this.$message.error('请检查输入的手机号和验证码');
+        }
+      });
+    },
+    handleMobileBindingDialogClose() {
+      this.mobileBindingDialogVisible = false;
+      this.phoneCodeForm = {
+        phonePrefix: '+86',
+        phone: '',
+        code: ''
+      };
+      this.countDown = 0;
+      this.timer && clearInterval(this.timer);
+    },
+    // 处理重置密码
+    handleResetPassword() {
+      // 跳转到重置密码页面
+      this.$router.push('/resetPassword');
+    },
     // 处理密码验证
     handlePasswordValidation() {
       this.$refs.resetPasswordForm.validate(async(valid) => {
@@ -735,8 +892,15 @@ export default {
 
 }
 
-::v-deep .el-input {
-  width: 300px;
+.reset-password-form {
+  padding: 20px 0;
+
+  .el-form-item {
+    margin-bottom: 24px;
+  }
+  ::v-deep .el-input {
+    width: 300px;
+  }
 }
 
 /* 购买记录弹框 */
@@ -804,5 +968,156 @@ export default {
   text-align: center;
   color: #333;
   font-size: 14px;
+}
+
+/* 手机号绑定表单样式 */
+.phone-code-form {
+  padding: 20px 0;
+
+  .el-form-item {
+    margin-bottom: 24px;
+  }
+
+  // 手机区号和手机号一行显示
+  .phone-prefix {
+    display: inline-block;
+    width: 100px;
+    margin-right: 12px;
+    vertical-align: top;
+
+    ::v-deep .el-input__inner {
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      height: 40px;
+      line-height: 40px;
+      font-size: 16px;
+      color: #333;
+      text-align: center;
+
+      &:focus {
+        border-color: #333;
+        background: #fff;
+      }
+    }
+
+    ::v-deep .el-input__suffix {
+      right: 8px;
+    }
+  }
+
+  .phone {
+    display: inline-block;
+    width: calc(100% - 112px);
+    vertical-align: top;
+
+    ::v-deep .el-input__inner {
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      height: 40px;
+      line-height: 40px;
+      font-size: 16px;
+      color: #333;
+      padding: 0 16px;
+
+      &::placeholder {
+        color: #999;
+        font-size: 16px;
+      }
+
+      &:focus {
+        border-color: #333;
+        background: #fff;
+      }
+    }
+  }
+
+  // 验证码输入框和发送按钮一行显示
+  .el-form-item:nth-child(3) {
+    position: relative;
+
+    ::v-deep .el-input {
+      width: calc(100% - 110px);
+      display: inline-block;
+      vertical-align: top;
+
+      .el-input__inner {
+        background: #f5f5f5;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        height: 40px;
+        line-height: 40px;
+        font-size: 16px;
+        color: #333;
+        padding: 0 16px;
+
+        &::placeholder {
+          color: #999;
+          font-size: 16px;
+        }
+
+        &:focus {
+          border-color: #333;
+          background: #fff;
+        }
+      }
+    }
+
+    .resend-btn {
+      display: inline-block;
+      width: 100px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      color: #333;
+      font-size: 14px;
+      cursor: pointer;
+      margin-left: 10px;
+      vertical-align: top;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #ebebeb;
+        border-color: #d0d0d0;
+      }
+
+      &[disabled] {
+        color: #999;
+        cursor: not-allowed;
+        background: #f9f9f9;
+
+        &:hover {
+          background: #f9f9f9;
+          border-color: #e0e0e0;
+        }
+      }
+    }
+  }
+
+  // 下一步按钮
+  .login-btn-wrapper {
+    width: 100%;
+    height: 48px;
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 24px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #333;
+    }
+
+    &:active {
+      background: #000;
+    }
+  }
 }
 </style>
