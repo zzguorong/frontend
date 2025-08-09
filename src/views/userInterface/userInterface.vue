@@ -280,7 +280,7 @@
     </el-dialog>
 
     <div
-      v-if="true"
+      v-if="hasActiveYearlyPlan"
       class="floating-qr"
       :style="{ cursor: 'move' }"
       @mousedown="startDrag"
