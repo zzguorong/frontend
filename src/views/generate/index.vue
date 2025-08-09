@@ -193,7 +193,7 @@
                     >
                       PSD下载
 
-                      <el-tooltip content="PSD下载功能" placement="top">
+                      <el-tooltip content="进行语义分割后可使用PSD下载" placement="top">
                         <svg-icon
                           icon-class="question"
                           class="icon-style"
