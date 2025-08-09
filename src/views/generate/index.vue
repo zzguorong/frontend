@@ -391,9 +391,12 @@
                         </div>
                       </div>
                       <el-select v-model="resolution" placeholder="选择分辨率" style="width: 100%">
-                        <el-option label="标准(1080P)" :value="1" />
-                        <el-option label="大(2k)" :value="2" />
-                        <el-option label="超大(4k)" :value="3" />
+                        <el-option
+                          v-for="item in resolutionOptions"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                        />
                       </el-select>
                     </div>
                     <!-- 图纸比例 -->
@@ -833,6 +836,18 @@ export default {
         this.selectedThumbnailItem.generatedImageId !== null &&
         this.selectedThumbnailItem.semanticImgUrlId !== undefined &&
         this.selectedThumbnailItem.semanticImgUrlId !== null;
+    },
+    resolutionOptions() {
+      const opts = [
+        { label: '标准(1080P)', value: 1 },
+        { label: '大(2k)', value: 2 }
+      ];
+
+      if (this.viewType === 1 || this.viewType === 2) {
+        opts.push({ label: '超大(4k)', value: 3 });
+      }
+
+      return opts;
     }
   },
   watch: {
@@ -861,6 +876,11 @@ export default {
     },
     viewType(val) {
       this.saveParam({ viewType: val });
+      if (val !== 1 && val !== 2) {
+        if (this.resolution === 3) {
+          this.resolution = 2; // 如果是鸟瞰或人视图，分辨率不能是4k
+        }
+      }
     },
     styleCategory(val) {
       this.saveParam({ styleCategory: val });
