@@ -6,7 +6,25 @@
         <!-- 用户头像 -->
         <div class="main-card">
           <div class="title">
-            <span>{{ userInfo.nickname }}</span>
+            <div class="user-profile">
+              <div class="user-avatar">
+                <img
+                  v-if="userInfo.avatar && !avatarLoadError"
+                  :src="userInfo.avatar"
+                  :alt="userInfo.nickname || '用户头像'"
+                  class="avatar-image"
+                  @error="handleAvatarError"
+                  @load="handleAvatarLoad"
+                />
+                <div v-else class="default-avatar">
+                  <svg class="avatar-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="8" r="4" fill="currentColor"/>
+                    <path d="M12 14c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5z" fill="currentColor"/>
+                  </svg>
+                </div>
+              </div>
+              <span class="user-nickname">{{ userInfo.nickname }}</span>
+            </div>
           </div>
         </div>
         <!-- 我的账户 -->
@@ -138,7 +156,7 @@
                   :key="index"
                   class="plan-rights-item"
                 >
-                  <i class="el-icon-check" style="color: #9A9A9A" />
+                  <i class="el-icon-check" />
                   <span>{{ item }}</span>
                 </div>
               </div>
@@ -308,6 +326,7 @@ export default {
   data() {
     return {
       userInfo: {},
+      avatarLoadError: false, // 头像加载错误状态
       phoneCodeForm: {
         phonePrefix: '+86',
         phone: '',
@@ -382,6 +401,7 @@ export default {
     try {
       const { data } = await getUserInfo();
       this.userInfo = data;
+      this.avatarLoadError = false; // 重置头像加载错误状态
     } catch (error) {
       console.log('获取用户信息失败:', error);
     }
@@ -408,6 +428,14 @@ export default {
     this.timer && clearInterval(this.timer);
   },
   methods: {
+    // 处理头像加载错误
+    handleAvatarError() {
+      this.avatarLoadError = true;
+    },
+    // 处理头像加载成功
+    handleAvatarLoad() {
+      this.avatarLoadError = false;
+    },
     handleSend() {
       if (this.countDown > 0) return;
       // 发送验证码逻辑
@@ -446,6 +474,7 @@ export default {
             // 重新获取用户信息
             const { data } = await getUserInfo();
             this.userInfo = data;
+            this.avatarLoadError = false; // 重置头像加载错误状态
           } catch (error) {
             console.error('手机号绑定失败:', error);
           }
@@ -593,8 +622,11 @@ export default {
 <style lang="scss" scoped>
 .user-interface-page {
   min-height: calc(100vh - 180px);
+  background: #f8f9fa;
   display: flex;
   flex-direction: column;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
   .main-content {
     display: flex;
@@ -618,62 +650,197 @@ export default {
 
     .main-card {
       background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
-      /* padding: 0 0 24px 0; */
-      margin-bottom: 0;
-      margin-bottom: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+      margin-bottom: 24px;
+      border: 1px solid #f0f2f5;
 
       .title {
-        font-size: 21px;
-        padding: 18px 24px 20px 24px;
-        border-bottom: 1px solid #f0f0f0;
+        font-size: 20px;
+        font-weight: 600;
+        padding: 24px 28px 20px 28px;
+        border-bottom: 1px solid #f8f9fa;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        color: #333333;
+
+        .user-profile {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          width: 100%;
+
+          @media (max-width: 768px) {
+            gap: 12px;
+          }
+
+          .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border: 2px solid #e8ecef;
+            flex-shrink: 0;
+
+            @media (max-width: 768px) {
+              width: 40px;
+              height: 40px;
+            }
+
+            .avatar-image {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              border-radius: 50%;
+            }
+
+            .default-avatar {
+              width: 100%;
+              height: 100%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background: #000000;
+              color: #ffffff;
+              position: relative;
+              overflow: hidden;
+
+              &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(135deg, #000000 0%, #333333 50%, #000000 100%);
+                opacity: 0.1;
+                z-index: 1;
+              }
+
+              .avatar-icon {
+                width: 24px;
+                height: 24px;
+                color: #ffffff;
+                z-index: 2;
+                position: relative;
+
+                @media (max-width: 768px) {
+                  width: 20px;
+                  height: 20px;
+                }
+              }
+            }
+          }
+
+          .user-nickname {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333333;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            @media (max-width: 768px) {
+              font-size: 18px;
+            }
+          }
+        }
       }
 
       .main-card-title {
-        font-size: 20px;
-        padding: 26px 24px 12px 24px;
-        border-bottom: 1px solid #f0f0f0;
+        font-size: 18px;
+        font-weight: 600;
+        padding: 24px 28px 16px 28px;
+        border-bottom: 1px solid #f8f9fa;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        color: #333333;
       }
     }
   }
 }
 
 .account-form {
-  padding: 0 24px 0 24px;
+  padding: 16px 28px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 18px;
-  margin-bottom: 32px;
+  font-size: 14px;
+  color: #333333;
+  font-weight: 400;
+  border-bottom: 1px solid #f8f9fa;
+  min-height: 60px;
+
+  &:last-child {
+    border-bottom: none;
+  }
 
   .btn-wx-check {
-    background: #6C6C6C;
-    color: #fff;
-    border-radius: 40px;
-    border: none;
-    font-size: 16px;
-    height: 38px;
+    background: #000000 !important;
+    color: #ffffff !important;
+    border-radius: 20px;
+    border: none !important;
+    font-size: 14px;
+    font-weight: 500;
+    height: 36px;
+    padding: 0 20px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #333333 !important;
+      color: #ffffff !important;
+
+      span {
+        color: #ffffff !important;
+      }
+    }
+
+    &:focus {
+      background: #000000 !important;
+      color: #ffffff !important;
+
+      span {
+        color: #ffffff !important;
+      }
+    }
+
+    span {
+      color: #ffffff !important;
+    }
   }
 }
 
 ::v-deep .el-form {
-  padding: 12px 0;
+  padding: 0;
 }
 
 ::v-deep .el-form-item {
   margin-bottom: 0;
 }
 
-.account-form .el-form-item {
-  font-size: 18px;
-  font-weight: 500;
+::v-deep .el-input__inner {
+  border: 1px solid #e8ecef;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333333;
+  background: #fff;
+  transition: all 0.2s ease;
+
+  &:focus {
+    border-color: #000000;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+  }
+
+  &::placeholder {
+    color: #9ca3af;
+  }
 }
 
 .save-btn {
@@ -686,10 +853,6 @@ export default {
 }
 
 .password-section {
-  padding: 0 0 12px 0;
-  border-top: 1px solid #f0f0f0;
-  margin-top: 10px;
-
   .password-title {
     font-size: 16px;
     font-weight: bold;
@@ -697,25 +860,109 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f8f9fa;
     padding-bottom: 8px;
   }
-}
 
-.password-form .el-form-item {
-  margin-bottom: 18px;
+  .pwd-btn {
+    background: #000000 !important;
+    color: #ffffff !important;
+    border-radius: 20px;
+    border: none !important;
+    font-size: 14px;
+    font-weight: 500;
+    height: 36px;
+    padding: 0 20px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #333333 !important;
+      color: #ffffff !important;
+
+      span {
+        color: #ffffff !important;
+      }
+    }
+
+    &:focus {
+      background: #000000 !important;
+      color: #ffffff !important;
+
+      span {
+        color: #ffffff !important;
+      }
+    }
+  }
+
+  .reset-password-form {
+    padding: 0;
+
+    .account-form {
+      padding: 16px 28px;
+      border-bottom: 1px solid #f8f9fa;
+      font-size: 14px;
+      color: #333333;
+      font-weight: 400;
+      min-height: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .el-form-item {
+        margin-bottom: 0;
+        width: 400px;
+        margin-left: 20px;
+
+        ::v-deep .el-input {
+          width: 100%;
+
+          .el-input__inner {
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            padding: 0 15px;
+            height: 40px;
+            line-height: 40px;
+            font-size: 14px;
+
+            &:focus {
+              border-color: #000000;
+              box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+            }
+          }
+        }
+
+        @media (max-width: 768px) {
+          width: 240px;
+        }
+
+        @media (max-width: 480px) {
+          width: 180px;
+        }
+      }
+    }
+  }
 }
 
 .password-tips {
   font-size: 12px;
-  color: #888;
-  margin-top: 8px;
+  color: #6c757d;
+  margin-top: 0;
   margin-bottom: 0;
-  padding-left: 24px;
-  padding-bottom: 24px;
+  padding: 16px 28px 24px 28px;
+  background: #f8f9fa;
+  border-radius: 0 0 12px 12px;
+  line-height: 1.5;
 
   div {
-    margin-bottom: 12px;
+    margin-bottom: 6px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }
 
@@ -729,80 +976,135 @@ export default {
 }
 
 .plan-info {
-  padding: 24px 24px 24px 24px;
-  font-size: 15px;
-  color: #222;
+  padding: 24px 28px;
+  font-size: 14px;
+  color: #333333;
 
   .plan-title {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
-    margin-top: 13px;
+    margin-bottom: 16px;
+    color: #333333;
 
     .buy-btn {
-      color: #000;
+      color: #000000;
       font-size: 14px;
-      border-bottom: 1px solid #000;
-      border-radius: 0;
-      padding-bottom: 4px;
       font-weight: 500;
+      border-bottom: 1px solid #000000;
+      border-radius: 0;
+      padding: 0 0 2px 0;
+      background: none;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      transition: all 0.2s ease;
+
+      &:hover {
+        color: #333333;
+        border-bottom-color: #333333;
+      }
     }
   }
 
   .plan-name {
-    padding: 15px;
-    border: 1px #000 solid;
-    border-radius: 6px;
-    margin: 15px 0 20px 0;
+    padding: 20px;
+    border: 1px solid #e8ecef;
+    border-radius: 8px;
+    margin: 16px 0 20px 0;
+    background: #fff;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
 
     .plan-name-title {
       display: flex;
       justify-content: space-between;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 500;
+      color: #333333;
+
+      span {
+        font-weight: 600;
+        color: #000000;
+      }
     }
   }
 }
 
 .plan-rights {
-  background: #f6f6f6;
-  border-radius: 4px;
-  padding: 12px 16px;
-  margin-top: 10px;
-  font-size: 15px;
-  border: 1px #ccc solid;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 12px;
+  font-size: 14px;
+  border: 1px solid #e8ecef;
+  position: relative;
+  min-height: 240px;
+  overflow: hidden;
 }
 
 .plan-rights-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 
-  div {
-    margin: 2px 0;
+  .plan-rights-item {
     display: flex;
+    align-items: flex-start;
     gap: 10px;
+    color: #4a5568;
+    line-height: 1.4;
+    white-space: nowrap;
+
+    .el-icon-check {
+      color: #000000 !important;
+      font-size: 14px;
+      font-weight: 600;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    span {
+      font-size: 14px;
+      color: #333333;
+      font-weight: 400;
+      white-space: nowrap;
+    }
   }
 }
 
+.usage-section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f2f5;
+}
+
 .usage-list {
-  padding-bottom: 24px;
-  font-size: 15px;
-  color: #222;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e8ecef;
 
   .usage-item {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 15px;
-    color: #6C6C6C;
+    align-items: center;
+    padding: 12px 0;
+    font-size: 14px;
+    color: #333333;
+    border-bottom: 1px solid #f0f2f5;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    span {
+      font-weight: 600;
+      color: #000000;
+    }
   }
 }
 
@@ -816,10 +1118,15 @@ export default {
 }
 
 .footer-link {
-  color: #aaa;
+  color: #6c757d;
   font-size: 14px;
-  margin-right: 24px;
+  font-weight: 500;
   cursor: pointer;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #333333;
+  }
 }
 
 .logout-title,
@@ -846,15 +1153,7 @@ export default {
   margin-left: 35px;
 }
 
-.pwd-btn {
-  background: #000;
-  color: #fff;
-  border-radius: 40px;
-  border: none;
-  font-size: 16px;
-  height: 38px;
 
-}
 
 .agree-word {
   font-weight: 600;
@@ -892,16 +1191,7 @@ export default {
 
 }
 
-.reset-password-form {
-  padding: 20px 0;
 
-  .el-form-item {
-    margin-bottom: 24px;
-  }
-  ::v-deep .el-input {
-    width: 300px;
-  }
-}
 
 /* 购买记录弹框 */
 .purchase-dialog-header {
