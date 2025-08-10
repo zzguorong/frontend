@@ -93,7 +93,7 @@
                   >
                     PSD下载
 
-                    <el-tooltip content="PSD下载功能" placement="top">
+                    <el-tooltip content="进行语义分割后可使用PSD下载" placement="top">
                       <svg-icon
                         icon-class="question"
                         class="icon-style"
@@ -444,7 +444,8 @@ import {
   getUserFavoriteImages,
   getUserRemainingDownloads,
   getUserRemainingPSDDownloads,
-  unfavoriteGeneratedImage
+  unfavoriteGeneratedImage,
+  getPerspectiveStyle
 } from '@/api/generate';
 // import 'simplebar/dist/simplebar.min.css';
 import { downloadFile } from '@/utils/downLoad';
@@ -461,7 +462,7 @@ export default {
       currentImageInSet: 0, // 当前显示的是该项目images数组中的第几张图片
 
       // 选项数据
-      viewTypeOptions: [{ label: '室内图', value: '4' }],
+      perspectiveOptions: [], // 视角类型
       styleCategoryOptions: [{ label: '通用', value: '通用' }],
       galleryItems: [],
       // 收藏状态 - 使用二维数组匹配新的数据结构
@@ -585,6 +586,15 @@ export default {
       // 只有选择了生图，且该生图存在语义分割图的情况下，才可以点击PSD下载
       return this.generatedImageId !== null && this.semanticImgUrlId !== null;
     }
+  },
+  created() {
+    getPerspectiveStyle().then((res) => {
+      this.perspectiveOptions = res.data.map((item) => ({
+        label: item.name,
+        value: item.id,
+        raw: item
+      }));
+    });
   },
   // 生命周期钩子
   activated() {
@@ -936,16 +946,10 @@ export default {
         new Array(dateGroup.galleryItem.length).fill(false)
       );
     },
-
-    viewTypeFormat(row) {
-      const statusMap = {
-        1: '鸟瞰图小尺寸',
-        2: '鸟瞰图大尺寸',
-        3: '人视图',
-        4: '平面图',
-        5: '室内图'
-      };
-      return statusMap[row] || '';
+    viewTypeFormat(val) {
+      // 从perspectiveOptions中匹配value相同的
+      const option = this.perspectiveOptions.find(item => item.value === val);
+      return option ? option.label : '';
     },
     styleTypeFormat(row) {
       const statusMap = {

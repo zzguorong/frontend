@@ -193,7 +193,7 @@
                     >
                       PSD下载
 
-                      <el-tooltip content="PSD下载功能" placement="top">
+                      <el-tooltip content="进行语义分割后可使用PSD下载" placement="top">
                         <svg-icon
                           icon-class="question"
                           class="icon-style"
@@ -391,9 +391,12 @@
                         </div>
                       </div>
                       <el-select v-model="resolution" placeholder="选择分辨率" style="width: 100%">
-                        <el-option label="标准(1080P)" :value="1" />
-                        <el-option label="大(2k)" :value="2" />
-                        <el-option label="超大(4k)" :value="3" />
+                        <el-option
+                          v-for="item in resolutionOptions"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                        />
                       </el-select>
                     </div>
                     <!-- 图纸比例 -->
@@ -833,6 +836,19 @@ export default {
         this.selectedThumbnailItem.generatedImageId !== null &&
         this.selectedThumbnailItem.semanticImgUrlId !== undefined &&
         this.selectedThumbnailItem.semanticImgUrlId !== null;
+    },
+    resolutionOptions() {
+      const opts = [
+        { label: '标准(1080P)', value: 1 },
+        { label: '大(2k)', value: 2 }
+      ];
+
+      // 鸟瞰图(viewType: 1)时，可以选择超大(4k)
+      if (this.viewType === 1) {
+        opts.push({ label: '超大(4k)', value: 3 });
+      }
+
+      return opts;
     }
   },
   watch: {
@@ -861,6 +877,11 @@ export default {
     },
     viewType(val) {
       this.saveParam({ viewType: val });
+      if (val !== 1) {
+        if (this.resolution === 3) {
+          this.resolution = 2; // 如果是平面图或人视图或室内图，分辨率不能是4k
+        }
+      }
     },
     styleCategory(val) {
       this.saveParam({ styleCategory: val });
