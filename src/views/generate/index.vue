@@ -843,7 +843,8 @@ export default {
         { label: '大(2k)', value: 2 }
       ];
 
-      if (this.viewType === 1 || this.viewType === 2) {
+      // 鸟瞰图(viewType: 1)时，可以选择超大(4k)
+      if (this.viewType === 1) {
         opts.push({ label: '超大(4k)', value: 3 });
       }
 
@@ -876,9 +877,9 @@ export default {
     },
     viewType(val) {
       this.saveParam({ viewType: val });
-      if (val !== 1 && val !== 2) {
+      if (val !== 1) {
         if (this.resolution === 3) {
-          this.resolution = 2; // 如果是鸟瞰或人视图，分辨率不能是4k
+          this.resolution = 2; // 如果是平面图或人视图或室内图，分辨率不能是4k
         }
       }
     },
