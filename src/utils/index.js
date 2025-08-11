@@ -123,6 +123,7 @@ export async function blobUrlToBase64(blobUrl) {
   try {
     if (process.env.NODE_ENV === 'development') {
       blobUrl = blobUrl.replace('https://api.gaiass.com', '');
+      blobUrl = blobUrl.replace('https://sd-files-storage-1324196168.cos.ap-nanjing.myqcloud.com', '');
     }
     const response = await fetch(blobUrl);
     const blob = await response.blob();

@@ -1318,9 +1318,9 @@ export default {
         // 6. 异常处理
         console.error('生成接口错误:', err);
         this.isGenerating = false;
-        this.$message.error('生成图片失败，请稍后重试');
         // 删除第三个位置
         this.thumbnails.splice(2, 1);
+        this.getUserRemainingGenerations();
       }
     },
 
