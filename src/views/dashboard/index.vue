@@ -98,12 +98,14 @@
           <div class="link-column">
             <h3>关于我们 & 安全</h3>
             <ul>
-              <li><a href="/aboutUs" aria-label="了解关于我们">关于我们</a></li>
               <li>
-                <a href="/privacyPolicy" aria-label="查看隐私政策">隐私政策</a>
+                <router-link to="/aboutUs" aria-label="了解关于我们">关于我们</router-link>
               </li>
               <li>
-                <a href="/termOfservice" aria-label="查看用户协议">用户协议</a>
+                <router-link to="/privacyPolicy" aria-label="查看隐私政策">隐私政策</router-link>
+              </li>
+              <li>
+                <router-link to="/termOfservice" aria-label="查看用户协议">用户协议</router-link>
               </li>
             </ul>
           </div>
@@ -397,7 +399,9 @@ export default {
     li {
       margin-bottom: 12px;
 
-      a {
+      a,
+      .router-link-active,
+      .router-link-exact-active {
         font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial,
           sans-serif;
         font-size: 14px;
@@ -405,6 +409,7 @@ export default {
         text-decoration: none;
         line-height: 1.5;
         transition: color 0.2s ease;
+        cursor: pointer;
 
         &:hover {
           color: #ffffff;
@@ -450,7 +455,7 @@ export default {
 // 响应式设计
 @media (max-width: 1024px) {
   .hero-section {
-    /* min-height: 60vh; */
+    // min-height: 60vh;
     background-attachment: scroll;
   }
 
@@ -474,7 +479,7 @@ export default {
 
 @media (max-width: 768px) {
   .hero-section {
-    /* min-height: 50vh; */
+    // min-height: 50vh;
     padding: 40px 0;
   }
 
@@ -529,7 +534,7 @@ export default {
 
 @media (max-width: 480px) {
   .hero-section {
-    /* min-height: 40vh; */
+    // min-height: 40vh;
     padding: 30px 0;
   }
 
@@ -573,7 +578,7 @@ export default {
   .hero-section {
     background: none;
     color: #000000;
-    /* min-height: auto; */
+    // min-height: auto;
 
     &::before {
       display: none;
