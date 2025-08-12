@@ -37,7 +37,6 @@ router.beforeEach(async(to, from, next) => {
     } else {
       // 如果to.path是这些路径：/AIdialogue，/imageToVideo， /AImodeling，/communityExploration，则中断跳转：
       if (['/AIdialogue', '/imageToVideo', '/AImodeling', '/communityExploration'].includes(to.path)) {
-        Message.warning('该功能正在研发中，请耐心等待！');
         // 中断跳转
         next(false);
         NProgress.done();

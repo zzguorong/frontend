@@ -316,7 +316,7 @@
                           <div class="slider-control">
                             <div class="slider-title">
                               <label>控制程度</label>
-                              <el-tooltip content="是生成图与底图颜色材质的相似程度" placement="top">
+                              <el-tooltip content="是生成图与底图颜色材质的相似程度，建议数值≤9" placement="top">
                                 <svg-icon icon-class="question" class="icon-style" />
                                 <!-- <i class="question-icon">?</i> -->
                               </el-tooltip>
