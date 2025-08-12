@@ -240,10 +240,25 @@
 <script>
 export default {
   name: 'PrivacyPolicy',
+  data() {
+    return {
+      canGoBack: false
+    };
+  },
+  mounted() {
+    // 检查是否可以返回上一页 - 使用更可靠的方法
+    this.canGoBack = window.history.length > 1;
+  },
   methods: {
     close() {
+      // 使用更可靠的导航检查方式
       try {
-        this.$router.go(-1);
+        // 尝试检查是否有来源页面
+        if (this.canGoBack && document.referrer && document.referrer !== '' && document.referrer !== window.location.href) {
+          this.$router.go(-1);
+        } else {
+          this.$router.push('/');
+        }
       } catch (error) {
         // 如果出现任何错误，默认跳转到首页
         console.warn('Navigation error:', error);
