@@ -15,6 +15,12 @@
   <meta name="robots" content="index,follow">
   <meta name="theme-color" content="#1a1a1a">
 
+  <!-- Bing特定的H1标题优化 -->
+  <meta name="title" content="GAIAHubs - 专业空间AI工具平台 | AIGC生成、语义分割、智能设计">
+  <meta name="headline" content="GAIAHubs: 专业空间AI工具平台">
+  <meta name="page-topic" content="空间AI设计工具">
+  <meta name="page-type" content="主页">
+
   <!-- DNS预解析优化 -->
   <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
   <link rel="dns-prefetch" href="//res.wx.qq.com">
@@ -74,10 +80,51 @@
 </head>
 
 <body>
+  <!-- SEO友好的静态内容 - 对搜索引擎可见但对用户隐藏 -->
+  <div id="seo-content" style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;">
+    <header>
+      <h1>GAIAHubs - 专业空间AI工具平台</h1>
+      <h2>AIGC生成、语义分割、智能设计一站式解决方案</h2>
+    </header>
+
+    <main>
+      <section>
+        <h3>核心功能</h3>
+        <p>GAIAHubs是领先的空间AI工具平台，提供AIGC生成、PSD语义分割、草图转图像等专业功能。支持鸟瞰图、室内设计、平面图生成，助力设计师高效完成空间设计与图像处理工作。</p>
+        <ul>
+          <li>AIGC图像生成技术</li>
+          <li>PSD分层语义分割</li>
+          <li>草图转专业设计图</li>
+          <li>多视角场景覆盖</li>
+          <li>AI对话式设计</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>服务领域</h3>
+        <p>专注于空间设计领域，覆盖建筑设计、室内设计、景观设计等多个专业方向。</p>
+      </section>
+    </main>
+
+    <nav aria-label="主要导航">
+      <ul>
+        <li><a href="/" title="首页">首页</a></li>
+        <li><a href="/generate" title="开始创作">开始创作</a></li>
+        <li><a href="/aboutUs" title="关于我们">关于我们</a></li>
+        <li><a href="/privacyPolicy" title="隐私政策">隐私政策</a></li>
+        <li><a href="/termOfservice" title="用户协议">用户协议</a></li>
+      </ul>
+    </nav>
+  </div>
+
   <noscript>
-    <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled.
-        Please enable it to continue.</strong>
+    <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
+      <h1>GAIAHubs - 专业空间AI工具平台</h1>
+      <p><strong>抱歉，GAIAHubs需要启用JavaScript才能正常工作。请启用JavaScript后继续使用。</strong></p>
+      <p>GAIAHubs是专业的空间AI工具平台，提供AIGC生成、语义分割、智能设计等功能。</p>
+    </div>
   </noscript>
+
   <div id="app"></div>
   <!-- built files will be auto injected -->
 </body>
