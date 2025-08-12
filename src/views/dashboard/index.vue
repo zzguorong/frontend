@@ -224,8 +224,7 @@ export default {
 
 // Hero Section 样式
 .hero-section {
-  flex: 1;
-  min-height: 70vh;
+  height: 100vh;
   background: url("~@/assets/images/dashboard-1.jpg") no-repeat center center;
   background-size: cover;
   background-attachment: fixed;
@@ -432,16 +431,31 @@ export default {
     color: #cccccc;
     line-height: 1.6;
     margin-top: 8px;
-    white-space: nowrap;
-    overflow: hidden;
+    /* white-space: nowrap; */
     text-overflow: ellipsis;
+    width: 22vw;
+
+    @media (max-width: 768px) {
+      font-size: 13px; // 调整字体大小
+      text-align: center; // 居中显示
+      white-space: normal; // 允许换行
+      overflow: visible; // 取消溢出隐藏
+      margin-top: 12px; // 增加间距
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 12px; // 更小屏幕进一步调整字体大小
+      margin-top: 16px; // 增加间距
+      white-space: pre-wrap;
+    }
   }
 }
 
 // 响应式设计
 @media (max-width: 1024px) {
   .hero-section {
-    min-height: 60vh;
+    // min-height: 60vh;
     background-attachment: scroll;
   }
 
@@ -465,7 +479,7 @@ export default {
 
 @media (max-width: 768px) {
   .hero-section {
-    min-height: 50vh;
+    // min-height: 50vh;
     padding: 40px 0;
   }
 
@@ -520,7 +534,7 @@ export default {
 
 @media (max-width: 480px) {
   .hero-section {
-    min-height: 40vh;
+    // min-height: 40vh;
     padding: 30px 0;
   }
 
@@ -564,7 +578,7 @@ export default {
   .hero-section {
     background: none;
     color: #000000;
-    min-height: auto;
+    // min-height: auto;
 
     &::before {
       display: none;
