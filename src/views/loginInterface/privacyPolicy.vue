@@ -1,6 +1,6 @@
 <template>
   <div class="service-container">
-     <div class="service-title">GAIA隐私政策  <i class="el-icon-close close-icon" @click="close"></i></div>
+    <div class="service-title">GAIAHubs 隐私政策  <i class="el-icon-close close-icon" @click="close" /></div>
 
     <div class="service-date">发布日期：2025年7月26日星期六</div>
     <div class="service-date">生效日期：2025年7月26日星期六</div>
