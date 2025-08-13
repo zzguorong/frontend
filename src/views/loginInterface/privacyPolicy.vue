@@ -1,7 +1,7 @@
 <template>
   <div class="service-container">
-    <i class="el-icon-close close-icon" @click="close" />
-    <div class="service-title">GAIA隐私政策</div>
+     <div class="service-title">GAIA隐私政策  <i class="el-icon-close close-icon" @click="close"></i></div>
+
     <div class="service-date">发布日期：2025年7月26日星期六</div>
     <div class="service-date">生效日期：2025年7月26日星期六</div>
     <div class="service-intro service-intro-item">一）本政策适用范围</div>
@@ -264,13 +264,14 @@ export default {
     font-weight: 500;
     font-size: 20px;
     font-size: 20px;
-    position: fixed;
-    top: 50px;
-    left: 1250px;
+    position: absolute;
+    top: 0;
+   right: 0;
     cursor: pointer;
   }
 
   .service-title {
+     position: relative;
     font-size: 22px;
   }
 
