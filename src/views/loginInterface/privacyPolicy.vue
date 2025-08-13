@@ -242,7 +242,11 @@ export default {
   name: 'PrivacyPolicy',
   methods: {
     close() {
-      this.$router.push('/');
+      if (window.history.state.back === null || window.history.length <= 1) {
+        this.$router.push('/');
+      } else {
+        this.$router.go(-1);
+      }
     }
   }
 };
