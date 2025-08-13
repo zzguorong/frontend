@@ -55,8 +55,8 @@
       <div class="content first">
         <h2 class="animate-element" data-delay="0" style="line-height: 57px;">语义分割+PSD下载操作演示</h2>
         <div class="animate-element" data-delay="0.4" style="width: 80%;margin-top: 7vh;">
-          <video controls autoplay loop muted style="width: 100%; height: 100%;">
-            <source src="https://www.gaiass.com/gaiass-guidence.mp4" type="video/mp4">
+          <video controls loop muted style="width: 100%; height: 100%;">
+            <source src="https://sd-files-storage-1324196168.cos.ap-nanjing.myqcloud.com/public_files/videos/guide_tour.mp4" type="video/mp4">
           </video>
         </div>
       </div>
