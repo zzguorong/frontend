@@ -3232,7 +3232,7 @@ export default {
 
 </script>
 
-<style  lang="scss" scoped>
+<style lang="scss" scoped>
 .app-container {
   /* // 根据顶部导航栏的高度 */
   height: calc(100vh - 70px);
