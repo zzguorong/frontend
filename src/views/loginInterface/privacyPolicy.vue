@@ -231,7 +231,8 @@
     <div class="sevice-content">
       <span>如您在使用过程中有任何问题、建议或投诉，可通过以下方式与我们联系：</span><br>
       <span>公司名称：深石（深圳）智能科技有限公司</span><br>
-      <span>联系邮箱：contact@gaia.com</span>
+      <span>联系邮箱：contact@gaiass.com</span><br>
+      <span>微信服务号：GAIAHubs</span>
     </div>
 
   </div>
