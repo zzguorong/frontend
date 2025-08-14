@@ -193,7 +193,30 @@
                     >
                       PSD下载
 
-                      <el-tooltip content="进行语义分割后可使用PSD下载" placement="top">
+                      <el-tooltip placement="top" popper-class="psd-tooltip-custom">
+                        <div slot="content" class="psd-tooltip-content">
+                          <div class="tooltip-section">
+                            <div class="tooltip-text">
+                              <p class="tooltip-item">
+                                <span class="bullet">•</span>
+                                进行语义分割后可使用PSD下载
+                              </p>
+                            </div>
+                          </div>
+                          <div class="tooltip-image-section">
+                            <div class="tooltip-image-content">
+                              <p class="tooltip-image-item">
+                                <span class="bullet">•</span>
+                                下载后PSD最下边图层未设置蒙版，检查效果请关闭
+                              </p>
+                              <img
+                                src="@/assets/images/psd_edit_guidence.png"
+                                alt="PSD编辑指导图"
+                                class="guidance-image"
+                              >
+                            </div>
+                          </div>
+                        </div>
                         <svg-icon
                           icon-class="question"
                           class="icon-style"
@@ -3209,7 +3232,7 @@ export default {
 
 </script>
 
-<style  lang="scss" scoped>
+<style lang="scss" scoped>
 .app-container {
   /* // 根据顶部导航栏的高度 */
   height: calc(100vh - 70px);
@@ -4507,5 +4530,99 @@ export default {
     overflow-x: auto;
   }
 
+}
+
+/* PSD下载 tooltip 自定义样式 */
+::v-deep .psd-tooltip-custom {
+  max-width: 350px;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  border: 1px solid #34495e;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  padding: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #ffffff;
+}
+
+::v-deep .psd-tooltip-custom .el-tooltip__popper[x-placement^="top"] .el-tooltip__arrow {
+  border-top-color: #2c3e50;
+}
+
+.psd-tooltip-content {
+  padding: 16px;
+}
+
+.tooltip-section {
+  margin-bottom: 12px;
+}
+
+.tooltip-section:last-child {
+  margin-bottom: 0;
+}
+
+.tooltip-text {
+  line-height: 1.6;
+}
+
+.tooltip-item {
+  margin: 8px 0;
+  display: flex;
+  align-items: flex-start;
+  color: #ffffff;
+  font-size: 13px;
+}
+
+.tooltip-item:first-child {
+  margin-top: 0;
+}
+
+.tooltip-item:last-child {
+  margin-bottom: 0;
+}
+
+.bullet {
+  color: #66b3ff;
+  font-weight: bold;
+  margin-right: 8px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.tooltip-image-section {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.tooltip-image-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tooltip-image-item {
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  color: #ffffff;
+  font-size: 13px;
+}
+
+.tooltip-image-item .bullet {
+  color: #66b3ff;
+  font-weight: bold;
+  margin-right: 8px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.guidance-image {
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid #e4e7ed;
+  display: block;
+  margin: 0 auto;
 }
 </style>
