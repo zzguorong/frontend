@@ -74,6 +74,54 @@ export function getGalleryImages(params) {
     params
   });
 }
+// 获取用户生成的单张图片
+export function getSingleGeneratedImage(imageId) {
+  return request({
+    url: `/generated_image/single/${imageId}`,
+    method: 'get'
+  });
+}
+// 获取用户生成的单张图片URL
+export function getSingleGeneratedImageUrl(imageId) {
+  return getSingleGeneratedImage(imageId).then(response => response.data ? response.data.url : '');
+}
+
+// 获取单个底图信息
+export function getSingleBaseImage(imageId) {
+  return request({
+    url: `/base_image/single/${imageId}`,
+    method: 'get'
+  });
+}
+// 获取单个底图信息URL
+export function getSingleBaseImageUrl(imageId) {
+  return getSingleBaseImage(imageId).then(response => response.data ? response.data.url : '');
+}
+
+// 获取单个语义分割图信息
+export function getSingleSegmentImage(imageId) {
+  return request({
+    url: `/segment_image/single/${imageId}`,
+    method: 'get'
+  });
+}
+
+// 获取单个语义分割图信息URL
+export function getSingleSegmentImageUrl(imageId) {
+  return getSingleSegmentImage(imageId).then(response => response.image ? response.image.url : '');
+}
+
+// 获取单个风格图信息
+export function getSingleStyleImage(imageId) {
+  return request({
+    url: `/style_image/single/${imageId}`,
+    method: 'get'
+  });
+}
+// 获取单个风格图信息URL
+export function getSingleStyleImageUrl(imageId) {
+  return getSingleStyleImage(imageId).then(response => response.data ? response.data.url : '');
+}
 
 // 删除图片
 export function deleteImage(type, id) {
