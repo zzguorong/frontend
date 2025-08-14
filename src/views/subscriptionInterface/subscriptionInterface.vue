@@ -645,9 +645,10 @@ export default {
 
 .price-amount-number {
   display: inline-block;
-  width: 70px;
+  /* width: 70px; */
   text-align: right;
   font-size: 32px;
+  margin-left: 8px;
 }
 
 .price-trigger:hover {
@@ -942,13 +943,14 @@ table tbody tr:nth-child(odd) {
   left: 10px;
   color: #999;
   font-size: 16px;
+  line-height: 32px;
 }
 
 .price-unit {
   font-size: 14px;
   color: #999;
   margin-left: 0px;
-  height: 15px
+  height: 2vh
 }
 
 .price-arrow {
