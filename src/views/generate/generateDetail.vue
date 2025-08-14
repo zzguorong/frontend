@@ -216,7 +216,7 @@
                         >
                           <!-- 图片预览 -->
                           <div class="item-preview">
-                            <img v-if="item.image" :src="item.image" alt="画廊图片" loading="lazy">
+                            <img v-if="item.thumbnailImage" :src="item.thumbnailImage" alt="画廊图片" loading="lazy">
                             <div v-else class="empty-item" />
 
                             <!-- 图片数量标识 -->
@@ -464,11 +464,11 @@ import {
   generatePNG,
   generatePSD,
   getGalleryImages,
+  getPerspectiveStyle,
   getUserFavoriteImages,
   getUserRemainingDownloads,
   getUserRemainingPSDDownloads,
-  unfavoriteGeneratedImage,
-  getPerspectiveStyle
+  unfavoriteGeneratedImage
 } from '@/api/generate';
 // import 'simplebar/dist/simplebar.min.css';
 import { downloadFile } from '@/utils/downLoad';
@@ -897,7 +897,8 @@ export default {
           styleImgUrl: item.style_images?.url || null,
           styleImageId: item.style_image_id,
           isFavorite: false,
-          created_at: generatedImage.created_at // 添加创建时间用于排序
+          created_at: generatedImage.created_at, // 添加创建时间用于排序
+          thumbnailImage: generatedImage.thumbnails[0].url // 添加缩略图
         }]
       };
     },
@@ -1502,6 +1503,7 @@ export default {
         });
     },
     // 选择画廊项目
+    // firstPreviewUrl：首次预览时传
     selectGalleryItem(globalIndex, dateIndex, itemIndex) {
       this.currentImageIndex = globalIndex;
       this.currentImageInSet = 0; // 重置为显示第一张图片
@@ -1527,7 +1529,7 @@ export default {
         this.styleImgUrl = selectedItem.styleImgUrl;
       } else if (selectedItem && selectedItem.image) {
         // 如果没有images数组，显示单张image
-        this.currentPreviewImage = selectedItem.image;
+        this.currentPreviewImage = selectedItem.images[0].src;
       } else {
         this.currentPreviewImage = '';
       }

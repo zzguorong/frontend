@@ -48,7 +48,7 @@
                       :class="{ active: selectedThumbnail === index }"
                       @click="selectThumbnail(thumb, index)"
                     >
-                      <img v-if="thumb.url" :src="thumb.url" alt="缩略图" class="thumb-img">
+                      <img v-if="thumb.url" :src="index < 2 ? thumb.url : thumb.thumbnailImage" alt="缩略图" class="thumb-img">
                       <!-- 当无图时显示占位图标 -->
                       <svg-icon v-else icon-class="generateImage" class="placeholder-icon" />
                       <div v-if="thumb && thumb.url && index > 1" class="thumbnail-actions">
@@ -1365,10 +1365,18 @@ export default {
               clearInterval(this.pollingTimer);
               this.pollingTimer = null;
               const imageUrls = res.data.generated_images.map((item) => item);
-              imageUrls.forEach((item, idx) => {
-                // 生成图倒序排列，索引为2，同时也就清除了loading状态
-                this.thumbnails.splice(2, 1, { ...item, generatedImageId: item.id, semanticImgUrlId: res.data.segment_image_id });
-              });
+              // 目前一次只返回一张图片，所以直接取第一个
+              // imageUrls.forEach((item, idx) => {
+              //   // 生成图倒序排列，索引为2，同时也就清除了loading状态
+              //   this.thumbnails.splice(2, 1, { ...item, generatedImageId: item.id, semanticImgUrlId: res.data.segment_image_id });
+              // });
+
+              if (imageUrls.length === 0) {
+                return;
+              } else {
+                this.thumbnails.splice(2, 1, { ...imageUrls[0], generatedImageId: imageUrls[0].id, semanticImgUrlId: res.data.segment_image_id, thumbnailImage: imageUrls[0].thumbnails[0].url });
+              }
+
               // 重置生成状态
               this.isGenerating = false;
               // 保存 语义分割图
