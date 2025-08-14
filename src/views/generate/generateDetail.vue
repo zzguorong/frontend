@@ -898,7 +898,7 @@ export default {
           styleImageId: item.style_image_id,
           isFavorite: false,
           created_at: generatedImage.created_at, // 添加创建时间用于排序
-          thumbnailImage: generatedImage.thumbnails[0].url // 添加缩略图
+          thumbnailImage: generatedImage.thumbnails[0] ? generatedImage.thumbnails[0].url : generatedImage.url // 添加缩略图
         }]
       };
     },
@@ -1529,7 +1529,7 @@ export default {
         this.styleImgUrl = selectedItem.styleImgUrl;
       } else if (selectedItem && selectedItem.image) {
         // 如果没有images数组，显示单张image
-        this.currentPreviewImage = selectedItem.images[0].src;
+        this.currentPreviewImage = selectedItem.image;
       } else {
         this.currentPreviewImage = '';
       }

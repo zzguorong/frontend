@@ -48,7 +48,7 @@
                       :class="{ active: selectedThumbnail === index }"
                       @click="selectThumbnail(thumb, index)"
                     >
-                      <img v-if="thumb.url" :src="index < 2 ? thumb.url : thumb.thumbnailImage" alt="缩略图" class="thumb-img">
+                      <img v-if="thumb.thumbnailImage" :src="thumb.thumbnailImage" alt="缩略图" class="thumb-img">
                       <!-- 当无图时显示占位图标 -->
                       <svg-icon v-else icon-class="generateImage" class="placeholder-icon" />
                       <div v-if="thumb && thumb.url && index > 1" class="thumbnail-actions">
@@ -1041,14 +1041,14 @@ export default {
         this.basemapUrl = p.basemapUrl;
         this.basemapUrlId = p.basemapUrlId;
         // 更新缩略图第一个位置（底图）
-        this.$set(this.thumbnails, 0, { url: p.basemapUrl });
+        this.$set(this.thumbnails, 0, { url: p.basemapUrl, thumbnailImage: p.basemapUrl });
         // this.previewImage = p.basemapUrl;
         // this.selectedThumbnail = 0;
         // this.selectedThumbnailItem = this.thumbnails[0];
       } else {
         this.basemapUrl = '';
         this.basemapUrlId = null;
-        this.$set(this.thumbnails, 0, { url: '' });
+        this.$set(this.thumbnails, 0, { url: '', thumbnailImage: '' });
       }
 
       // 语义分割图
@@ -1056,16 +1056,16 @@ export default {
         this.semanticImgUrlId = p.semanticImgUrlId;
         this.semanticImgUrl = p.semanticImgUrl;
         // 更新缩略图第二个位置（语义分割图）
-        this.$set(this.thumbnails, 1, { url: p.semanticImgUrl });
+        this.$set(this.thumbnails, 1, { url: p.semanticImgUrl, thumbnailImage: p.semanticImgUrl });
       } else if (p.semanticImgUrl) {
         this.semanticImgUrl = p.semanticImgUrl;
         this.semanticImgUrlId = null;
         // 更新缩略图第二个位置（语义分割图）
-        this.$set(this.thumbnails, 1, { url: p.semanticImgUrl });
+        this.$set(this.thumbnails, 1, { url: p.semanticImgUrl, thumbnailImage: p.semanticImgUrl });
       } else {
         this.semanticImgUrl = '';
         this.semanticImgUrlId = null;
-        this.$set(this.thumbnails, 1, { url: '' });
+        this.$set(this.thumbnails, 1, { url: '', thumbnailImage: '' });
       }
 
       // * 如果是通过点击’保留底图生图‘跳转过来的，那么底图不为空，语义分割图可能为空
@@ -1110,7 +1110,7 @@ export default {
         // 3. 更新预览图
         if (base64Str) {
           // 4. 同步更新缩略图第 2 张（语义分割图）
-          this.$set(this.thumbnails, 1, { url: base64Str });
+          this.$set(this.thumbnails, 1, { url: base64Str, thumbnailImage: base64Str });
           this.previewImage = base64Str;
           this.selectedThumbnail = 1; // 选择第二个缩略图位置
           this.selectedThumbnailItem = this.thumbnails[1]; // 更新当前选中项
@@ -1307,7 +1307,7 @@ export default {
         if (this.thumbnails[1] && this.thumbnails[1].url) {
           if (!this.thumbnails[1].url.startsWith('data:') || !this.thumbnails[1].url.includes(';base64,')) {
             const base64 = await blobUrlToBase64(this.thumbnails[1].url);
-            this.$set(this.thumbnails, 1, { url: base64 });
+            this.$set(this.thumbnails, 1, { url: base64, thumbnailImage: base64 });
             this.semanticImgUrl = base64;
             payload.segment_image = base64;
           } else {
@@ -1324,7 +1324,7 @@ export default {
       // 3. 开始请求前：设置状态 + 显示遮罩
       this.isGenerating = true;
       // 索引 2 位置插入一个图片位置
-      this.thumbnails.splice(2, 0, { url: '', loading: true });
+      this.thumbnails.splice(2, 0, { url: '', thumbnailImage: '', loading: true });
       // 更新预览图为
       this.previewImage = '';
       this.selectedThumbnailItem = null;
@@ -1364,18 +1364,20 @@ export default {
               // 停止轮询
               clearInterval(this.pollingTimer);
               this.pollingTimer = null;
-              const imageUrls = res.data.generated_images.map((item) => item);
-              // 目前一次只返回一张图片，所以直接取第一个
-              // imageUrls.forEach((item, idx) => {
-              //   // 生成图倒序排列，索引为2，同时也就清除了loading状态
-              //   this.thumbnails.splice(2, 1, { ...item, generatedImageId: item.id, semanticImgUrlId: res.data.segment_image_id });
-              // });
-
+              const imageUrls = res.data.generated_images;
               if (imageUrls.length === 0) {
                 return;
-              } else {
-                this.thumbnails.splice(2, 1, { ...imageUrls[0], generatedImageId: imageUrls[0].id, semanticImgUrlId: res.data.segment_image_id, thumbnailImage: imageUrls[0].thumbnails[0].url });
               }
+              // 目前一次只返回一张图片，所以直接取第一个
+              const generateImg = imageUrls[0];
+              // 生成图倒序排列，索引为2，同时也就清除了loading状态
+              this.thumbnails.splice(2, 1, {
+                ...generateImg,
+                generatedImageId: generateImg.id,
+                semanticImgUrlId: res.data.segment_image_id,
+                // 如果存在缩略图，则使用缩略图的url，否则使用原图URL：generateImg.url
+                thumbnailImage: generateImg.thumbnails[0] ? generateImg.thumbnails[0].url : generateImg.url
+              });
 
               // 重置生成状态
               this.isGenerating = false;
@@ -1385,7 +1387,7 @@ export default {
                 this.semanticImgUrlId = res.data.segment_image_id;
               }
               // 更新主预览图
-              this.previewImage = imageUrls[0].url;
+              this.previewImage = generateImg.url;
               this.selectedThumbnailItem = this.thumbnails[2]; // 更新选中项为第三个位置
               this.selectedThumbnail = 2; // 更新选中缩略图索引
               this.$message.success('图片生成完成！');
@@ -1905,7 +1907,7 @@ export default {
         this.formErrors.basemapUrl = false;
 
         // 更新缩略图第一个位置（底图）
-        this.$set(this.thumbnails, 0, { url: imageUrl });
+        this.$set(this.thumbnails, 0, { url: imageUrl, thumbnailImage: imageUrl });
         // 更新主预览图
         this.previewImage = imageUrl;
         this.selectedThumbnail = 0; // 设置为底图缩略图
@@ -1956,7 +1958,7 @@ export default {
       this.formErrors.basemapUrl = false;
 
       // 更新缩略图第一个位置（底图）
-      this.$set(this.thumbnails, 0, { url: imageUrl });
+      this.$set(this.thumbnails, 0, { url: imageUrl, thumbnailImage: imageUrl });
 
       // 更新主预览图
       this.previewImage = imageUrl;
@@ -1986,7 +1988,7 @@ export default {
       this.semanticImgUrl = imageUrl;
 
       // 更新缩略图第二个位置（语义分割图）
-      this.$set(this.thumbnails, 1, { url: imageUrl });
+      this.$set(this.thumbnails, 1, { url: imageUrl, thumbnailImage: imageUrl });
 
       // 更新主预览图
       this.previewImage = imageUrl;
@@ -2006,7 +2008,7 @@ export default {
       }
 
       // 更新缩略图第二个位置（语义分割图）
-      this.$set(this.thumbnails, 1, { url: imageUrl });
+      this.$set(this.thumbnails, 1, { url: imageUrl, thumbnailImage: imageUrl });
 
       // 更新主预览图
       this.previewImage = imageUrl;
@@ -2052,14 +2054,14 @@ export default {
           if (type === 1) {
             this.basemapUrl = '';
             this.basemapUrlId = null;
-            this.$set(this.thumbnails, 0, { url: '' });
+            this.$set(this.thumbnails, 0, { url: '', thumbnailImage: '' });
           } else if (type === 2) {
             this.styleImgUrl = '';
             this.styleImageId = null;
           } else if (type === 3) {
             this.semanticImgUrl = '';
             this.semanticImgUrlId = null;
-            this.$set(this.thumbnails, 1, { url: '' });
+            this.$set(this.thumbnails, 1, { url: '', thumbnailImage: '' });
           }
           this.previewImage = '';
           this.selectedThumbnail = -1; // 清除选中状态
@@ -2123,7 +2125,7 @@ export default {
       // 生成 base64
       const mergedImageBase64 = tempCanvas.toDataURL('image/png');
       // 将预览图片传输到语义分割图位置（索引1）
-      this.$set(this.thumbnails, 1, { url: mergedImageBase64 });
+      this.$set(this.thumbnails, 1, { url: mergedImageBase64, thumbnailImage: mergedImageBase64 });
       this.$message.success('图片已暂存到语义分割图框！');
       // 更新预览区
       this.selectThumbnail(this.thumbnails[1], 1);
