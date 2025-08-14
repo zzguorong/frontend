@@ -1365,10 +1365,18 @@ export default {
               clearInterval(this.pollingTimer);
               this.pollingTimer = null;
               const imageUrls = res.data.generated_images.map((item) => item);
-              imageUrls.forEach((item, idx) => {
-                // 生成图倒序排列，索引为2，同时也就清除了loading状态
-                this.thumbnails.splice(2, 1, { ...item, generatedImageId: item.id, semanticImgUrlId: res.data.segment_image_id });
-              });
+              // 目前一次只返回一张图片，所以直接取第一个
+              // imageUrls.forEach((item, idx) => {
+              //   // 生成图倒序排列，索引为2，同时也就清除了loading状态
+              //   this.thumbnails.splice(2, 1, { ...item, generatedImageId: item.id, semanticImgUrlId: res.data.segment_image_id });
+              // });
+
+              if (imageUrls.length === 0) {
+                return;
+              } else {
+                this.thumbnails.splice(2, 1, { ...imageUrls[0].thumbnails[0], generatedImageId: imageUrls[0].id, semanticImgUrlId: res.data.segment_image_id });
+              }
+
               // 重置生成状态
               this.isGenerating = false;
               // 保存 语义分割图

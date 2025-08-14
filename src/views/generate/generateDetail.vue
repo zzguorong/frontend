@@ -464,11 +464,11 @@ import {
   generatePNG,
   generatePSD,
   getGalleryImages,
+  getPerspectiveStyle,
   getUserFavoriteImages,
   getUserRemainingDownloads,
   getUserRemainingPSDDownloads,
-  unfavoriteGeneratedImage,
-  getPerspectiveStyle
+  unfavoriteGeneratedImage
 } from '@/api/generate';
 // import 'simplebar/dist/simplebar.min.css';
 import { downloadFile } from '@/utils/downLoad';
@@ -647,7 +647,7 @@ export default {
               // 计算全局索引
               const globalIndex = this.getGlobalIndex(firstDateIndex, firstItemIndex);
               // 选中第一个图片
-              this.selectGalleryItem(globalIndex, firstDateIndex, firstItemIndex);
+              this.selectGalleryItem(globalIndex, firstDateIndex, firstItemIndex, true);
             }
           }
         }
@@ -883,9 +883,9 @@ export default {
       return {
         date: generatedImage.created_at.split('T')[0],
         galleryItem: [{
-          image: generatedImage.url,
+          image: generatedImage.thumbnails[0].url,
           images: [{
-            src: generatedImage.url,
+            src: generatedImage.thumbnails[0].url,
             generatedImageId: generatedImage.id,
             isCollect: false
           }],
@@ -897,7 +897,8 @@ export default {
           styleImgUrl: item.style_images?.url || null,
           styleImageId: item.style_image_id,
           isFavorite: false,
-          created_at: generatedImage.created_at // 添加创建时间用于排序
+          created_at: generatedImage.created_at, // 添加创建时间用于排序
+          fullImgUrl: generatedImage.url // 添加完整图片地址用来第一次展示
         }]
       };
     },
@@ -1502,7 +1503,8 @@ export default {
         });
     },
     // 选择画廊项目
-    selectGalleryItem(globalIndex, dateIndex, itemIndex) {
+    // firstPreviewUrl：首次预览时传
+    selectGalleryItem(globalIndex, dateIndex, itemIndex, firstPreviewUrl = false) {
       this.currentImageIndex = globalIndex;
       this.currentImageInSet = 0; // 重置为显示第一张图片
       const selectedItem = this.galleryItems[dateIndex].galleryItem[itemIndex];
@@ -1516,7 +1518,7 @@ export default {
         if (selectedItem.images[0].src !== this.currentPreviewImage) {
           this.previewImageLoading = true; // 开始加载预览图
         }
-        this.currentPreviewImage = selectedItem.images[0].src;
+        this.currentPreviewImage = firstPreviewUrl ? selectedItem.fullImgUrl : selectedItem.images[0].src;
         this.projectParameters = { ...selectedItem.projectParameters };
         this.baseImgUrl = selectedItem.baseImgUrl;
         this.baseImgUrlId = selectedItem.baseImgUrlId;
@@ -1527,7 +1529,7 @@ export default {
         this.styleImgUrl = selectedItem.styleImgUrl;
       } else if (selectedItem && selectedItem.image) {
         // 如果没有images数组，显示单张image
-        this.currentPreviewImage = selectedItem.image;
+        this.currentPreviewImage = firstPreviewUrl ? selectedItem.fullImgUrl : selectedItem.images[0].src;
       } else {
         this.currentPreviewImage = '';
       }
