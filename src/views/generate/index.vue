@@ -1054,7 +1054,7 @@ export default {
       // 语义分割图
       if (p.semanticImgUrl && p.semanticImgUrlId) {
         this.semanticImgUrlId = p.semanticImgUrlId;
-        const base64 = await blobUrlToBase64(this.semanticImgUrl);
+        const base64 = await blobUrlToBase64(p.semanticImgUrl);
         // 更新缩略图第二个位置（语义分割图）
         this.$set(this.thumbnails, 1, { url: base64, thumbnailImage: base64 });
         this.semanticImgUrl = base64;
