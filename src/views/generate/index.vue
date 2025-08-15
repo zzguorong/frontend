@@ -1041,7 +1041,7 @@ export default {
         this.basemapUrl = p.basemapUrl;
         this.basemapUrlId = p.basemapUrlId;
         // 更新缩略图第一个位置（底图）
-        this.$set(this.thumbnails, 0, { url: p.basemapUrl, thumbnailImage: p.basemapUrl });
+        this.$set(this.thumbnails, 0, { id: p.basemapUrlId, url: p.basemapUrl, thumbnailImage: p.basemapUrl });
         // this.previewImage = p.basemapUrl;
         // this.selectedThumbnail = 0;
         // this.selectedThumbnailItem = this.thumbnails[0];
@@ -1056,7 +1056,7 @@ export default {
         this.semanticImgUrlId = p.semanticImgUrlId;
         this.semanticImgUrl = p.semanticImgUrl;
         // 更新缩略图第二个位置（语义分割图）
-        this.$set(this.thumbnails, 1, { url: p.semanticImgUrl, thumbnailImage: p.semanticImgUrl });
+        this.$set(this.thumbnails, 1, { id: p.semanticImgUrlId, url: p.semanticImgUrl, thumbnailImage: p.semanticImgUrl });
       } else if (p.semanticImgUrl) {
         this.semanticImgUrl = p.semanticImgUrl;
         this.semanticImgUrlId = null;
@@ -1306,6 +1306,7 @@ export default {
         // 是否上传了语义分割图
         if (this.thumbnails[1] && this.thumbnails[1].url) {
           if (!this.thumbnails[1].url.startsWith('data:') || !this.thumbnails[1].url.includes(';base64,')) {
+            // TODO refresh url if it's necessary
             const base64 = await blobUrlToBase64(this.thumbnails[1].url);
             this.$set(this.thumbnails, 1, { url: base64, thumbnailImage: base64 });
             this.semanticImgUrl = base64;
@@ -1426,6 +1427,7 @@ export default {
 
     // 选择缩略图
     selectThumbnail(params, index) {
+      console.log('选择缩略图', params, index);
       // 若选择底图（索引 0）直接返回
       // if (index === 0) return;
 

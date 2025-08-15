@@ -1530,6 +1530,8 @@ export default {
         // 根据generateImageId，重新获取生图URL
         getSingleGeneratedImageUrl(this.generatedImageId).then(url => {
           this.currentPreviewImage = url;
+        }).catch(() => {
+          this.currentPreviewImage = '';
         });
       } else if (selectedItem && selectedItem.image) {
         // 如果没有images数组，显示单张image
