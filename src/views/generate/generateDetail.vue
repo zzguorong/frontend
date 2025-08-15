@@ -468,7 +468,8 @@ import {
   getUserFavoriteImages,
   getUserRemainingDownloads,
   getUserRemainingPSDDownloads,
-  unfavoriteGeneratedImage
+  unfavoriteGeneratedImage,
+  getSingleGeneratedImageUrl
 } from '@/api/generate';
 // import 'simplebar/dist/simplebar.min.css';
 import { downloadFile } from '@/utils/downLoad';
@@ -898,7 +899,7 @@ export default {
           styleImageId: item.style_image_id,
           isFavorite: false,
           created_at: generatedImage.created_at, // 添加创建时间用于排序
-          thumbnailImage: generatedImage.thumbnails[0].url // 添加缩略图
+          thumbnailImage: generatedImage.thumbnails[0] ? generatedImage.thumbnails[0].url : generatedImage.url // 添加缩略图
         }]
       };
     },
@@ -1518,7 +1519,6 @@ export default {
         if (selectedItem.images[0].src !== this.currentPreviewImage) {
           this.previewImageLoading = true; // 开始加载预览图
         }
-        this.currentPreviewImage = selectedItem.images[0].src;
         this.projectParameters = { ...selectedItem.projectParameters };
         this.baseImgUrl = selectedItem.baseImgUrl;
         this.baseImgUrlId = selectedItem.baseImgUrlId;
@@ -1527,9 +1527,15 @@ export default {
         this.semanticImgUrl = selectedItem.semanticImgUrl;
         this.styleImageId = selectedItem.styleImageId;
         this.styleImgUrl = selectedItem.styleImgUrl;
+        // 根据generateImageId，重新获取生图URL
+        getSingleGeneratedImageUrl(this.generatedImageId).then(url => {
+          this.currentPreviewImage = url;
+        }).catch(() => {
+          this.currentPreviewImage = '';
+        });
       } else if (selectedItem && selectedItem.image) {
         // 如果没有images数组，显示单张image
-        this.currentPreviewImage = selectedItem.images[0].src;
+        this.currentPreviewImage = selectedItem.image;
       } else {
         this.currentPreviewImage = '';
       }
