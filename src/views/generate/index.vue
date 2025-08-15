@@ -119,7 +119,7 @@
                   ></draggable-progress>
                 </div> -->
                 <div class="generate-btn-container">
-
+                  <a class="tutorial-link" href="https://www.gaiass.com/tutorial/index.html" target="_blank">  不知道怎么用？点击跳转教程</a>
                   <div
                     type="primary"
                     size="large"
@@ -3866,11 +3866,25 @@ export default {
 }
 
 .generate-btn-container {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   flex: 1;
   gap: 18px;
+  .tutorial-link{
+        font-size: 12px;
+    color: rgb(102, 102, 102);
+    margin-right: 20px;
+    /* display: none; */
+    position: absolute;
+    top: 1vh;
+    left: 0;
+  }
+  .tutorial-link:hover {
+    color: black;
+    text-decoration: underline;
+  }
 }
 
 .download-controls {
