@@ -680,15 +680,15 @@ import {
   generatePSD,
   getImageDetail,
   getPerspectiveStyle,
+  getSingleBaseImageUrl,
+  getSingleGeneratedImageUrl,
+  getSingleSegmentImageUrl,
+  getSingleStyleImageUrl,
   getUserRemainingDownloads,
   getUserRemainingGenerations,
   getUserRemainingPSDDownloads,
   preprocessSegment,
-  unfavoriteGeneratedImage,
-  getSingleBaseImageUrl,
-  getSingleStyleImageUrl,
-  getSingleGeneratedImageUrl,
-  getSingleSegmentImageUrl
+  unfavoriteGeneratedImage
 } from '@/api/generate';
 import { downloadFile } from '@/utils/downLoad';
 import { blobUrlToBase64 } from '@/utils/index';
@@ -1041,10 +1041,16 @@ export default {
 
       // 底图
       if (p.basemapUrl && p.basemapUrlId) {
-        this.basemapUrl = p.basemapUrl;
         this.basemapUrlId = p.basemapUrlId;
-        // 更新缩略图第一个位置（底图）
-        this.$set(this.thumbnails, 0, { id: p.basemapUrlId, url: p.basemapUrl, thumbnailImage: p.basemapUrl });
+        // refresh
+        getSingleBaseImageUrl(p.basemapUrlId).then((url) => {
+          // 更新缩略图第一个位置（底图）
+          this.$set(this.thumbnails, 0, { id: p.basemapUrlId, url: url, thumbnailImage: url });
+          this.basemapUrl = url;
+        }).catch(() => {
+          this.$set(this.thumbnails, 0, { id: p.basemapUrlId, url: '', thumbnailImage: '' });
+          this.basemapUrl = '';
+        });
       } else {
         this.basemapUrl = '';
         this.basemapUrlId = null;
@@ -1054,9 +1060,15 @@ export default {
       // 语义分割图
       if (p.semanticImgUrl && p.semanticImgUrlId) {
         this.semanticImgUrlId = p.semanticImgUrlId;
-        this.semanticImgUrl = p.semanticImgUrl;
-        // 更新缩略图第二个位置（语义分割图）
-        this.$set(this.thumbnails, 1, { id: p.semanticImgUrlId, url: p.semanticImgUrl, thumbnailImage: p.semanticImgUrl });
+        // refresh
+        getSingleSegmentImageUrl(p.semanticImgUrlId).then((url) => {
+          // 更新缩略图第二个位置（语义分割图）
+          this.$set(this.thumbnails, 1, { id: p.semanticImgUrlId, url: url, thumbnailImage: url });
+          this.semanticImgUrl = url;
+        }).catch(() => {
+          this.$set(this.thumbnails, 1, { id: p.semanticImgUrlId, url: '', thumbnailImage: '' });
+          this.semanticImgUrl = '';
+        });
       } else if (p.semanticImgUrl) {
         this.semanticImgUrl = p.semanticImgUrl;
         this.semanticImgUrlId = null;
@@ -1435,6 +1447,7 @@ export default {
 
     // 选择缩略图
     selectThumbnail(params, index) {
+      console.log('selectThumbnail', params, index);
       // 若选择底图（索引 0）直接返回
       // if (index === 0) return;
 
