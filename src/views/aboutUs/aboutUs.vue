@@ -76,7 +76,7 @@
 
     <!-- 加入我们 部分 -->
     <section class="section join-us no-padding">
-      <div class="content first" style="max-width:unset;padding:0; height: 100vh;">
+      <div class="content first" style="max-width:unset;padding:60px; height: 100vh;">
         <div class="first" style=" max-width: 1380px; margin-bottom: 38vh;">
           <h2 class="animate-element" data-delay="0">加入我们</h2>
           <p class="animate-element" data-delay="0.2">在GAIAHubs，我们相信AI与设计的融合将重塑未来空间。如果你热爱技术创新，痴迷于探索AIGC、3D生成与智能设计的无限可能，欢迎加入我们的团队，一起打造下一代空间智能平台！
