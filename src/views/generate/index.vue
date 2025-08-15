@@ -684,7 +684,11 @@ import {
   getUserRemainingGenerations,
   getUserRemainingPSDDownloads,
   preprocessSegment,
-  unfavoriteGeneratedImage
+  unfavoriteGeneratedImage,
+  getSingleBaseImageUrl,
+  getSingleStyleImageUrl,
+  getSingleGeneratedImageUrl,
+  getSingleSegmentImageUrl
 } from '@/api/generate';
 import { downloadFile } from '@/utils/downLoad';
 import { blobUrlToBase64 } from '@/utils/index';
@@ -1020,7 +1024,12 @@ export default {
         this.styleTransferLevel = p.styleTransferLevel;
         this.styleTransferEnabled = true;
         this.styleImageId = p.styleImageId;
-        this.styleImgUrl = p.styleImgUrl;
+        // refresh
+        getSingleStyleImageUrl(p.styleImageId).then((url) => {
+          this.styleImgUrl = url;
+        }).catch(() => {
+          this.styleImgUrl = '';
+        });
       } else {
         this.styleTransferLevel = 0;
         this.styleTransferEnabled = false;
@@ -1030,21 +1039,12 @@ export default {
 
       if (p.baseControlLevel) this.baseControlLevel = p.baseControlLevel;
 
-      // // 清空画廊
-      // this.thumbnails = Array.from({ length: 6 }, (_, i) => ({
-      //   url: null,
-      //   id: `thumb-${i + 1}`   // 用反引号包裹整个字符串
-      // }));
-
       // 底图
       if (p.basemapUrl && p.basemapUrlId) {
         this.basemapUrl = p.basemapUrl;
         this.basemapUrlId = p.basemapUrlId;
         // 更新缩略图第一个位置（底图）
         this.$set(this.thumbnails, 0, { id: p.basemapUrlId, url: p.basemapUrl, thumbnailImage: p.basemapUrl });
-        // this.previewImage = p.basemapUrl;
-        // this.selectedThumbnail = 0;
-        // this.selectedThumbnailItem = this.thumbnails[0];
       } else {
         this.basemapUrl = '';
         this.basemapUrlId = null;
@@ -1075,13 +1075,11 @@ export default {
       // 2. 如果没有语义分割图，但有底图，则预览图为底图，同时更新selectedThumbnail和selectedThumbnailItem
       // 3. 如果都没有，则预览图为 null，并清空选中项
       if (this.semanticImgUrl) {
-        this.previewImage = this.semanticImgUrl;
-        this.selectedThumbnail = 1; // 选择第二个缩略图位置
-        this.selectedThumbnailItem = this.thumbnails[1]; // 更新当前选中项
+        // 选择第二个缩略图位置
+        this.selectThumbnail(this.thumbnails[1], 1);
       } else if (this.basemapUrl) {
-        this.previewImage = this.basemapUrl;
-        this.selectedThumbnail = 0; // 选择第一个缩略图位置
-        this.selectedThumbnailItem = this.thumbnails[0]; // 更新当前选中项
+        // 选择第一个缩略图位置
+        this.selectThumbnail(this.thumbnails[0], 0);
       } else {
         this.previewImage = null;
         this.selectedThumbnail = -1; // 无选中项
@@ -1306,11 +1304,21 @@ export default {
         // 是否上传了语义分割图
         if (this.thumbnails[1] && this.thumbnails[1].url) {
           if (!this.thumbnails[1].url.startsWith('data:') || !this.thumbnails[1].url.includes(';base64,')) {
-            // TODO refresh url if it's necessary
-            const base64 = await blobUrlToBase64(this.thumbnails[1].url);
-            this.$set(this.thumbnails, 1, { url: base64, thumbnailImage: base64 });
-            this.semanticImgUrl = base64;
-            payload.segment_image = base64;
+            try {
+              let segmentImgUrl = this.thumbnails[1].url;
+              // refresh url if it's necessary
+              if (this.thumbnails[1].id) {
+                segmentImgUrl = await getSingleSegmentImageUrl(this.thumbnails[1].id);
+              }
+              const base64 = await blobUrlToBase64(segmentImgUrl);
+              this.$set(this.thumbnails, 1, { url: base64, thumbnailImage: base64 });
+              this.semanticImgUrl = base64;
+              payload.segment_image = base64;
+            } catch (err) {
+              console.error('Error processing segment image:', err);
+              this.$message.error('处理语义分割图时出错');
+              return;
+            }
           } else {
             payload.segment_image = this.thumbnails[1].url;
           }
@@ -1427,7 +1435,6 @@ export default {
 
     // 选择缩略图
     selectThumbnail(params, index) {
-      console.log('选择缩略图', params, index);
       // 若选择底图（索引 0）直接返回
       // if (index === 0) return;
 
@@ -1445,8 +1452,19 @@ export default {
 
       // 更新主预览图
       this.selectedThumbnailItem = thumb;
-      this.previewImage = params.url;
       this.selectedThumbnail = index;
+      if (thumb.id) {
+        // refresh OSS URL by image type
+        this.refreshImgURLByType(index, thumb.id).then((url) => {
+          this.previewImage = url;
+        }).catch((err) => {
+          console.error('Error refreshing image URL:', err);
+          this.previewImage = '';
+          this.$message.error('获取预览图片失败');
+        });
+      } else {
+        this.previewImage = thumb.url;
+      }
 
       // 保存当前画布状态
       // const currentCanvasState = {
@@ -1455,6 +1473,22 @@ export default {
       //     : null,
       //   lasso: this.fixedPoints
       // };
+    },
+
+    async refreshImgURLByType(indexOfThumbnails, imageId) {
+      // 底图
+      if (indexOfThumbnails === 0) {
+        // 根据imageId，重新获取底图URL
+        return getSingleBaseImageUrl(imageId);
+      }
+      // 语义图
+      if (indexOfThumbnails === 1) {
+        return getSingleSegmentImageUrl(imageId);
+      }
+      // 生图
+      if (indexOfThumbnails >= 2) {
+        return getSingleGeneratedImageUrl(imageId);
+      }
     },
 
     async downloadPNG() {
