@@ -1848,8 +1848,8 @@ export default {
 
     // 校验是都可以使用语义分割功能
     isActionAllowed() {
-      if (this.previewImage !== this.thumbnails[1].url) {
-        // 不可点击
+      if (this.selectedThumbnail !== 1 || this.selectedThumbnailItem === null) {
+        // 语义分割图未选中或未加载
         this.$message.warning('请从预览区选择语义分割图后操作');
         return false;
       } else {
