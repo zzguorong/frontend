@@ -1005,7 +1005,7 @@ export default {
       this.setParams({ ...this.generationParams, ...part });
     },
     // 页面激活或首次进入时，把 Vuex 中存储的参数写回表单
-    applyStoredParams() {
+    async applyStoredParams() {
       const p = this.generationParams || {};
       if (!Object.keys(p).length) return;
 
@@ -1019,17 +1019,20 @@ export default {
       if (p.resolution) this.resolution = p.resolution;
       if (p.aspectRatio) this.aspectRatio = p.aspectRatio;
 
+      // 定义请求列表
+      const requests = [];
+
       // 风格迁移图&&控制程度
       if (p.styleImageId && p.styleImgUrl) {
         this.styleTransferLevel = p.styleTransferLevel;
         this.styleTransferEnabled = true;
         this.styleImageId = p.styleImageId;
-        // refresh
-        getSingleStyleImageUrl(p.styleImageId).then((url) => {
-          this.styleImgUrl = url;
-        }).catch(() => {
-          this.styleImgUrl = '';
-        });
+
+        requests.push(
+          getSingleStyleImageUrl(p.styleImageId)
+            .then((url) => ({ type: 'style', url }))
+            .catch(() => ({ type: 'style', url: '' }))
+        );
       } else {
         this.styleTransferLevel = 0;
         this.styleTransferEnabled = false;
@@ -1037,20 +1040,15 @@ export default {
         this.styleImgUrl = '';
       }
 
-      if (p.baseControlLevel) this.baseControlLevel = p.baseControlLevel;
-
       // 底图
       if (p.basemapUrl && p.basemapUrlId) {
         this.basemapUrlId = p.basemapUrlId;
-        // refresh
-        getSingleBaseImageUrl(p.basemapUrlId).then((url) => {
-          // 更新缩略图第一个位置（底图）
-          this.$set(this.thumbnails, 0, { id: p.basemapUrlId, url: url, thumbnailImage: url });
-          this.basemapUrl = url;
-        }).catch(() => {
-          this.$set(this.thumbnails, 0, { id: p.basemapUrlId, url: '', thumbnailImage: '' });
-          this.basemapUrl = '';
-        });
+
+        requests.push(
+          getSingleBaseImageUrl(p.basemapUrlId)
+            .then((url) => ({ type: 'base', url }))
+            .catch(() => ({ type: 'base', url: '' }))
+        );
       } else {
         this.basemapUrl = '';
         this.basemapUrlId = null;
@@ -1060,25 +1058,38 @@ export default {
       // 语义分割图
       if (p.semanticImgUrl && p.semanticImgUrlId) {
         this.semanticImgUrlId = p.semanticImgUrlId;
-        // refresh
-        getSingleSegmentImageUrl(p.semanticImgUrlId).then((url) => {
-          // 更新缩略图第二个位置（语义分割图）
-          this.$set(this.thumbnails, 1, { id: p.semanticImgUrlId, url: url, thumbnailImage: url });
-          this.semanticImgUrl = url;
-        }).catch(() => {
-          this.$set(this.thumbnails, 1, { id: p.semanticImgUrlId, url: '', thumbnailImage: '' });
-          this.semanticImgUrl = '';
-        });
+
+        requests.push(
+          getSingleSegmentImageUrl(p.semanticImgUrlId)
+            .then((url) => ({ type: 'segment', url }))
+            .catch(() => ({ type: 'segment', url: '' }))
+        );
       } else if (p.semanticImgUrl) {
         this.semanticImgUrl = p.semanticImgUrl;
         this.semanticImgUrlId = null;
-        // 更新缩略图第二个位置（语义分割图）
         this.$set(this.thumbnails, 1, { url: p.semanticImgUrl, thumbnailImage: p.semanticImgUrl });
       } else {
         this.semanticImgUrl = '';
         this.semanticImgUrlId = null;
         this.$set(this.thumbnails, 1, { url: '', thumbnailImage: '' });
       }
+
+      // 并发执行
+      const results = await Promise.all(requests);
+
+      results.forEach(({ type, url }) => {
+        if (type === 'style') {
+          this.styleImgUrl = url;
+        }
+        if (type === 'base') {
+          this.basemapUrl = url;
+          this.$set(this.thumbnails, 0, { id: p.basemapUrlId, url, thumbnailImage: url });
+        }
+        if (type === 'segment') {
+          this.semanticImgUrl = url;
+          this.$set(this.thumbnails, 1, { id: p.semanticImgUrlId, url, thumbnailImage: url });
+        }
+      });
 
       // * 如果是通过点击’保留底图生图‘跳转过来的，那么底图不为空，语义分割图可能为空
       // * 如果是通过点击’保留生图参数‘跳转过来的，那么底图和语义分割图都为空
@@ -1466,10 +1477,26 @@ export default {
       // 更新主预览图
       this.selectedThumbnailItem = thumb;
       this.selectedThumbnail = index;
+
       if (thumb.id) {
         // refresh OSS URL by image type
         this.refreshImgURLByType(index, thumb.id).then((url) => {
-          this.previewImage = url;
+          // 判断更新 的图片类型
+          if (index >= 2) {
+            // 生图
+            this.previewImage = url;
+            this.$set(this.thumbnails, index, { ...this.thumbnails[index], url: url });
+          } else if (index === 1) {
+            // 语义图
+            this.previewImage = url;
+            this.$set(this.thumbnails, 1, { ...this.thumbnails[1], url: url, thumbnailImage: url });
+            this.semanticImgUrl = url;
+          } else if (index === 0) {
+            // 底图
+            this.previewImage = url;
+            this.$set(this.thumbnails, 0, { ...this.thumbnails[0], url: url, thumbnailImage: url });
+            this.basemapUrl = url;
+          }
         }).catch((err) => {
           console.error('Error refreshing image URL:', err);
           this.previewImage = '';
