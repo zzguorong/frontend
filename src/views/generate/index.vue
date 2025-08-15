@@ -680,15 +680,15 @@ import {
   generatePSD,
   getImageDetail,
   getPerspectiveStyle,
+  getSingleBaseImageUrl,
+  getSingleGeneratedImageUrl,
+  getSingleSegmentImageUrl,
+  getSingleStyleImageUrl,
   getUserRemainingDownloads,
   getUserRemainingGenerations,
   getUserRemainingPSDDownloads,
   preprocessSegment,
-  unfavoriteGeneratedImage,
-  getSingleBaseImageUrl,
-  getSingleStyleImageUrl,
-  getSingleGeneratedImageUrl,
-  getSingleSegmentImageUrl
+  unfavoriteGeneratedImage
 } from '@/api/generate';
 import { downloadFile } from '@/utils/downLoad';
 import { blobUrlToBase64 } from '@/utils/index';
@@ -1005,7 +1005,7 @@ export default {
       this.setParams({ ...this.generationParams, ...part });
     },
     // 页面激活或首次进入时，把 Vuex 中存储的参数写回表单
-    applyStoredParams() {
+    async applyStoredParams() {
       const p = this.generationParams || {};
       if (!Object.keys(p).length) return;
 
@@ -1054,9 +1054,10 @@ export default {
       // 语义分割图
       if (p.semanticImgUrl && p.semanticImgUrlId) {
         this.semanticImgUrlId = p.semanticImgUrlId;
-        this.semanticImgUrl = p.semanticImgUrl;
+        const base64 = await blobUrlToBase64(this.semanticImgUrl);
         // 更新缩略图第二个位置（语义分割图）
-        this.$set(this.thumbnails, 1, { id: p.semanticImgUrlId, url: p.semanticImgUrl, thumbnailImage: p.semanticImgUrl });
+        this.$set(this.thumbnails, 1, { url: base64, thumbnailImage: base64 });
+        this.semanticImgUrl = base64;
       } else if (p.semanticImgUrl) {
         this.semanticImgUrl = p.semanticImgUrl;
         this.semanticImgUrlId = null;
@@ -1087,6 +1088,8 @@ export default {
       }
 
       console.log('页面激活或首次进入时this.thumbnails', this.thumbnails);
+      // 重置当前工具，让用户显式再次选择
+      this.currentTool = '';
     },
     // 查看更多
     goToDetail() {
