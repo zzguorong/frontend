@@ -2166,6 +2166,8 @@ export default {
       // 将预览图片传输到语义分割图位置（索引1）
       this.$set(this.thumbnails, 1, { url: mergedImageBase64, thumbnailImage: mergedImageBase64 });
       this.$message.success('图片已暂存到语义分割图框！');
+      this.semanticImgUrl = mergedImageBase64;
+      this.semanticImgUrlId = null;
       // 更新预览区
       this.selectThumbnail(this.thumbnails[1], 1);
 
