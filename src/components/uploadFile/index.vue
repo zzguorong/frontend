@@ -1,7 +1,7 @@
 <template>
   <el-upload
     ref="upload"
-    v-loading="loading"
+    v-loading="realLoading"
     class="avatar-uploader"
     :action="actionUrl"
     :show-file-list="false"
@@ -31,7 +31,9 @@ export default {
   props: {
     imgUrl: { type: String, default: '' },
     describeText: { type: String, default: '' },
-    finalApi: { type: String, default: '' }
+    finalApi: { type: String, default: '' },
+    // 新增：父组件可传 loading
+    loading: { type: Boolean, default: null }
   },
   data() {
     return {
@@ -45,8 +47,14 @@ export default {
         Accept: 'application/json',
         Authorization: 'Bearer ' + getToken()
       },
-      loading: false
+      selfLoading: false // 内部默认loading
     };
+  },
+  computed: {
+    realLoading() {
+      // 如果父组件传了loading，就用父的；否则用自己的
+      return this.loading !== null ? this.loading : this.selfLoading;
+    }
   },
   methods: {
     // 自定义上传方法，不发送网络请求
@@ -77,13 +85,14 @@ export default {
 
     // 头像上传失败处理
     handleAvatarError(err, file) {
-      console.error('上传失败:', err, file);
-      this.loading = false; // 上传失败后隐藏加载状态
+      if (this.loading === null) this.selfLoading = false;
+
       this.$emit('upload-error', { err, file });
       this.$message.error('图片上传失败！');
     },
     // 头像上传成功处理（保留原方法以防需要）
     handleAvatarSuccess(res, file) {
+      if (this.loading === null) this.selfLoading = false;
       console.log('上传成功:', res, file);
       // Element-UI 成功回调中 file.url 为本地地址 / res.data.url 为服务器地址
       let imageUrl = '';
@@ -96,7 +105,7 @@ export default {
       if (!imageUrl && file && file.raw) {
         imageUrl = URL.createObjectURL(file.raw);
       }
-      this.loading = false; // 上传完成后隐藏加载状态
+      if (this.loading === null) this.selfLoading = false;
       // 更新父组件的 imgUrl
       this.$emit('update:imgUrl', imageUrl);
       this.$emit('upload-success', { res, file, imageUrl });
@@ -121,7 +130,7 @@ export default {
         this.$message.error('上传图片大小不能超过 50MB!');
         return false;
       }
-      this.loading = true; // 开始上传时显示加载状态
+      if (this.loading === null) this.selfLoading = true;
       return true;
     },
     // 新增：删除按钮事件
