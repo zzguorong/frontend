@@ -33,7 +33,7 @@ export default {
     describeText: { type: String, default: '' },
     finalApi: { type: String, default: '' },
     // 新增：父组件可传 loading
-    loading: { type: Boolean, default: null }
+    loading: { type: Boolean, default: false }
   },
   data() {
     return {
@@ -53,7 +53,7 @@ export default {
   computed: {
     realLoading() {
       // 如果父组件传了loading，就用父的；否则用自己的
-      return this.loading !== null ? this.loading : this.selfLoading;
+      return this.loading || this.selfLoading;
     }
   },
   methods: {
@@ -85,14 +85,17 @@ export default {
 
     // 头像上传失败处理
     handleAvatarError(err, file) {
-      if (this.loading === null) this.selfLoading = false;
+      this.selfLoading = false;
+      this.$emit('update-loading', false); // 通知父组件
 
       this.$emit('upload-error', { err, file });
       this.$message.error('图片上传失败！');
     },
     // 头像上传成功处理（保留原方法以防需要）
     handleAvatarSuccess(res, file) {
-      if (this.loading === null) this.selfLoading = false;
+      this.selfLoading = false;
+      this.$emit('update-loading', false); // 通知父组件
+
       console.log('上传成功:', res, file);
       // Element-UI 成功回调中 file.url 为本地地址 / res.data.url 为服务器地址
       let imageUrl = '';
@@ -105,7 +108,8 @@ export default {
       if (!imageUrl && file && file.raw) {
         imageUrl = URL.createObjectURL(file.raw);
       }
-      if (this.loading === null) this.selfLoading = false;
+      this.selfLoading = false;
+      this.$emit('update-loading', false); // 通知父组件
       // 更新父组件的 imgUrl
       this.$emit('update:imgUrl', imageUrl);
       this.$emit('upload-success', { res, file, imageUrl });
@@ -120,6 +124,7 @@ export default {
       } else {
         this.uploadData.base_image = file;
       }
+
       const isImage = file && file.type && file.type.startsWith('image/');
       const isLt500M = file.size / 1024 / 1024 < 50;
       if (!isImage) {
@@ -130,7 +135,11 @@ export default {
         this.$message.error('上传图片大小不能超过 50MB!');
         return false;
       }
-      if (this.loading === null) this.selfLoading = true;
+      // 设置自己的 loading 并通知父组件
+
+      this.selfLoading = true;
+      this.$emit('update-loading', true); // 通知父组件
+
       return true;
     },
     // 新增：删除按钮事件

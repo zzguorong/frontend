@@ -463,6 +463,7 @@
                     <!-- 上传语义分割图 -->
                     <div class="semantic-upload-section">
                       <upload-file
+                        ref="semanticUploadRef"
                         :loading="semanticUploadRefLoading"
                         final-api="/segment_image"
                         :img-url.sync="semanticImgUrl"
@@ -470,20 +471,32 @@
                         @upload-success="onBasemapUpload($event, 3)"
                         @update:imgUrl="onSemanticUrlUpdate"
                         @delete="onImageDelete(3)"
+                        @update-loading="semanticUploadRefLoading = $event"
                       />
                     </div>
                     <div class="tool-actions">
                       <span
+                        v-loading="semanticUploadRefLoading"
                         :class="[
                           'auto-detect select-type',
                           {
                             disabled:
                               viewType === 'aerial' ||
                               viewType === 'engineering' ||
-                              !basemapUrlId,
+                              !basemapUrlId ||
+                              semanticUploadRefLoading
                           },
                         ]"
-                        style="position: relative; display: inline-flex; align-items: center; cursor: pointer; justify-content: center;"
+                        :style="{
+                          cursor: !semanticUploadRefLoading ? 'pointer' : 'not-allowed',
+                          backgroundColor: !semanticUploadRefLoading ? '#fff' : '#bbb',
+                          border: semanticUploadRefLoading ? 'unset' : '1px solid #d9d9d9',
+                          position: 'relative',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }"
+
                         @click="automaticRecognition"
                       >
                         自动识别
@@ -878,6 +891,11 @@ export default {
       }
 
       return opts;
+    },
+    // 获取ref中的变量
+    getSemanticUploadRef() {
+      console.log('获取语义分割图上传组件的loading状态', this.$refs.semanticUploadRef?.realLoading ?? false);
+      return this.$refs.semanticUploadRef?.realLoading ?? false;
     }
   },
   watch: {
@@ -1098,31 +1116,42 @@ export default {
       this.$router.push('/generateDetail');
     },
     // 自动识别
-    automaticRecognition() {
-      // 若尚未上传底图图则阻止调用
+    async automaticRecognition() {
+      // 1. 底图检查
       if (!this.basemapUrlId) {
         this.$message.warning('请先上传底图后再使用自动识别');
         return;
       }
+
+      // 2. 防止重复点击
+      if (this.semanticUploadRefLoading) return;
+
+      // 3. 设置 loading
       this.semanticUploadRefLoading = true;
-      // 调用后端接口获取 base64 图
-      preprocessSegment(this.basemapUrlId).then((res) => {
-        // 1. 兼容不同字段结构，优先取 res.data
-        const base64Str = res.data;
 
-        // 3. 更新预览图
-        if (base64Str) {
-          // 4. 同步更新缩略图第 2 张（语义分割图）
-          this.$set(this.thumbnails, 1, { url: base64Str, thumbnailImage: base64Str });
-          this.previewImage = base64Str;
-          this.selectedThumbnail = 1; // 选择第二个缩略图位置
-          this.selectedThumbnailItem = this.thumbnails[1]; // 更新当前选中项
+      try {
+        // 4. 请求分割图
+        const res = await preprocessSegment(this.basemapUrlId);
+        const base64Str = res?.data;
 
-          // 5. 更新分割图 URL 方便后续操作
-          this.semanticImgUrl = base64Str;
-          this.semanticUploadRefLoading = false;
+        if (!base64Str) {
+          this.$message.error('自动识别失败：未返回有效图像');
+          return;
         }
-      });
+
+        // 5. 更新预览区 & 缩略图
+        this.$set(this.thumbnails, 1, { url: base64Str, thumbnailImage: base64Str });
+        this.previewImage = base64Str;
+        this.selectedThumbnail = 1;
+        this.selectedThumbnailItem = this.thumbnails[1];
+        this.semanticImgUrl = base64Str;
+      } catch (error) {
+        console.error('自动识别失败:', error);
+        this.$message.error('自动识别失败，请稍后重试');
+      } finally {
+        // 6. 无论成功失败，都关闭 loading
+        this.semanticUploadRefLoading = false;
+      }
     },
     updateStyleOptions(e) {
       console.log('updateStyleOptions', e);
@@ -4073,9 +4102,9 @@ export default {
 .tempo-store:hover,
 .auto-detect:active,
 .tempo-store:active {
-  background-color: #000;
-  color: #fff;
-  border-color: #000;
+  background-color: #000 !important;
+  color: #fff !important;
+  border-color: #000 !important;
 }
 
 /* 禁用状态样式（鸟瞰图和工程图时） */
