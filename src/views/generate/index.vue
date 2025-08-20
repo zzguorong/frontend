@@ -463,26 +463,40 @@
                     <!-- 上传语义分割图 -->
                     <div class="semantic-upload-section">
                       <upload-file
+                        ref="semanticUploadRef"
+                        :loading="semanticUploadRefLoading"
                         final-api="/segment_image"
                         :img-url.sync="semanticImgUrl"
                         :describe-text="'上传语义分割图（文件不超过50MB）'"
                         @upload-success="onBasemapUpload($event, 3)"
                         @update:imgUrl="onSemanticUrlUpdate"
                         @delete="onImageDelete(3)"
+                        @update-loading="semanticUploadRefLoading = $event"
                       />
                     </div>
                     <div class="tool-actions">
                       <span
+                        v-loading="semanticUploadRefLoading"
                         :class="[
                           'auto-detect select-type',
                           {
                             disabled:
                               viewType === 'aerial' ||
                               viewType === 'engineering' ||
-                              !basemapUrlId,
+                              !basemapUrlId ||
+                              semanticUploadRefLoading
                           },
                         ]"
-                        style="position: relative; display: inline-flex; align-items: center; cursor: pointer; justify-content: center;"
+                        :style="{
+                          cursor: !semanticUploadRefLoading ? 'pointer' : 'not-allowed',
+                          backgroundColor: !semanticUploadRefLoading ? '#fff' : '#bbb',
+                          border: semanticUploadRefLoading ? 'unset' : '1px solid #d9d9d9',
+                          position: 'relative',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }"
+
                         @click="automaticRecognition"
                       >
                         自动识别
@@ -731,6 +745,7 @@ export default {
       isGenerating: false,
       psdDownloading: false,
       pngDownloading: false,
+      semanticUploadRefLoading: false, // 语义分割图上传loading状态
       // 轮询定时器
       pollingTimer: null,
       // 预览图
@@ -876,6 +891,11 @@ export default {
       }
 
       return opts;
+    },
+    // 获取ref中的变量
+    getSemanticUploadRef() {
+      console.log('获取语义分割图上传组件的loading状态', this.$refs.semanticUploadRef?.realLoading ?? false);
+      return this.$refs.semanticUploadRef?.realLoading ?? false;
     }
   },
   watch: {
@@ -1096,30 +1116,42 @@ export default {
       this.$router.push('/generateDetail');
     },
     // 自动识别
-    automaticRecognition() {
-      // 若尚未上传底图图则阻止调用
+    async automaticRecognition() {
+      // 1. 底图检查
       if (!this.basemapUrlId) {
         this.$message.warning('请先上传底图后再使用自动识别');
         return;
       }
 
-      // 调用后端接口获取 base64 图
-      preprocessSegment(this.basemapUrlId).then((res) => {
-        // 1. 兼容不同字段结构，优先取 res.data
-        const base64Str = res.data;
+      // 2. 防止重复点击
+      if (this.semanticUploadRefLoading) return;
 
-        // 3. 更新预览图
-        if (base64Str) {
-          // 4. 同步更新缩略图第 2 张（语义分割图）
-          this.$set(this.thumbnails, 1, { url: base64Str, thumbnailImage: base64Str });
-          this.previewImage = base64Str;
-          this.selectedThumbnail = 1; // 选择第二个缩略图位置
-          this.selectedThumbnailItem = this.thumbnails[1]; // 更新当前选中项
+      // 3. 设置 loading
+      this.semanticUploadRefLoading = true;
 
-          // 5. 更新分割图 URL 方便后续操作
-          this.semanticImgUrl = base64Str;
+      try {
+        // 4. 请求分割图
+        const res = await preprocessSegment(this.basemapUrlId);
+        const base64Str = res?.data;
+
+        if (!base64Str) {
+          this.$message.error('自动识别失败：未返回有效图像');
+          return;
         }
-      });
+
+        // 5. 更新预览区 & 缩略图
+        this.$set(this.thumbnails, 1, { url: base64Str, thumbnailImage: base64Str });
+        this.previewImage = base64Str;
+        this.selectedThumbnail = 1;
+        this.selectedThumbnailItem = this.thumbnails[1];
+        this.semanticImgUrl = base64Str;
+      } catch (error) {
+        console.error('自动识别失败:', error);
+        this.$message.error('自动识别失败，请稍后重试');
+      } finally {
+        // 6. 无论成功失败，都关闭 loading
+        this.semanticUploadRefLoading = false;
+      }
     },
     updateStyleOptions(e) {
       console.log('updateStyleOptions', e);
@@ -1163,7 +1195,7 @@ export default {
     // 设置统一的绘制样式 - 确保套索边框为圆角
     setUnifiedDrawStyle(ctx, opacity = 0.6) {
       // 强制使用完全相同的硬编码设置
-      const exactColor = 'rgb(87, 81, 220)'; // 固定颜色，不使用参数
+      const exactColor = this.getUnifiedColor(); // 固定颜色，不使用参数
 
       ctx.globalCompositeOperation = 'source-over';
       ctx.globalAlpha = 1.0;
@@ -1831,10 +1863,10 @@ export default {
         return;
       }
 
-      // 若重复点击相同颜色，直接返回，避免再次着色导致视觉加深
+      // 若重复点击相同颜色，直接返回，避免再次着色导致视觉加深，当前选择颜色不变
       if (item.color === this.selectedWaterColor) {
-        this.selectedWaterColor = '#87CEEB';
-        this.selectLabel = '';
+        this.selectedWaterColor = '#87CEEB'; // 未发现有用到的地方
+        // this.selectLabel = '';
         return;
       }
 
@@ -1844,8 +1876,9 @@ export default {
       // 更新基准颜色 (保持 alpha 不变)
       const { r, g, b } = this.hexToRgb(item.color);
       this.baseColor = { ...this.baseColor, r, g, b };
-      this.paintColor = `rgba(${r},${g},${b},1)`;
+      this.paintColor = `rgba(${r},${g},${b},1)`;// 未发现有用到的地方
 
+      // 所有已绘制区域整体着色
       this.recolorCanvas(this.getUnifiedColor());
     },
 
@@ -2137,6 +2170,12 @@ export default {
         return;
       }
 
+      // 判断用户是否选择了颜色
+      if (this.selectLabel === '') {
+        this.$message.warning('请先选择涂抹颜色');
+        return;
+      }
+
       // 获取背景图和涂抹层引用
       const img = this.$refs.previewImg;
       const lassoCanvas = this.$refs.lassoCanvas;
@@ -2166,14 +2205,12 @@ export default {
       // 将预览图片传输到语义分割图位置（索引1）
       this.$set(this.thumbnails, 1, { url: mergedImageBase64, thumbnailImage: mergedImageBase64 });
       this.$message.success('图片已暂存到语义分割图框！');
+
       // 更新预览区
       this.selectThumbnail(this.thumbnails[1], 1);
 
       // 重置当前工具，让用户显式再次选择
       this.currentTool = '';
-      // 清空选择的元素类别
-      this.selectedWaterColor = '#87CEEB';
-      this.selectLabel = '';
     },
 
     // 跳转到详情页面
@@ -2552,10 +2589,10 @@ export default {
         }
       } else {
         // 自由涂抹：使用丝滑的线条绘制
-        const exactColor = 'rgb(87, 81, 220)';
         ctx.globalCompositeOperation = 'source-over';
         ctx.globalAlpha = 1.0;
-        ctx.strokeStyle = exactColor;
+        // 使用统一的涂抹颜色
+        ctx.strokeStyle = this.getUnifiedColor();
         ctx.lineWidth = this.brushSize;
         ctx.lineCap = 'round'; // 涂抹使用圆角端点保持平滑
         ctx.lineJoin = 'round'; // 涂抹使用圆角连接保持平滑
@@ -2817,8 +2854,8 @@ export default {
       // 设置预览样式（边框线条）
       ctx.globalCompositeOperation = 'source-over';
       ctx.globalAlpha = 1; // 稍微透明一些，区别于已完成的填充
-      ctx.strokeStyle = '#5751dc'; // 使用更明显的颜色作为预览
-      ctx.fillStyle = '#5751dc';
+      ctx.strokeStyle = this.getUnifiedColor(); // 使用更明显的颜色作为预览
+      ctx.fillStyle = this.getUnifiedColor();
       ctx.lineCap = 'butt'; // 改为直线端点
       ctx.lineJoin = 'miter'; // 改为尖角连接
       ctx.lineWidth = 2;
@@ -2872,7 +2909,7 @@ export default {
       if (!this.fixedPoints.length) return;
 
       // 设置统一的颜色和透明度
-      const exactColor = 'rgb(87, 81, 220)';
+      const exactColor = this.getUnifiedColor();
       ctx.globalCompositeOperation = 'source-over';
       ctx.globalAlpha = 1.0;
 
@@ -2958,7 +2995,7 @@ export default {
       ctx.putImageData(this.savedCanvasData, 0, 0);
 
       // 设置绘制样式
-      const exactColor = 'rgb(87, 81, 220)';
+      const exactColor = this.getUnifiedColor();
       ctx.globalCompositeOperation = 'source-over';
       ctx.globalAlpha = 1.0;
       ctx.fillStyle = exactColor;
@@ -3025,7 +3062,7 @@ export default {
       if (!this.fixedPoints || this.fixedPoints.length < 3) return;
 
       // 设置统一的颜色和样式
-      const exactColor = 'rgb(87, 81, 220)';
+      const exactColor = this.getUnifiedColor();
       ctx.globalCompositeOperation = 'source-over';
       ctx.globalAlpha = 1.0;
       ctx.fillStyle = exactColor;
@@ -4065,9 +4102,9 @@ export default {
 .tempo-store:hover,
 .auto-detect:active,
 .tempo-store:active {
-  background-color: #000;
-  color: #fff;
-  border-color: #000;
+  background-color: #000 !important;
+  color: #fff !important;
+  border-color: #000 !important;
 }
 
 /* 禁用状态样式（鸟瞰图和工程图时） */
