@@ -465,11 +465,11 @@ import {
   generatePSD,
   getGalleryImages,
   getPerspectiveStyle,
+  getSingleGeneratedImageUrl,
   getUserFavoriteImages,
   getUserRemainingDownloads,
   getUserRemainingPSDDownloads,
-  unfavoriteGeneratedImage,
-  getSingleGeneratedImageUrl
+  unfavoriteGeneratedImage
 } from '@/api/generate';
 // import 'simplebar/dist/simplebar.min.css';
 import { downloadFile } from '@/utils/downLoad';
@@ -841,6 +841,12 @@ export default {
             });
           });
         }
+        // 添加刷新时间
+        this.galleryItems.forEach((dateGroup) => {
+          dateGroup.galleryItem.forEach((item) => {
+            item.urlRefreshTime = Date.now() + 28 * 60 * 1000;
+          });
+        });
       } catch (error) {
         console.error('Failed to load gallery images:', error);
         this.$message.error('加载图片失败');
@@ -1528,13 +1534,18 @@ export default {
         this.styleImageId = selectedItem.styleImageId;
         this.styleImgUrl = selectedItem.styleImgUrl;
         // 根据generateImageId，重新获取生图URL
-        getSingleGeneratedImageUrl(this.generatedImageId).then(url => {
-          this.currentPreviewImage = url;
-        }).catch((err) => {
-          console.error('获取生图失败:', err);
-          this.currentPreviewImage = '';
-          this.$message.error('获取生图失败');
-        });
+        if (Date.now() > selectedItem.urlRefreshTime) {
+          // refresh OSS URL by image type
+          getSingleGeneratedImageUrl(this.generatedImageId).then((url) => {
+            this.currentPreviewImage = url;
+          }).catch((err) => {
+            console.error('获取生图失败:', err);
+            this.currentPreviewImage = '';
+            this.$message.error('获取生图失败');
+          });
+        } else {
+          this.currentPreviewImage = selectedItem.images[0].src;
+        }
       } else if (selectedItem && selectedItem.image) {
         // 如果没有images数组，显示单张image
         this.currentPreviewImage = selectedItem.image;

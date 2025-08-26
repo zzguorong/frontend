@@ -1045,11 +1045,12 @@ export default {
         this.styleTransferEnabled = true;
         this.styleImageId = p.styleImageId;
         // refresh
-        getSingleStyleImageUrl(p.styleImageId).then((url) => {
+        try {
+          const url = await getSingleStyleImageUrl(p.styleImageId);
           this.styleImgUrl = url;
-        }).catch(() => {
+        } catch (error) {
           this.styleImgUrl = '';
-        });
+        }
       } else {
         this.styleTransferLevel = 0;
         this.styleTransferEnabled = false;
@@ -1061,32 +1062,43 @@ export default {
 
       // 底图
       if (p.basemapUrl && p.basemapUrlId) {
-        this.basemapUrl = p.basemapUrl;
         this.basemapUrlId = p.basemapUrlId;
-        // 更新缩略图第一个位置（底图）
-        this.$set(this.thumbnails, 0, { id: p.basemapUrlId, url: p.basemapUrl, thumbnailImage: p.basemapUrl });
+        // refresh
+        try {
+          const url = await this.refreshImgURLByType(0, p.basemapUrlId);
+          this.basemapUrl = url;
+          // 更新缩略图第一个位置（底图）+ 过期时间
+          this.$set(this.thumbnails, 0, { id: p.basemapUrlId, url: url, thumbnailImage: url, urlRefreshTime: Date.now() + 28 * 60 * 1000 });
+        } catch (error) {
+          this.basemapUrl = '';
+        }
       } else {
         this.basemapUrl = '';
         this.basemapUrlId = null;
-        this.$set(this.thumbnails, 0, { url: '', thumbnailImage: '' });
+        this.$set(this.thumbnails, 0, { url: '', thumbnailImage: '', urlRefreshTime: 0 });
       }
-
       // 语义分割图
       if (p.semanticImgUrl && p.semanticImgUrlId) {
         this.semanticImgUrlId = p.semanticImgUrlId;
-        const base64 = await blobUrlToBase64(p.semanticImgUrl);
-        // 更新缩略图第二个位置（语义分割图）
-        this.$set(this.thumbnails, 1, { url: base64, thumbnailImage: base64 });
-        this.semanticImgUrl = base64;
-      } else if (p.semanticImgUrl) {
+
+        try {
+          const url = await this.refreshImgURLByType(1, p.semanticImgUrlId);
+          const base64 = await blobUrlToBase64(url);
+          // 更新缩略图第二个位置（语义分割图）
+          this.$set(this.thumbnails, 1, { url: base64, thumbnailImage: base64, urlRefreshTime: Date.now() + 28 * 60 * 1000 });
+          this.semanticImgUrl = base64;
+        } catch (e) {
+          console.error('刷新语义分割图失败:', e);
+        }
+      } else if (p.semanticImgUrl) { // todo:什么情况走到这里？--用户使用工具栏后暂存
         this.semanticImgUrl = p.semanticImgUrl;
         this.semanticImgUrlId = null;
         // 更新缩略图第二个位置（语义分割图）
-        this.$set(this.thumbnails, 1, { url: p.semanticImgUrl, thumbnailImage: p.semanticImgUrl });
+        this.$set(this.thumbnails, 1, { url: p.semanticImgUrl, thumbnailImage: p.semanticImgUrl, urlRefreshTime: Date.now() + 28 * 60 * 1000 });
       } else {
         this.semanticImgUrl = '';
         this.semanticImgUrlId = null;
-        this.$set(this.thumbnails, 1, { url: '', thumbnailImage: '' });
+        this.$set(this.thumbnails, 1, { url: '', thumbnailImage: '', urlRefreshTime: 0 });
       }
 
       // * 如果是通过点击’保留底图生图‘跳转过来的，那么底图不为空，语义分割图可能为空
@@ -1140,7 +1152,7 @@ export default {
         }
 
         // 5. 更新预览区 & 缩略图
-        this.$set(this.thumbnails, 1, { url: base64Str, thumbnailImage: base64Str });
+        this.$set(this.thumbnails, 1, { url: base64Str, thumbnailImage: base64Str, urlRefreshTime: Date.now() + 28 * 60 * 1000 });
         this.previewImage = base64Str;
         this.selectedThumbnail = 1;
         this.selectedThumbnailItem = this.thumbnails[1];
@@ -1346,7 +1358,7 @@ export default {
                 segmentImgUrl = await getSingleSegmentImageUrl(this.thumbnails[1].id);
               }
               const base64 = await blobUrlToBase64(segmentImgUrl);
-              this.$set(this.thumbnails, 1, { url: base64, thumbnailImage: base64 });
+              this.$set(this.thumbnails, 1, { url: base64, thumbnailImage: base64, urlRefreshTime: Date.now() + 28 * 60 * 1000 });
               this.semanticImgUrl = base64;
               payload.segment_image = base64;
             } catch (err) {
@@ -1420,7 +1432,9 @@ export default {
                 generatedImageId: generateImg.id,
                 semanticImgUrlId: res.data.segment_image_id,
                 // 如果存在缩略图，则使用缩略图的url，否则使用原图URL：generateImg.url
-                thumbnailImage: generateImg.thumbnails[0] ? generateImg.thumbnails[0].url : generateImg.url
+                thumbnailImage: generateImg.thumbnails[0] ? generateImg.thumbnails[0].url : generateImg.url,
+                // URL 刷新时间 后⾯⽤来判断是否需要重新刷新URL, 28分钟后刷新
+                urlRefreshTime: Date.now() + 28 * 60 * 1000
               });
 
               // 重置生成状态
@@ -1489,14 +1503,21 @@ export default {
       this.selectedThumbnailItem = thumb;
       this.selectedThumbnail = index;
       if (thumb.id) {
-        // refresh OSS URL by image type
-        this.refreshImgURLByType(index, thumb.id).then((url) => {
-          this.previewImage = url;
-        }).catch((err) => {
-          console.error('Error refreshing image URL:', err);
-          this.previewImage = '';
-          this.$message.error('获取预览图片失败');
-        });
+        // 如果是生图并且当前时间 - thumbnails中记录的URL 刷新时间 > 28分钟，则需要刷新URL
+        // 语义分割图和底图刷新
+        if (Date.now() > thumb.urlRefreshTime) {
+          // refresh OSS URL by image type
+          this.refreshImgURLByType(index, thumb.id).then((url) => {
+            this.previewImage = url;
+            this.$set(this.thumbnails, index, { ...thumb, url, urlRefreshTime: Date.now() + 28 * 60 * 1000 });
+          }).catch((err) => {
+            console.error('Error refreshing image URL:', err);
+            this.previewImage = '';
+            this.$message.error('获取预览图片失败');
+          });
+        } else {
+          this.previewImage = thumb.url;
+        }
       } else {
         this.previewImage = thumb.url;
       }
@@ -1979,7 +2000,7 @@ export default {
         this.formErrors.basemapUrl = false;
 
         // 更新缩略图第一个位置（底图）
-        this.$set(this.thumbnails, 0, { url: imageUrl, thumbnailImage: imageUrl });
+        this.$set(this.thumbnails, 0, { url: imageUrl, thumbnailImage: imageUrl, urlRefreshTime: Date.now() + 28 * 60 * 1000 });
         // 更新主预览图
         this.previewImage = imageUrl;
         this.selectedThumbnail = 0; // 设置为底图缩略图
@@ -2060,7 +2081,7 @@ export default {
       this.semanticImgUrl = imageUrl;
 
       // 更新缩略图第二个位置（语义分割图）
-      this.$set(this.thumbnails, 1, { url: imageUrl, thumbnailImage: imageUrl });
+      this.$set(this.thumbnails, 1, { url: imageUrl, thumbnailImage: imageUrl, urlRefreshTime: Date.now() + 28 * 60 * 1000 });
 
       // 更新主预览图
       this.previewImage = imageUrl;
@@ -2080,7 +2101,7 @@ export default {
       }
 
       // 更新缩略图第二个位置（语义分割图）
-      this.$set(this.thumbnails, 1, { url: imageUrl, thumbnailImage: imageUrl });
+      this.$set(this.thumbnails, 1, { url: imageUrl, thumbnailImage: imageUrl, urlRefreshTime: Date.now() + 28 * 60 * 1000 });
 
       // 更新主预览图
       this.previewImage = imageUrl;
